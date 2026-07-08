@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source "../views";
+
+@theme {
+    --font-sans:
+        "Roboto", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+
+    --color-primary: var(--primary);
+    --color-primary-dark: var(--primary-dark);
+    --color-primary-soft: var(--primary-soft);
+    --color-accent: var(--accent);
+    --color-star: var(--star);
+    --color-text: var(--text);
+    --color-muted: var(--muted);
+    --color-bg: var(--bg);
+    --color-card: var(--card);
+    --color-border: var(--border);
+    --radius-btn: var(--radius-btn);
+    --radius-card: var(--radius-card);
+}
+
+:root {
+    --primary: #1668dc;
+    --primary-dark: #0f4fb0;
+    --primary-soft: #e8f1ff;
+    --accent: #ff7a00;
+    --star: #f5a623;
+    --text: #1f2733;
+    --muted: #6b7785;
+    --bg: #f1f4f8;
+    --card: #ffffff;
+    --border: #e6e9ee;
+    --radius-btn: 6px;
+    --radius-card: 10px;
+    --shadow:
+        0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+    --shadow-hover: 0 8px 24px rgba(16, 24, 40, 0.12);
+}
+
+@layer base {
+    body {
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: var(--font-sans);
+    }
+
+    /* Global Smooth Transitions */
+    a, button, input, select, textarea {
+        @apply transition duration-300 ease-in-out;
+    }
+}
