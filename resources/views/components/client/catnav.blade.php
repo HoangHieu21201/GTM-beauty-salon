@@ -49,7 +49,7 @@
             </div>
         </div>
 
-        <div class="relative group h-full flex items-center">
+        <div class="group h-full flex items-center">
             <a href="#" class="h-full flex items-center px-4 hover:bg-white/10 transition-colors gap-1 text-white hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 mr-0.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -60,7 +60,7 @@
                 </svg>
             </a>
             <!-- Mega Menu -->
-            <div class="absolute top-full left-0 w-max max-w-[95vw] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.15)] rounded-b-[12px] rounded-tr-[12px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 p-6 mt-1 cursor-default">
+            <div class="absolute top-full left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-[1500px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.15)] rounded-b-[12px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 p-6 cursor-default">
                 <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-3">
                     <div class="text-[#0F2A4A] font-bold text-[15px] flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-[#1668DC]">
