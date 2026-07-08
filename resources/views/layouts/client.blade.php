@@ -6,10 +6,13 @@
     <title>@yield('title', 'Review Thẩm Mỹ')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col overflow-x-hidden">
     <x-client.header />
     
-    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Thanh điều hướng danh mục độc lập (Sticky) -->
+    <x-client.catnav />
+    
+    <main class="flex-grow w-full">
         @yield('content')
     </main>
 

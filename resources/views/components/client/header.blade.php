@@ -1,37 +1,60 @@
-<header class="bg-white shadow-sm border-b border-border sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
+<header class="bg-white w-full shadow-sm">
+    <!-- Top Bar -->
+    <div class="max-w-[1200px] mx-auto px-4 py-4">
+        <div class="flex items-center justify-between gap-8">
             <!-- Logo -->
-            <div class="flex-shrink-0 flex items-center">
-                <a href="{{ url('/') }}" class="text-2xl font-black flex items-center gap-2">
-                    <span class="text-accent text-3xl">★</span> 
-                    <span class="text-primary">SORA<span class="text-text">ThinkHub</span></span>
+            <a href="{{ url('/') }}" class="logo flex-shrink-0 text-[var(--text)]">
+                <svg viewBox="0 0 48 48" aria-hidden="true" class="w-10 h-10">
+                    <defs>
+                        <linearGradient id="rtmGradH" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#3f86ff"></stop>
+                            <stop offset="1" stop-color="#1668dc"></stop>
+                        </linearGradient>
+                    </defs>
+                    <path d="M24 5 C13.5 5 5 12.3 5 21.5 C5 30.7 13.5 38 24 38 c1.6 0 3.2-.2 4.7-.5 L36.5 42 l-1.2-7.4 C40.3 31.4 43 26.8 43 21.5 43 12.3 34.5 5 24 5 Z" fill="url(#rtmGradH)"></path>
+                    <polygon points="24,12.5 26.2,18.4 32.6,18.7 27.6,22.7 29.3,28.8 24,25.3 18.7,28.8 20.4,22.7 15.4,18.7 21.8,18.4" fill="#fff"></polygon>
+                    <path d="M39 1 l1.5 3.9 3.9 1.5 -3.9 1.5 -1.5 3.9 -1.5 -3.9 -3.9 -1.5 3.9 -1.5 Z" fill="#ff7a00"></path>
+                </svg>
+                <span>Review</span>
+                <span class="text-[var(--primary)]">Thẩm Mỹ</span>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-2xl mx-auto relative hidden md:block">
+                <div class="flex items-center bg-[#F3F4F6] rounded-full p-1">
+                    <div class="pl-4 pr-2 text-gray-400">
+                        <i class="pi pi-search"></i>
+                    </div>
+                    <input type="text" placeholder="Tìm kiếm bài viết, đánh giá thẩm mỹ..." class="flex-1 bg-transparent border-none focus:ring-0 text-[14px] text-gray-700 placeholder-gray-400 py-2 outline-none">
+                    <button class="bg-[#4D8AFF] hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium text-[14px] transition-colors flex items-center gap-2">
+                        <i class="pi pi-search text-[12px]"></i> Tìm kiếm
+                    </button>
+                </div>
+                <div class="mt-2 px-2 text-[13px] flex items-center gap-3">
+                    <span class="text-gray-500">Gợi ý:</span>
+                    <a href="#" class="text-[#4D8AFF] font-medium hover:underline">Nâng mũi</a>
+                    <a href="#" class="text-[#4D8AFF] font-medium hover:underline">Cắt mí</a>
+                    <a href="#" class="text-[#4D8AFF] font-medium hover:underline">Top cơ sở</a>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="flex-shrink-0 hidden md:flex items-center">
+                <a href="#" class="btn-client btn-client-accent">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-[18px] h-[18px]">
+                        <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
+                    </svg>
+                    Bảng xếp hạng
                 </a>
             </div>
-
-            <!-- Desktop Menu -->
-            <nav class="hidden md:flex space-x-8">
-                <a href="{{ url('/') }}" class="text-primary font-bold border-b-2 border-primary py-7 px-1">Trang chủ</a>
-                <a href="#" class="text-muted hover:text-primary font-medium border-b-2 border-transparent hover:border-primary-soft transition-colors py-7 px-1">Cơ sở thẩm mỹ</a>
-                <a href="#" class="text-muted hover:text-primary font-medium border-b-2 border-transparent hover:border-primary-soft transition-colors py-7 px-1">Bài viết</a>
-                <a href="#" class="text-muted hover:text-primary font-medium border-b-2 border-transparent hover:border-primary-soft transition-colors py-7 px-1">Danh mục</a>
-            </nav>
-
-            <!-- Right Actions -->
-            <div class="hidden md:flex items-center space-x-4">
-                <button class="text-muted hover:text-primary transition-colors p-2">
-                    🔍
-                </button>
-                <a href="#" class="text-primary font-semibold hover:text-primary-dark px-3 py-2">Đăng nhập</a>
-                <a href="#" class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-5 rounded-full shadow hover:shadow-hover transition-all">Đăng ký</a>
-            </div>
-
-            <!-- Mobile menu button -->
-            <div class="flex items-center md:hidden">
-                <button class="text-muted hover:text-text p-2 text-2xl">
-                    ☰
+            
+            <!-- Mobile Menu Toggle -->
+            <div class="md:hidden flex items-center">
+                <button class="text-gray-600 text-2xl">
+                    <i class="pi pi-bars"></i>
                 </button>
             </div>
         </div>
     </div>
+
 </header>
