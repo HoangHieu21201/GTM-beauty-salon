@@ -1,8 +1,13 @@
+@props(['title' => 'Xếp hạng cơ sở thẩm mỹ', 'icon' => false])
+
 <div class="max-w-[1200px] mx-auto px-4 mt-12 mb-8">
     <div class="flex justify-between items-center mb-6">
         <div class="flex items-center gap-2.5">
             <div class="w-1.5 h-6 bg-[#1668DC] rounded-full"></div>
-            <h2 class="text-[18px] font-bold text-[#0F2A4A] uppercase tracking-wide">Xếp hạng cơ sở thẩm mỹ</h2>
+            <h2 class="text-[18px] font-bold text-[#0F2A4A] uppercase tracking-wide flex items-center gap-2">
+                @if($icon) <span class="text-[20px]">🏆</span> @endif
+                {{ $title }}
+            </h2>
         </div>
         <a href="#" class="text-[#1668DC] text-[14px] font-medium hover:underline flex items-center gap-1">
             Xem tất cả <span class="text-[16px]">&rarr;</span>

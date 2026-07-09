@@ -5,7 +5,7 @@
         <a href="{{ url('/') }}" class="h-full flex items-center px-4 border-b-2 border-white text-white">Trang chủ</a>
         
         <div class="relative group h-full flex items-center">
-            <a href="#" class="h-full flex items-center px-4 hover:bg-white/10 transition-colors gap-1 text-white hover:text-white">
+            <a href="{{ url('/bai-viet?type=main&cat=phau-thuat-tham-my') }}" class="h-full flex items-center px-4 hover:bg-white/10 transition-colors gap-1 text-white hover:text-white">
                 Phẫu thuật thẩm mỹ
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-[11px] h-[11px] ml-1 transition-transform duration-300 group-hover:-rotate-180">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -13,15 +13,15 @@
             </a>
             <!-- Dropdown -->
             <div class="absolute top-full left-0 bg-white shadow-xl rounded-[8px] py-2 min-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 mt-1">
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Nâng mũi</a>
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Nâng ngực</a>
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Cắt mí</a>
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Hút mỡ</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=nang-mui') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Nâng mũi</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=nang-nguc') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Nâng ngực</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=cat-mi') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Cắt mí</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=hut-mo') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Hút mỡ</a>
             </div>
         </div>
 
         <div class="relative group h-full flex items-center">
-            <a href="#" class="h-full flex items-center px-4 hover:bg-white/10 transition-colors gap-1 text-white hover:text-white">
+            <a href="{{ url('/bai-viet?type=main&cat=cham-soc-da') }}" class="h-full flex items-center px-4 hover:bg-white/10 transition-colors gap-1 text-white hover:text-white">
                 Chăm sóc da
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-[11px] h-[11px] ml-1 transition-transform duration-300 group-hover:-rotate-180">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -29,14 +29,14 @@
             </a>
             <!-- Dropdown -->
             <div class="absolute top-full left-0 bg-white shadow-xl rounded-[8px] py-2 min-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 mt-1">
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Trẻ hóa da</a>
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Trị mụn</a>
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Tắm trắng</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=tre-hoa-da') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Trẻ hóa da</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=tri-mun') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Trị mụn</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=tam-trang') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Tắm trắng</a>
             </div>
         </div>
 
         <div class="relative group h-full flex items-center">
-            <a href="#" class="h-full flex items-center px-4 hover:bg-white/10 transition-colors gap-1 text-white hover:text-white">
+            <a href="{{ url('/bai-viet?type=main&cat=rang-ham-mat') }}" class="h-full flex items-center px-4 hover:bg-white/10 transition-colors gap-1 text-white hover:text-white">
                 Răng - Hàm - Mặt
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-[11px] h-[11px] ml-1 transition-transform duration-300 group-hover:-rotate-180">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -44,8 +44,8 @@
             </a>
             <!-- Dropdown -->
             <div class="absolute top-full left-0 bg-white shadow-xl rounded-[8px] py-2 min-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 mt-1">
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Niềng răng</a>
-                <a href="#" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Bọc răng sứ</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=nieng-rang') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Niềng răng</a>
+                <a href="{{ url('/bai-viet?type=sub&cat=boc-rang-su') }}" class="block px-5 py-2.5 text-[14px] font-medium text-gray-700 hover:bg-blue-50 hover:text-[#1668DC] normal-case">Bọc răng sứ</a>
             </div>
         </div>
 
