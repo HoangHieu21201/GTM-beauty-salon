@@ -43,6 +43,7 @@
 
     <!-- Pagination / View More -->
     <div class="flex justify-center mt-6">
+        <!-- TODO: Wire up pagination or load-more logic -->
         <button class="px-6 py-2 bg-white border border-[#1668DC] text-[#1668DC] text-[14px] font-medium rounded-[6px] hover:bg-[#1668DC] hover:text-white transition-colors">
             Xem thêm
         </button>

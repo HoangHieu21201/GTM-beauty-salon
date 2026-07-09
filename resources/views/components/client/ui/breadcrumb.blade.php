@@ -6,7 +6,7 @@
             <span class="mx-1.5 text-[11px]">&rsaquo;</span>
         @endif
         @if(isset($item['url']))
-            <a href="{{ $item['url'] }}" class="hover:text-[#1668DC] transition-colors">{{ $item['label'] }}</a>
+            <a href="{{ $item['url'] }}" class="text-[#1668DC] hover:underline transition-colors">{{ $item['label'] }}</a>
         @else
             <span>{{ $item['label'] }}</span>
         @endif

@@ -27,9 +27,9 @@
             <div class="col-span-1 md:col-span-2">
                 <h3 class="text-white font-bold text-[15px] mb-4">Về chúng tôi</h3>
                 <ul class="space-y-3 text-[14px]">
-                    <li><a href="#" class="hover:text-white transition-colors">Giới thiệu</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Liên hệ</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Hợp tác</a></li>
+                    <li><a href="{{ url('/ve-chung-toi#gioi-thieu') }}" class="hover:text-white transition-colors">Giới thiệu</a></li>
+                    <li><a href="{{ url('/ve-chung-toi#lien-he') }}" class="hover:text-white transition-colors">Liên hệ</a></li>
+                    <li><a href="{{ url('/ve-chung-toi#hop-tac') }}" class="hover:text-white transition-colors">Hợp tác</a></li>
                 </ul>
             </div>
 
@@ -37,10 +37,10 @@
             <div class="col-span-1 md:col-span-2">
                 <h3 class="text-white font-bold text-[15px] mb-4">Danh mục</h3>
                 <ul class="space-y-3 text-[14px]">
-                    <li><a href="#" class="hover:text-white transition-colors">Phẫu thuật thẩm mỹ</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Chăm sóc da</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Răng - Hàm - Mặt</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Bài viết theo tỉnh thành</a></li>
+                    <li><a href="{{ url('/bai-viet?type=main&cat=phau-thuat-tham-my') }}" class="hover:text-white transition-colors">Phẫu thuật thẩm mỹ</a></li>
+                    <li><a href="{{ url('/bai-viet?type=main&cat=cham-soc-da') }}" class="hover:text-white transition-colors">Chăm sóc da</a></li>
+                    <li><a href="{{ url('/bai-viet?type=main&cat=rang-ham-mat') }}" class="hover:text-white transition-colors">Răng - Hàm - Mặt</a></li>
+                    <li><a href="{{ url('/tinh-thanh') }}" class="hover:text-white transition-colors">Bài viết theo tỉnh thành</a></li>
                 </ul>
             </div>
 
@@ -48,9 +48,9 @@
             <div class="col-span-1 md:col-span-2">
                 <h3 class="text-white font-bold text-[15px] mb-4">Chính sách</h3>
                 <ul class="space-y-3 text-[14px]">
-                    <li><a href="#" class="hover:text-white transition-colors">Điều khoản sử dụng</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Chính sách bảo mật</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Tiêu chí đánh giá</a></li>
+                    <li><a href="{{ url('/chinh-sach#dieu-khoan-su-dung') }}" class="hover:text-white transition-colors">Điều khoản sử dụng</a></li>
+                    <li><a href="{{ url('/chinh-sach#chinh-sach-bao-mat') }}" class="hover:text-white transition-colors">Chính sách bảo mật</a></li>
+                    <li><a href="{{ url('/chinh-sach#tieu-chi-danh-gia') }}" class="hover:text-white transition-colors">Tiêu chí đánh giá</a></li>
                 </ul>
             </div>
 

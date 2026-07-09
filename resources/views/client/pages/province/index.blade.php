@@ -46,7 +46,11 @@
                         $subtitleColor = $hasPosts ? 'text-[#1668DC]' : 'text-[#94a3b8]';
                         $arrowColor = $hasPosts ? 'text-[#cbd5e1] group-hover:text-[#1668DC]' : 'text-[#e2e8f0]';
                     @endphp
-                    <a href="{{ $hasPosts ? url('/tinh-thanh/' . $province['slug']) : 'javascript:void(0)' }}" class="group bg-white rounded-[12px] border border-[#e6e9ee] p-3 flex items-center justify-between {{ $hasPosts ? 'hover:border-[#1668DC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:-translate-y-1' : 'cursor-default' }} transition-all duration-150">
+                    @if($hasPosts)
+                        <a href="{{ url('/tinh-thanh/' . $province['slug']) }}" class="group bg-white rounded-[12px] border border-[#e6e9ee] p-3 flex items-center justify-between hover:border-[#1668DC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-150">
+                    @else
+                        <div class="group bg-white rounded-[12px] border border-[#e6e9ee] p-3 flex items-center justify-between cursor-default transition-all duration-150">
+                    @endif
                         <div class="flex items-center gap-3">
                             <div class="w-[42px] h-[42px] rounded-[8px] flex items-center justify-center flex-shrink-0 {{ $iconBg }} {{ $iconColor }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-[18px] h-[18px]">
@@ -62,7 +66,11 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 {{ $arrowColor }} transition-colors">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                         </svg>
-                    </a>
+                    @if($hasPosts)
+                        </a>
+                    @else
+                        </div>
+                    @endif
                 @endforeach
             </div>
         </section>

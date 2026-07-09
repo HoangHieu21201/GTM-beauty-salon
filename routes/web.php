@@ -333,7 +333,7 @@ Route::get('/tinh-thanh/{slug}', function ($slug) {
         'hai-phong' => ['name' => 'Hải Phòng', 'region' => 'Miền Bắc'],
     ];
     
-    $province = $provinces[$slug] ?? ['name' => ucfirst(str_replace('-', ' ', $slug)), 'region' => 'Miền Bắc'];
+    $province = $provinces[$slug] ?? ['name' => ucwords(str_replace('-', ' ', $slug)), 'region' => 'Miền Bắc'];
 
     $breadcrumb = [
         ['label' => 'Trang chủ', 'url' => url('/')],
@@ -364,6 +364,22 @@ Route::get('/tinh-thanh/{slug}', function ($slug) {
     ];
 
     return view('client.pages.province.detail', compact('province', 'articles', 'breadcrumb'));
+});
+
+Route::get('/ve-chung-toi', function () {
+    $breadcrumb = [
+        ['label' => 'Trang chủ', 'url' => url('/')],
+        ['label' => 'Về chúng tôi']
+    ];
+    return view('client.pages.about', compact('breadcrumb'));
+});
+
+Route::get('/chinh-sach', function () {
+    $breadcrumb = [
+        ['label' => 'Trang chủ', 'url' => url('/')],
+        ['label' => 'Chính sách & Điều khoản']
+    ];
+    return view('client.pages.policy', compact('breadcrumb'));
 });
 
 // Admin Routes

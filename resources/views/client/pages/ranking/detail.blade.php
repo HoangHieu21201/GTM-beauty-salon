@@ -10,7 +10,7 @@
         </div>
 
         <!-- Main Layout Grid -->
-        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start;">
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
             
             <!-- Left Column (Main) -->
             <div class="flex flex-col w-full overflow-hidden">
@@ -110,7 +110,7 @@
                             <div style="color: #64748b; font-size: 13px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
                                 <i class="pi pi-globe"></i> Website
                             </div>
-                            <a href="https://{{ $clinic['website'] }}" target="_blank" rel="noopener" style="color: #1F2733; font-weight: 700; font-size: 14px; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 4px;">
+                            <a href="{{ str_starts_with($clinic['website'], 'http') ? $clinic['website'] : 'https://' . $clinic['website'] }}" target="_blank" rel="noopener" style="color: #1F2733; font-weight: 700; font-size: 14px; text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 4px;">
                                 <span>{{ $clinic['website'] }}</span> 
                                 <i class="pi pi-external-link" style="font-size: 11px; color: #94a3b8;"></i>
                             </a>
@@ -145,7 +145,7 @@
                         <i class="pi pi-map" style="color: #1668DC;"></i> Bản đồ
                     </h3>
                     <div style="width: 100%; height: 230px; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #e2e8f0; background: #e5e7eb;">
-                        <iframe width="100%" height="100%" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bản đồ vị trí cơ sở" style="border: 0;" src="https://www.google.com/maps?q=B%E1%BB%87nh%20vi%E1%BB%87n%20Th%E1%BA%A9m%20m%E1%BB%B9%20Kim%20C%C6%B0%C6%A1ng%2C%20100%20%C4%90%C6%B0%E1%BB%9Dng%20Th%E1%BA%A9m%20M%E1%BB%B9%2C%20H%C3%A0%20N%E1%BB%99i&output=embed&hl=vi&z=16"></iframe>
+                        <iframe width="100%" height="100%" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bản đồ vị trí cơ sở" style="border: 0;" src="https://www.google.com/maps?q={{ urlencode($clinic['name'] . ', ' . $clinic['address']) }}&output=embed&hl=vi&z=16"></iframe>
                     </div>
                     <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($clinic['address']) }}" target="_blank" rel="noopener" style="text-align: center; color: #1668DC; font-size: 13px; font-weight: 500; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 4px;">
                         Mở bản đồ lớn <i class="pi pi-external-link" style="font-size: 10px;"></i>

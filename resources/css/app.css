@@ -109,4 +109,11 @@
     .card-hover:hover {
         @apply -translate-y-1 shadow-[0_4px_12px_rgba(0,0,0,0.05)];
     }
+
+    /* CatNav Mega Province */
+    .mega-province-active { background-color: #f1f5f9; color: #1F2733; }
+    .mega-province-inactive { background-color: #f8fafc; color: #64748b; }
+    .mega-province:hover { background-color: #1668DC !important; color: #ffffff !important; }
+    .mega-badge { background-color: #dbeafe; color: #1668DC; }
+    .mega-province:hover .mega-badge { background-color: rgba(255, 255, 255, 0.25); color: #ffffff; }
 }

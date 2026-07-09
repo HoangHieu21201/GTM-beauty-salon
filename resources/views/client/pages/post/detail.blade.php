@@ -16,7 +16,7 @@
                 <!-- Article Header Container -->
                 <div class="mb-6">
                     <div class="flex items-center gap-2 mb-3">
-                        <span class="bg-[#F0F5FF] text-[#1668DC] px-3 py-1 rounded-[4px] text-[13px] font-bold">Bọc răng sứ</span>
+                        <span class="bg-[#F0F5FF] text-[#1668DC] px-3 py-1 rounded-[4px] text-[13px] font-bold">{{ $article['category'] }}</span>
                     </div>
 
                     <div class="flex items-center gap-2 mb-3">
@@ -42,18 +42,18 @@
                         <div class="w-[1px] h-8 bg-[#e2e8f0]"></div>
                         <div class="flex flex-col">
                             <span class="text-[#94a3b8] mb-0.5">Tác giả / Reviewer</span>
-                            <b class="text-[#1668DC]">Quản trị viên</b>
+                            <b class="text-[#1668DC]">{{ $article['author'] }}</b>
                         </div>
                         <div class="w-[1px] h-8 bg-[#e2e8f0]"></div>
                         <div class="flex flex-col">
                             <span class="text-[#94a3b8] mb-0.5">Chuyên mục</span>
-                            <a href="#" class="text-[#1668DC] font-bold hover:underline">Bọc răng sứ</a>
+                            <a href="#" class="text-[#1668DC] font-bold hover:underline">{{ $article['category'] }}</a>
                         </div>
                         <div class="w-[1px] h-8 bg-[#e2e8f0]"></div>
                         <div class="flex flex-col">
                             <span class="text-[#94a3b8] mb-0.5">Địa điểm</span>
                             <div class="text-[#1668DC] font-bold">
-                                <a href="#" class="hover:underline">Hà Nội</a>, <a href="#" class="hover:underline">Hải Phòng</a>
+                                {{ $article['locations'] }}
                             </div>
                         </div>
                     </div>
@@ -84,9 +84,9 @@
                             </a>
                         </div>
                         <div class="text-[#64748b] text-[13px] flex items-center gap-2">
-                            <span><i class="pi pi-eye"></i> 608 lượt xem</span>
+                            <span><i class="pi pi-eye"></i> {{ $article['views'] }} lượt xem</span>
                             <span>•</span>
-                            <span><i class="pi pi-clock"></i> 2 phút đọc</span>
+                            <span><i class="pi pi-clock"></i> {{ $article['read_time'] }} phút đọc</span>
                         </div>
                     </div>
 
@@ -223,7 +223,7 @@
                 <div class="mb-8">
                     <h3 class="text-[18px] font-bold text-[#1F2733] mb-4">Bài viết liên quan</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @foreach(array_slice($articles ?? [], 0, 4) as $ra)
+                        @foreach(array_slice($relatedArticles ?? [], 0, 4) as $ra)
                             <div class="bg-white rounded-[8px] border border-[#e2e8f0] overflow-hidden hover:shadow-md transition-shadow flex flex-col group">
                                 <a href="{{ $ra['url'] ?? '#' }}" class="relative block overflow-hidden aspect-[16/10]">
                                     <img src="{{ $ra['image'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $ra['title'] }}">

@@ -3,7 +3,7 @@
 @section('title', $category['name'] . ' - Review Thẩm Mỹ')
 
 @section('content')
-<div class="max-w-[1200px] mx-auto px-4 pb-12">
+<div class="max-w-[1200px] mx-auto pb-12">
     <!-- Breadcrumb -->
     <x-client.ui.breadcrumb :items="$breadcrumb" />
 
@@ -30,9 +30,14 @@
         
         <!-- Loop qua các danh mục con để hiển thị 1 dòng (4 bài) cho mỗi danh mục -->
         @foreach($category['children'] as $child)
+            @php
+                $childArticles = collect($articles)->filter(function($item) use ($child) {
+                    return \Illuminate\Support\Str::slug($item['category']) === $child['slug'];
+                })->all();
+            @endphp
             <section class="mb-[34px]">
                 <x-client.ui.section-title :title="$child['name']" :link="url('/bai-viet?type=sub&cat='.$child['slug'])" />
-                <x-client.ui.posts-grid :articles="$articles" :limit="4" />
+                <x-client.ui.posts-grid :articles="$childArticles" :limit="4" />
             </section>
         @endforeach
 
