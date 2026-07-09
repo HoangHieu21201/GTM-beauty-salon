@@ -17,5 +17,5 @@
     <x-client.home.cta-band />
 
     <!-- Khối Bài viết hay nhất -->
-    <x-client.home.best-articles />
+    <x-client.home.best-posts />
 @endsection
