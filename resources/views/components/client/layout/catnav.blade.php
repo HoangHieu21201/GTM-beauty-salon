@@ -77,7 +77,7 @@
             </a>
             
             <!-- Mega Menu Dropdown -->
-            <div class="dropdown mega absolute top-[46px] left-4 right-4 bg-white shadow-xl rounded-b-[12px] pt-[16px] px-[24px] pb-[20px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 cursor-default text-gray-800">
+            <div class="dropdown mega absolute top-full left-4 right-4 bg-white shadow-xl rounded-b-[12px] pt-[16px] px-[24px] pb-[20px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 cursor-default text-gray-800">
                 <div class="flex justify-between items-center border-b border-[#e6e9ee] pb-3">
                     <div class="flex items-center gap-2 text-[#1668DC] text-[13px] font-bold uppercase tracking-wider">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
