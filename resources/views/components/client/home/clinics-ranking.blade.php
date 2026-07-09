@@ -1,6 +1,7 @@
-@props(['title' => 'Xếp hạng cơ sở thẩm mỹ', 'icon' => false])
+@props(['title' => 'Xếp hạng cơ sở thẩm mỹ', 'icon' => false, 'hideTitle' => false, 'disableTopMargin' => false])
 
-<div class="max-w-[1200px] mx-auto px-4 mt-12 mb-8">
+<div class="{{ $disableTopMargin ? '' : 'max-w-[1200px] mx-auto px-4 mt-12 mb-8' }}">
+    @if(!$hideTitle)
     <div class="flex justify-between items-center mb-6">
         <div class="flex items-center gap-2.5">
             <div class="w-1.5 h-6 bg-[#1668DC] rounded-full"></div>
@@ -9,10 +10,11 @@
                 {{ $title }}
             </h2>
         </div>
-        <a href="#" class="text-[#1668DC] text-[14px] font-medium hover:underline flex items-center gap-1">
+        <a href="{{ url('/bang-xep-hang') }}" class="text-[#1668DC] text-[14px] font-medium hover:underline flex items-center gap-1">
             Xem tất cả <span class="text-[16px]">&rarr;</span>
         </a>
     </div>
+    @endif
 
     <div class="flex flex-col gap-[12px]">
         @php
@@ -104,7 +106,7 @@
             </div>
 
             <!-- Thumbnail -->
-            <a href="#" class="w-full md:w-[150px] h-[100px] flex-shrink-0 rounded-[8px] overflow-hidden group relative">
+            <a href="{{ url('/bang-xep-hang/chi-tiet/' . Str::slug($clinic['name'])) }}" class="w-full md:w-[150px] h-[100px] flex-shrink-0 rounded-[8px] overflow-hidden group relative">
                 @if($clinic['featured'])
                     <div class="absolute top-1.5 left-1.5 z-10 bg-white/90 backdrop-blur-sm text-[#D9534F] text-[11px] font-bold px-2 py-0.5 rounded-[4px] shadow-sm">
                         Nổi bật
@@ -120,7 +122,7 @@
                 </div>
                 
                 <h3 class="text-[17px] font-bold text-[#1F2733] hover:text-[#1668DC] transition-colors leading-tight">
-                    <a href="#">{{ $clinic['name'] }}</a>
+                    <a href="{{ url('/bang-xep-hang/chi-tiet/' . Str::slug($clinic['name'])) }}">{{ $clinic['name'] }}</a>
                 </h3>
                 
                 <div class="flex items-center gap-1.5 text-[13px] mt-0.5">
@@ -155,7 +157,7 @@
                     <div class="text-[12px] text-[#6B7280] mt-1">điểm</div>
                 </div>
                 
-                <a href="#" class="px-3.5 py-1.5 border border-[#cbe0fb] text-[#1668DC] text-[13px] font-medium rounded-[6px] flex items-center justify-center gap-1.5 hover:bg-[#e9f1fe] transition-colors w-full md:w-auto">
+                <a href="{{ url('/bang-xep-hang/chi-tiet/' . Str::slug($clinic['name'])) }}" class="px-3.5 py-1.5 border border-[#cbe0fb] text-[#1668DC] text-[13px] font-medium rounded-[6px] flex items-center justify-center gap-1.5 hover:bg-[#e9f1fe] transition-colors w-full md:w-auto">
                     Chi tiết <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3 h-3"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                 </a>
             </div>

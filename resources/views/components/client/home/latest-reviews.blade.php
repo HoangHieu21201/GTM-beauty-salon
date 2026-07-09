@@ -52,7 +52,7 @@
         @endphp
 
         @foreach($reviews as $item)
-            <x-client.review-card :item="$item" />
+            <x-client.ui.review-card :item="$item" />
         @endforeach
     </div>
 </div>
