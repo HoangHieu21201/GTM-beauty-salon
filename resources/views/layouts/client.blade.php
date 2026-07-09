@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Review Thẩm Mỹ')</title>
     <!-- PrimeIcons -->
-    <link rel="stylesheet" href="https://unpkg.com/primeicons@7.0.0/primeicons.css" />
+    <link rel="stylesheet" href="https://unpkg.com/primeicons@7.0.0/primeicons.css" integrity="sha384-hNrzZtGh6HtRBhu3vrg8Fu0z8K9T70OblwsOAYzfQ4oQvZhpdfZCnKOpeqAVYh9N" crossorigin="anonymous" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen flex flex-col overflow-x-hidden">
