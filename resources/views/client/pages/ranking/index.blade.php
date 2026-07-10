@@ -13,7 +13,7 @@
         <p class="text-[#6B7785] text-[15px] mb-8 -mt-2">Xếp theo điểm đánh giá tổng hợp. Cơ sở đứng đầu là lựa chọn được đánh giá cao nhất.</p>
 
         <!-- Ranking Component without internal title and spacing -->
-        <x-client.home.clinics-ranking :hideTitle="true" :disableTopMargin="true" />
+        <x-client.home.clinics-ranking :hideTitle="true" :disableTopMargin="true" :clinics="$clinics" />
     </div>
 </div>
 @endsection
