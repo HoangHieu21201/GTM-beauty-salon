@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class ClinicController extends Controller
@@ -30,33 +31,49 @@ class ClinicController extends Controller
     public function create(): View
     {
         $categories = $this->ensureDefaultCategories();
+        $formToken = $this->makeSubmissionToken(request());
 
-        return view('admin.pages.clinics.create', compact('categories'));
+        return view('admin.pages.clinics.create', compact('categories', 'formToken'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validatedData($request);
+
+        if (! $this->consumeSubmissionToken($request)) {
+            return redirect()
+                ->route('admin.clinics.index')
+                ->with('warning', 'Yêu cầu này đã được xử lý, vui lòng không gửi lại form.');
+        }
+
         $data['image'] = $this->resolveImages($request);
 
         Salon::create($data);
 
         return redirect()
             ->route('admin.clinics.index')
-            ->with('success', 'Da them co so thanh cong.');
+            ->with('success', 'Đã thêm cơ sở thành công.');
     }
 
     public function edit(Salon $clinic): View
     {
         $categories = $this->ensureDefaultCategories();
         $clinic->load('category');
+        $formToken = $this->makeSubmissionToken(request());
 
-        return view('admin.pages.clinics.edit', compact('clinic', 'categories'));
+        return view('admin.pages.clinics.edit', compact('clinic', 'categories', 'formToken'));
     }
 
     public function update(Request $request, Salon $clinic): RedirectResponse
     {
-        $data = $this->validatedData($request);
+        $data = $this->validatedData($request, $clinic);
+
+        if (! $this->consumeSubmissionToken($request)) {
+            return redirect()
+                ->route('admin.clinics.index')
+                ->with('warning', 'Yêu cầu này đã được xử lý, vui lòng không gửi lại form.');
+        }
+
         $image = $this->resolveImages($request, $clinic->image);
 
         $data['image'] = $image;
@@ -65,7 +82,7 @@ class ClinicController extends Controller
 
         return redirect()
             ->route('admin.clinics.index')
-            ->with('success', 'Da cap nhat co so thanh cong.');
+            ->with('success', 'Đã cập nhật cơ sở thành công.');
     }
 
     public function destroy(Salon $clinic): RedirectResponse
@@ -74,7 +91,7 @@ class ClinicController extends Controller
 
         return redirect()
             ->route('admin.clinics.index')
-            ->with('success', 'Da xoa co so thanh cong.');
+            ->with('success', 'Đã xóa cơ sở thành công.');
     }
 
     public function updateImages(Request $request, Salon $clinic): JsonResponse
@@ -94,7 +111,7 @@ class ClinicController extends Controller
         ]);
     }
 
-    private function validatedData(Request $request): array
+    private function validatedData(Request $request, ?Salon $clinic = null): array
     {
         $categories = $this->ensureDefaultCategories();
 
@@ -105,11 +122,27 @@ class ClinicController extends Controller
         }
 
         $data = $request->validate([
+            'form_token' => ['required', 'string', 'size:36'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('salons', 'name')->ignore($clinic?->id)->whereNull('deleted_at'),
+            ],
             'address' => ['nullable', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:255'],
-            'website' => ['nullable', 'url', 'max:255'],
+            'phone' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('salons', 'phone')->ignore($clinic?->id)->whereNull('deleted_at'),
+            ],
+            'website' => [
+                'nullable',
+                'url',
+                'max:255',
+                Rule::unique('salons', 'website')->ignore($clinic?->id)->whereNull('deleted_at'),
+            ],
             'description' => ['nullable', 'string'],
             'score' => ['nullable', 'integer', 'min:0'],
             'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
@@ -124,13 +157,18 @@ class ClinicController extends Controller
             'image_url' => ['nullable', 'url', 'max:500'],
         ], [
             'name.required' => 'Vui lòng nhập tên cơ sở.',
+            'name.unique' => 'Tên cơ sở này đã tồn tại, vui lòng kiểm tra lại.',
+            'phone.unique' => 'Số điện thoại này đã được sử dụng cho cơ sở khác.',
+            'website.unique' => 'Website này đã được sử dụng cho cơ sở khác.',
             'website.url' => 'Website phải là một đường dẫn hợp lệ.',
             'rating.numeric' => 'Rating phải là số từ 0 đến 5.',
             'rating.min' => 'Rating phải là số từ 0 đến 5.',
             'rating.max' => 'Rating phải là số từ 0 đến 5.',
-            'image_file.mimes' => 'Ảnh cơ sở phải là file ảnh JPG, PNG, WEBP, GIF, SVG hoặc AVIF.',
-            'image_file.max' => 'Ảnh cơ sở không được vượt quá 8MB.',
+            'image_files.*.mimes' => 'Ảnh cơ sở phải là file ảnh JPG, PNG, WEBP, GIF, SVG hoặc AVIF.',
+            'image_files.*.max' => 'Ảnh cơ sở không được vượt quá 8MB.',
             'image_url.url' => 'URL ảnh phải là một đường dẫn hợp lệ.',
+            'form_token.required' => 'Phiên làm việc đã hết hạn, vui lòng tải lại trang.',
+            'form_token.size' => 'Phiên làm việc không hợp lệ, vui lòng tải lại trang.',
         ]);
 
         return [
@@ -187,6 +225,32 @@ class ClinicController extends Controller
         }
 
         return [$image];
+    }
+
+    private function makeSubmissionToken(Request $request): string
+    {
+        $token = (string) Str::uuid();
+        $tokens = $request->session()->get('clinic_form_tokens', []);
+        $tokens[$token] = true;
+
+        $request->session()->put('clinic_form_tokens', array_slice($tokens, -10, null, true));
+
+        return $token;
+    }
+
+    private function consumeSubmissionToken(Request $request): bool
+    {
+        $token = $request->string('form_token')->toString();
+        $tokens = $request->session()->get('clinic_form_tokens', []);
+
+        if (! isset($tokens[$token])) {
+            return false;
+        }
+
+        unset($tokens[$token]);
+        $request->session()->put('clinic_form_tokens', $tokens);
+
+        return true;
     }
 
     private function ensureDefaultCategories()
