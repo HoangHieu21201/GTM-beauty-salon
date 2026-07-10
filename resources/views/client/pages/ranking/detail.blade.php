@@ -16,29 +16,21 @@
             <div class="flex flex-col w-full overflow-hidden">
                 
                 <!-- Gallery -->
+                @php
+                    $galleryImages = collect($clinic['images'] ?? [])->filter()->values()->take(4);
+                @endphp
                 <div style="display: flex; gap: 8px; height: 320px; margin-bottom: 18px;">
                     <!-- Big -->
                     <div style="flex: 1; min-width: 540px; height: 320px; border-radius: 12px; overflow: hidden; background: #f3f4f6;">
-                        <img src="{{ $clinic['images'][0] }}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" class="hover:scale-105 transition-transform duration-500" alt="{{ $clinic['name'] }}">
+                        <img id="clinicMainImage" src="{{ $galleryImages->first() }}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" class="hover:scale-105 transition-transform duration-500" alt="{{ $clinic['name'] }}">
                     </div>
                     <!-- Thumbs -->
                     <div style="width: 272px; flex-shrink: 0; height: 320px; display: flex; flex-direction: column; gap: 8px;">
-                        <!-- Thumb 1 (Active) -->
-                        <button type="button" style="flex: 1; min-height: 0; border-radius: 8px; overflow: hidden; border: 2px solid #1668DC; position: relative; cursor: pointer; padding: 0;" aria-label="Xem ảnh 1">
-                            <img src="{{ $clinic['images'][0] }}" style="width: 100%; height: 100%; object-fit: cover;" alt="Thumb 1">
-                        </button>
-                        <!-- Thumb 2 (Inactive) -->
-                        <button type="button" class="hover:opacity-100 transition-opacity" style="flex: 1; min-height: 0; border-radius: 8px; overflow: hidden; border: 2px solid transparent; opacity: 0.7; background: #f3f4f6; cursor: pointer; padding: 0;" aria-label="Xem ảnh 2">
-                            <img src="{{ $clinic['images'][1] ?? $clinic['images'][0] }}" style="width: 100%; height: 100%; object-fit: cover;" alt="Thumb 2">
-                        </button>
-                        <!-- Thumb 3 (Inactive) -->
-                        <button type="button" class="hover:opacity-100 transition-opacity" style="flex: 1; min-height: 0; border-radius: 8px; overflow: hidden; border: 2px solid transparent; opacity: 0.7; background: #f3f4f6; cursor: pointer; padding: 0;" aria-label="Xem ảnh 3">
-                            <img src="{{ $clinic['images'][2] ?? $clinic['images'][0] }}" style="width: 100%; height: 100%; object-fit: cover;" alt="Thumb 3">
-                        </button>
-                        <!-- Thumb 4 (Inactive) -->
-                        <button type="button" class="hover:opacity-100 transition-opacity" style="flex: 1; min-height: 0; border-radius: 8px; overflow: hidden; border: 2px solid transparent; opacity: 0.7; background: #f3f4f6; cursor: pointer; padding: 0;" aria-label="Xem ảnh 4">
-                            <img src="{{ $clinic['images'][3] ?? $clinic['images'][0] }}" style="width: 100%; height: 100%; object-fit: cover;" alt="Thumb 4">
-                        </button>
+                        @foreach($galleryImages as $index => $image)
+                            <button type="button" data-gallery-thumb data-image-src="{{ $image }}" class="hover:opacity-100 transition-opacity" style="flex: 1; min-height: 0; border-radius: 8px; overflow: hidden; border: 2px solid {{ $index === 0 ? '#1668DC' : 'transparent' }}; opacity: {{ $index === 0 ? '1' : '0.7' }}; background: #f3f4f6; cursor: pointer; padding: 0;" aria-label="Xem anh {{ $index + 1 }}">
+                                <img src="{{ $image }}" style="width: 100%; height: 100%; object-fit: cover;" alt="Anh {{ $index + 1 }}">
+                            </button>
+                        @endforeach
                     </div>
                 </div>
 
@@ -161,4 +153,23 @@
         </div>
     </div>
 </div>
+<script>
+    document.querySelectorAll('[data-gallery-thumb]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const mainImage = document.getElementById('clinicMainImage');
+            const imageSrc = button.dataset.imageSrc;
+
+            if (!mainImage || !imageSrc) return;
+
+            mainImage.src = imageSrc;
+            document.querySelectorAll('[data-gallery-thumb]').forEach((thumb) => {
+                thumb.style.borderColor = 'transparent';
+                thumb.style.opacity = '0.7';
+            });
+
+            button.style.borderColor = '#1668DC';
+            button.style.opacity = '1';
+        });
+    });
+</script>
 @endsection
