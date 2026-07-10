@@ -10,15 +10,10 @@
         </a>
     </div>
 
-    @if ($errors->any())
-        <div class="bg-red-50 border border-red-100 rounded-lg p-4 mb-6 text-[14px] text-red-700 font-medium">
-            {{ $errors->first() }}
-        </div>
-    @endif
-
-    <form action="{{ route('admin.clinics.update', $clinic) }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row gap-5">
+    <form action="{{ route('admin.clinics.update', $clinic) }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row gap-5" data-loading-submit>
         @csrf
         @method('PUT')
+        <input type="hidden" name="form_token" value="{{ $formToken }}">
         <input type="hidden" name="images_synced" value="1">
         <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-5">
             <div>
@@ -212,7 +207,7 @@
                 throw new Error('Image sync failed');
             }
         }).catch(() => {
-            alert('Không thể tự lưu ảnh vừa xóa. Vui lòng tải lại trang rồi thử lại.');
+            window.showToast?.('Không thể tự lưu ảnh vừa xóa. Vui lòng tải lại trang rồi thử lại.', 'error');
         });
     }
 

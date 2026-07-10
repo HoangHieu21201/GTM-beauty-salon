@@ -51,7 +51,7 @@
                     <td class="py-3 px-4 text-right">
                         <div class="flex items-center justify-end gap-2">
                             <a href="{{ route('admin.clinics.edit', $clinic) }}" class="w-8 h-8 flex items-center justify-center rounded-full text-primary hover:bg-blue-50 transition-colors"><i class="pi pi-pencil text-[13px]"></i></a>
-                            <form action="{{ route('admin.clinics.destroy', $clinic) }}" method="POST" onsubmit="return confirm('Xóa cơ sở này?')">
+                            <form action="{{ route('admin.clinics.destroy', $clinic) }}" method="POST" data-confirm-submit data-confirm-title="Xóa cơ sở" data-confirm-message="Bạn có chắc chắn muốn xóa cơ sở này?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 transition-colors"><i class="pi pi-trash text-[13px]"></i></button>
