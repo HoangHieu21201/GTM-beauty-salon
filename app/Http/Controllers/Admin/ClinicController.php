@@ -74,7 +74,11 @@ class ClinicController extends Controller
                 ->with('warning', 'Yêu cầu này đã được xử lý, vui lòng không gửi lại form.');
         }
 
+        $oldImages = $this->decodeImages($clinic->image);
         $image = $this->resolveImages($request, $clinic->image);
+        $newImages = $this->decodeImages($image);
+
+        $this->cleanupImages($oldImages, $newImages);
 
         $data['image'] = $image;
 
@@ -87,6 +91,9 @@ class ClinicController extends Controller
 
     public function destroy(Salon $clinic): RedirectResponse
     {
+        $oldImages = $this->decodeImages($clinic->image);
+        $this->cleanupImages($oldImages, []);
+
         $clinic->delete();
 
         return redirect()
@@ -101,9 +108,14 @@ class ClinicController extends Controller
             'existing_images.*' => ['string', 'max:500'],
         ]);
 
+        $oldImages = $this->decodeImages($clinic->image);
         $images = array_values(array_unique(array_filter($data['existing_images'] ?? [])));
+        $newImages = array_slice($images, 0, 4);
+        
+        $this->cleanupImages($oldImages, $newImages);
+
         $clinic->update([
-            'image' => json_encode(array_slice($images, 0, 4), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            'image' => json_encode($newImages, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
         ]);
 
         return response()->json([
@@ -225,6 +237,22 @@ class ClinicController extends Controller
         }
 
         return [$image];
+    }
+
+    private function cleanupImages(array $oldImages, array $newImages): void
+    {
+        $imagesToDelete = array_diff($oldImages, $newImages);
+
+        foreach ($imagesToDelete as $imagePath) {
+            if (is_string($imagePath) && strpos($imagePath, 'uploads/salons/') === 0) {
+                $fullPath = realpath(public_path($imagePath));
+                $basePath = realpath(public_path('uploads/salons'));
+
+                if ($fullPath && $basePath && strpos($fullPath, $basePath) === 0 && File::exists($fullPath)) {
+                    File::delete($fullPath);
+                }
+            }
+        }
     }
 
     private function makeSubmissionToken(Request $request): string

@@ -183,6 +183,4 @@ class CategoryController extends Controller
             ->route('admin.categories.index')
             ->with('error', $message);
     }
-
-    }
 }
