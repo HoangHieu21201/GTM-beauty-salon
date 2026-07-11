@@ -17,7 +17,6 @@ class CategoryController extends Controller
 {
     public function index(): View
     {
-        $this->ensureDefaultCategories();
 
         $rootCategories = Category::with([
             'children' => fn ($query) => $query->orderBy('name'),
@@ -147,6 +146,7 @@ class CategoryController extends Controller
 
         return [
             'name' => $name,
+            'slug' => Str::slug($name),
             'parent_id' => $parentId,
         ];
     }
@@ -154,15 +154,14 @@ class CategoryController extends Controller
     private function ensureUniqueNameAndSlug(string $name, ?int $ignoreId = null): void
     {
         $slug = Str::slug($name);
-        $normalizedName = Str::lower($name);
 
         $duplicate = Category::query()
             ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
-            ->get(['id', 'name'])
-            ->first(function (Category $category) use ($slug, $normalizedName): bool {
-                return Str::lower($category->name) === $normalizedName
-                    || Str::slug($category->name) === $slug;
-            });
+            ->where(function ($query) use ($name, $slug) {
+                $query->where('name', $name)
+                      ->orWhere('slug', $slug);
+            })
+            ->exists();
 
         if ($duplicate) {
             throw ValidationException::withMessages([
@@ -182,79 +181,5 @@ class CategoryController extends Controller
         return redirect()
             ->route('admin.categories.index')
             ->with('error', $message);
-    }
-
-    private function ensureDefaultCategories(): Collection
-    {
-        $tree = [
-            'Phẫu thuật thẩm mỹ' => [
-                'Nâng mũi',
-                'Nâng ngực',
-                'Cắt mí',
-                'Hút mỡ',
-                'Gọt cằm',
-                'Độn cằm',
-                'Căng da mặt',
-            ],
-            'Chăm sóc da' => [
-                'Trẻ hóa da',
-                'Trị mụn',
-                'Tắm trắng',
-                'Điều trị nám',
-                'Peel da',
-            ],
-            'Răng - Hàm - Mặt' => [
-                'Niềng răng',
-                'Bọc răng sứ',
-                'Tẩy trắng răng',
-                'Cấy ghép Implant',
-            ],
-        ];
-
-        $categories = Category::orderBy('parent_id')->orderBy('name')->get();
-
-        foreach ($tree as $parentName => $children) {
-            $parent = $this->findCategoryBySlug($categories, $parentName);
-
-            if (! $parent) {
-                $parent = Category::create([
-                    'name' => $parentName,
-                    'parent_id' => null,
-                ]);
-                $categories->push($parent);
-            } elseif ($parent->parent_id !== null) {
-                $parent->update(['parent_id' => null]);
-                $parent->parent_id = null;
-            }
-
-            foreach ($children as $childName) {
-                $child = $this->findCategoryBySlug($categories, $childName);
-
-                if (! $child) {
-                    $child = Category::create([
-                        'name' => $childName,
-                        'parent_id' => $parent->id,
-                    ]);
-                    $categories->push($child);
-                    continue;
-                }
-
-                if ($child->parent_id === null && ! $child->children()->exists()) {
-                    $child->update(['parent_id' => $parent->id]);
-                    $child->parent_id = $parent->id;
-                }
-            }
-        }
-
-        return Category::orderBy('parent_id')->orderBy('name')->get();
-    }
-
-    private function findCategoryBySlug(Collection $categories, string $name): ?Category
-    {
-        $slug = Str::slug($name);
-
-        return $categories->first(
-            fn (Category $category): bool => Str::slug($category->name) === $slug
-        );
     }
 }

@@ -19,54 +19,69 @@
                     <span class="text-[#3f86ff]">Thẩm Mỹ</span>
                 </a>
                 <p class="text-[14px] leading-relaxed text-[#94a3b8]">
-                    Đánh giá khách quan, xếp hạng minh bạch các cơ sở thẩm mỹ.
+                    {{ setting('footer_brand_desc', 'Đánh giá khách quan, xếp hạng minh bạch các cơ sở thẩm mỹ.') }}
                 </p>
             </div>
 
-            <!-- Về chúng tôi -->
-            <div class="col-span-1 md:col-span-2">
-                <h3 class="text-white font-bold text-[15px] mb-4">Về chúng tôi</h3>
-                <ul class="space-y-3 text-[14px]">
-                    <li><a href="{{ url('/ve-chung-toi#gioi-thieu') }}" class="hover:text-white transition-colors">Giới thiệu</a></li>
-                    <li><a href="{{ url('/ve-chung-toi#lien-he') }}" class="hover:text-white transition-colors">Liên hệ</a></li>
-                    <li><a href="{{ url('/ve-chung-toi#hop-tac') }}" class="hover:text-white transition-colors">Hợp tác</a></li>
-                </ul>
-            </div>
+            <!-- Dynamic Columns -->
+            @php
+                $defaultColumns = [
+                    ['title' => 'Về chúng tôi', 'links' => [['text' => 'Giới thiệu', 'url' => '/ve-chung-toi#gioi-thieu'], ['text' => 'Liên hệ', 'url' => '/ve-chung-toi#lien-he'], ['text' => 'Hợp tác', 'url' => '/ve-chung-toi#hop-tac']]],
+                    ['title' => 'Danh mục', 'links' => [['text' => 'Phẫu thuật thẩm mỹ', 'url' => '/bai-viet?type=main&cat=phau-thuat-tham-my'], ['text' => 'Chăm sóc da', 'url' => '/bai-viet?type=main&cat=cham-soc-da'], ['text' => 'Răng - Hàm - Mặt', 'url' => '/bai-viet?type=main&cat=rang-ham-mat'], ['text' => 'Bài viết theo tỉnh thành', 'url' => '/tinh-thanh']]],
+                    ['title' => 'Chính sách', 'links' => [['text' => 'Điều khoản sử dụng', 'url' => '/chinh-sach#dieu-khoan-su-dung'], ['text' => 'Chính sách bảo mật', 'url' => '/chinh-sach#chinh-sach-bao-mat'], ['text' => 'Tiêu chí đánh giá', 'url' => '/chinh-sach#tieu-chi-danh-gia']]]
+                ];
+                $columnsData = json_decode(setting('footer_columns'), true);
+                if (!$columnsData) {
+                    $columnsData = $defaultColumns;
+                }
+            @endphp
 
-            <!-- Danh mục -->
+            @foreach($columnsData as $column)
             <div class="col-span-1 md:col-span-2">
-                <h3 class="text-white font-bold text-[15px] mb-4">Danh mục</h3>
+                <h3 class="text-white font-bold text-[15px] mb-4">{{ $column['title'] ?? '' }}</h3>
                 <ul class="space-y-3 text-[14px]">
-                    <li><a href="{{ url('/bai-viet?type=main&cat=phau-thuat-tham-my') }}" class="hover:text-white transition-colors">Phẫu thuật thẩm mỹ</a></li>
-                    <li><a href="{{ url('/bai-viet?type=main&cat=cham-soc-da') }}" class="hover:text-white transition-colors">Chăm sóc da</a></li>
-                    <li><a href="{{ url('/bai-viet?type=main&cat=rang-ham-mat') }}" class="hover:text-white transition-colors">Răng - Hàm - Mặt</a></li>
-                    <li><a href="{{ url('/tinh-thanh') }}" class="hover:text-white transition-colors">Bài viết theo tỉnh thành</a></li>
+                    @if(isset($column['links']) && is_array($column['links']))
+                        @foreach($column['links'] as $link)
+                        <li><a href="{{ url($link['url'] ?? '#') }}" class="hover:text-white transition-colors">{{ $link['text'] ?? '' }}</a></li>
+                        @endforeach
+                    @endif
                 </ul>
             </div>
-
-            <!-- Chính sách -->
-            <div class="col-span-1 md:col-span-2">
-                <h3 class="text-white font-bold text-[15px] mb-4">Chính sách</h3>
-                <ul class="space-y-3 text-[14px]">
-                    <li><a href="{{ url('/chinh-sach#dieu-khoan-su-dung') }}" class="hover:text-white transition-colors">Điều khoản sử dụng</a></li>
-                    <li><a href="{{ url('/chinh-sach#chinh-sach-bao-mat') }}" class="hover:text-white transition-colors">Chính sách bảo mật</a></li>
-                    <li><a href="{{ url('/chinh-sach#tieu-chi-danh-gia') }}" class="hover:text-white transition-colors">Tiêu chí đánh giá</a></li>
-                </ul>
-            </div>
+            @endforeach
 
             <!-- Kết nối -->
             <div class="col-span-1 md:col-span-2">
                 <h3 class="text-white font-bold text-[15px] mb-4">Kết nối</h3>
                 <div class="flex gap-4">
-                    <a href="#" class="text-[#94a3b8] hover:text-white transition-colors" title="Facebook"><i class="pi pi-facebook text-xl"></i></a>
-                    <a href="#" class="text-[#94a3b8] hover:text-white transition-colors" title="Zalo"><i class="pi pi-comment text-xl"></i></a>
-                    <a href="#" class="text-[#94a3b8] hover:text-white transition-colors" title="YouTube"><i class="pi pi-youtube text-xl"></i></a>
+                    @php
+                        $defaultSocials = [
+                            ['icon' => 'pi-facebook', 'url' => '#', 'title' => 'Facebook'],
+                            ['icon' => 'pi-comment', 'url' => '#', 'title' => 'Zalo'],
+                            ['icon' => 'pi-youtube', 'url' => '#', 'title' => 'YouTube']
+                        ];
+                        $socialsData = json_decode(setting('footer_socials'), true);
+                        if (!$socialsData) {
+                            $socialsData = $defaultSocials;
+                        }
+                    @endphp
+                    @foreach($socialsData as $social)
+                        @php
+                            $socialUrl = '#';
+                            if (!empty($social['url'])) {
+                                $scheme = parse_url($social['url'], PHP_URL_SCHEME);
+                                if (in_array(strtolower($scheme), ['http', 'https'])) {
+                                    $socialUrl = $social['url'];
+                                }
+                            }
+                        @endphp
+                        <a href="{{ $socialUrl }}" class="text-[#94a3b8] hover:text-white transition-colors" title="{{ $social['title'] ?? '' }}"><i class="pi {{ $social['icon'] ?? '' }} text-xl"></i></a>
+                    @endforeach
                 </div>
             </div>
         </div>
 
         <div class="pt-6 text-[13px] text-center md:text-left text-[#64748b]">
-            &copy; 2026 Review Thẩm Mỹ &mdash; Hệ thống đánh giá & xếp hạng cơ sở thẩm mỹ.
+            {{ setting('footer_copyright', '© 2026 Review Thẩm Mỹ — Hệ thống đánh giá & xếp hạng cơ sở thẩm mỹ.') }}
         </div>
     </div>
 </footer>

@@ -33,7 +33,7 @@
             </thead>
             <tbody id="sortableList" class="divide-y divide-gray-100">
                 @forelse($clinics as $index => $clinic)
-                <tr class="hover:bg-gray-50/50 transition-colors group draggable-row">
+                <tr class="hover:bg-gray-50/50 transition-colors group draggable-row" data-clinic-id="{{ $clinic->id }}">
                     <td class="py-3 px-4 text-center">
                         <div class="flex items-center justify-center gap-4">
                             <i class="pi pi-bars text-gray-400 cursor-move hover:text-black drag-handle p-2 -m-2"></i>
@@ -111,7 +111,7 @@
                 draggedItem.setAttribute('draggable', 'false');
                 draggedItem = null;
                 updateRankings(list);
-                showToast();
+                saveNewOrder(list);
             }
         });
 
@@ -151,9 +151,33 @@
             });
         }
 
+        async function saveNewOrder(container) {
+            const rows = container.querySelectorAll('.draggable-row');
+            const order = Array.from(rows).map(row => parseInt(row.getAttribute('data-clinic-id')));
+
+            try {
+                const response = await fetch('{{ route('admin.clinics.reorder') }}', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ order })
+                });
+
+                if (response.ok) {
+                    showToast();
+                } else {
+                    console.error('Failed to save order');
+                }
+            } catch (error) {
+                console.error('Error saving order:', error);
+            }
+        }
+
         function showToast() {
             if(window.showToast) {
-                window.showToast('Đã cập nhật thứ hạng', 'success');
+                window.showToast('Đã lưu thay đổi thứ hạng', 'success');
             }
         }
     }
