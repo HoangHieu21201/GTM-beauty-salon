@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ClinicController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Client\RankingController;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
@@ -403,9 +404,7 @@ Route::prefix('admin')->group(function () {
     Route::patch('/clinics/{clinic}/images', [ClinicController::class, 'updateImages'])->name('admin.clinics.images');
     Route::resource('clinics', ClinicController::class)->except(['show'])->names('admin.clinics');
 
-    Route::get('/categories', function () {
-        return view('admin.pages.categories.index');
-    });
+    Route::resource('categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy'])->names('admin.categories');
 
     Route::get('/comments', function () {
         return view('admin.pages.comments.index');
