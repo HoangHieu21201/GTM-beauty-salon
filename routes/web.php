@@ -401,6 +401,7 @@ Route::prefix('admin')->group(function () {
         return view('admin.pages.posts.edit');
     });
 
+    Route::patch('/clinics/reorder', [ClinicController::class, 'reorder'])->name('admin.clinics.reorder');
     Route::patch('/clinics/{clinic}/images', [ClinicController::class, 'updateImages'])->name('admin.clinics.images');
     Route::resource('clinics', ClinicController::class)->except(['show'])->names('admin.clinics');
 

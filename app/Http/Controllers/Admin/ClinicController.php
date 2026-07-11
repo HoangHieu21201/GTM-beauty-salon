@@ -123,6 +123,23 @@ class ClinicController extends Controller
         ]);
     }
 
+    public function reorder(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:salons,id'],
+        ]);
+
+        $ids = $data['order'];
+        $baseScore = count($ids) * 10;
+
+        foreach ($ids as $index => $id) {
+            Salon::where('id', $id)->update(['score' => $baseScore - ($index * 10)]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     private function validatedData(Request $request, ?Salon $clinic = null): array
     {
         $categories = $this->ensureDefaultCategories();
