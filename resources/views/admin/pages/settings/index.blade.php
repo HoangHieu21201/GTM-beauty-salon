@@ -326,7 +326,7 @@
                                 </div>
                             </div>
 
-                            <div class="pt-6 text-[13px] text-center md:text-left text-[#64748b]" x-html="footerCopyright"></div>
+                            <div class="pt-6 text-[13px] text-center md:text-left text-[#64748b]" x-text="footerCopyright"></div>
                         </div>
                     </footer>
                 </div>
@@ -361,7 +361,7 @@ function settingsData() {
         logos: @json($logos ?? []),
 
         footerBrandDesc: @json($settings['footer_brand_desc'] ?? 'Đánh giá khách quan, xếp hạng minh bạch các cơ sở thẩm mỹ.'),
-        footerCopyright: @json($settings['footer_copyright'] ?? '&copy; 2026 Review Thẩm Mỹ &mdash; Hệ thống đánh giá & xếp hạng cơ sở thẩm mỹ.'),
+        footerCopyright: @json($settings['footer_copyright'] ?? '© 2026 Review Thẩm Mỹ — Hệ thống đánh giá & xếp hạng cơ sở thẩm mỹ.'),
         footerCols: @json(json_decode($settings['footer_columns'] ?? '[]', true)),
         footerSocials: @json(json_decode($settings['footer_socials'] ?? '[]', true)),
 

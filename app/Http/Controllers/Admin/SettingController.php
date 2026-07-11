@@ -39,30 +39,45 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
-        $data = $request->except(['_token', '_method']);
+        $data = [];
+        $allowedKeys = ['footer_brand_desc', 'footer_copyright'];
+        foreach ($allowedKeys as $key) {
+            if ($request->has($key)) {
+                $data[$key] = $request->input($key);
+            }
+        }
 
         // 1. Handle Logo Selection or Cropped Upload
         if ($request->filled('site_logo_base64')) {
             $image_parts = explode(";base64,", $request->site_logo_base64);
             if (count($image_parts) == 2) {
                 $image_type_aux = explode("image/", $image_parts[0]);
-                $image_type = $image_type_aux[1] ?? 'png';
-                $image_base64 = base64_decode($image_parts[1]);
-                $fileName = 'logo_' . time() . '.' . $image_type;
+                $image_type = strtolower($image_type_aux[1] ?? '');
                 
-                $destinationPath = public_path('uploads/logos');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0755, true);
+                // Whitelist extension
+                if (in_array($image_type, ['png', 'jpg', 'jpeg', 'webp', 'gif'])) {
+                    $image_base64 = base64_decode($image_parts[1]);
+                    $fileName = 'logo_' . time() . '.' . $image_type;
+                    
+                    $destinationPath = public_path('uploads/logos');
+                    if (!file_exists($destinationPath)) {
+                        mkdir($destinationPath, 0755, true);
+                    }
+                    file_put_contents($destinationPath . '/' . $fileName, $image_base64);
+                    
+                    $data['site_logo'] = 'uploads/logos/' . $fileName;
                 }
-                file_put_contents($destinationPath . '/' . $fileName, $image_base64);
-                
-                $data['site_logo'] = 'uploads/logos/' . $fileName;
             }
-            unset($data['site_logo_base64']);
         } elseif ($request->filled('site_logo_existing')) {
             // User selected an old logo
-            $data['site_logo'] = $request->site_logo_existing;
-            unset($data['site_logo_existing']);
+            $existingPath = $request->site_logo_existing;
+            if (is_string($existingPath) && strpos($existingPath, 'uploads/logos/') === 0) {
+                $fullPath = realpath(public_path($existingPath));
+                $baseLogosPath = realpath(public_path('uploads/logos'));
+                if ($fullPath && $baseLogosPath && strpos($fullPath, $baseLogosPath) === 0 && file_exists($fullPath)) {
+                    $data['site_logo'] = $existingPath;
+                }
+            }
         }
 
         // Clean up temporary logo fields
@@ -132,18 +147,19 @@ class SettingController extends Controller
     {
         $path = $request->input('path');
         // Path should be like "uploads/logos/..."
-        if (strpos($path, 'uploads/logos/') === 0) {
-            $fullPath = public_path($path);
-            if (file_exists($fullPath)) {
-                unlink($fullPath);
-                
-                // If it's the current logo, remove it from settings
-                if (setting('site_logo') === $path) {
-                    Setting::where('key', 'site_logo')->update(['value' => null]);
-                    Cache::forget('site_settings');
-                }
+        if (is_string($path) && strpos($path, 'uploads/logos/') === 0) {
+            $fullPath = realpath(public_path($path));
+            $baseLogosPath = realpath(public_path('uploads/logos'));
 
-                return response()->json(['success' => true]);
+            if ($fullPath && $baseLogosPath && strpos($fullPath, $baseLogosPath) === 0 && file_exists($fullPath)) {
+                if (unlink($fullPath)) {
+                    // If it's the current logo, remove it from settings
+                    if (setting('site_logo') === $path) {
+                        Setting::where('key', 'site_logo')->update(['value' => null]);
+                        Cache::forget('site_settings');
+                    }
+                    return response()->json(['success' => true]);
+                }
             }
         }
         return response()->json(['success' => false], 400);

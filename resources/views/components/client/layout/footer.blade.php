@@ -65,14 +65,23 @@
                         }
                     @endphp
                     @foreach($socialsData as $social)
-                        <a href="{{ $social['url'] ?? '#' }}" class="text-[#94a3b8] hover:text-white transition-colors" title="{{ $social['title'] ?? '' }}"><i class="pi {{ $social['icon'] ?? '' }} text-xl"></i></a>
+                        @php
+                            $socialUrl = '#';
+                            if (!empty($social['url'])) {
+                                $scheme = parse_url($social['url'], PHP_URL_SCHEME);
+                                if (in_array(strtolower($scheme), ['http', 'https'])) {
+                                    $socialUrl = $social['url'];
+                                }
+                            }
+                        @endphp
+                        <a href="{{ $socialUrl }}" class="text-[#94a3b8] hover:text-white transition-colors" title="{{ $social['title'] ?? '' }}"><i class="pi {{ $social['icon'] ?? '' }} text-xl"></i></a>
                     @endforeach
                 </div>
             </div>
         </div>
 
         <div class="pt-6 text-[13px] text-center md:text-left text-[#64748b]">
-            {!! setting('footer_copyright', '&copy; 2026 Review Thẩm Mỹ &mdash; Hệ thống đánh giá & xếp hạng cơ sở thẩm mỹ.') !!}
+            {{ setting('footer_copyright', '© 2026 Review Thẩm Mỹ — Hệ thống đánh giá & xếp hạng cơ sở thẩm mỹ.') }}
         </div>
     </div>
 </footer>

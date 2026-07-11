@@ -52,7 +52,8 @@
                                         data-original-value="{{ $category->parent_id }}"
                                         data-category-parent
                                         data-update-url="{{ route('admin.categories.update', $category) }}"
-                                        class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer"
+                                        @disabled($category->parent_id === null && $category->children->count() > 0)
+                                        class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed"
                                     >
                                         <option value="">— Danh mục gốc —</option>
                                         @foreach($rootCategories as $rootCategory)
@@ -151,7 +152,7 @@
                         title: 'Xóa danh mục',
                         message: 'Bạn có chắc chắn muốn xóa danh mục này?',
                     })
-                    : false;
+                    : window.confirm('Bạn có chắc chắn muốn xóa danh mục này?');
 
                 if (!confirmed) return;
 
