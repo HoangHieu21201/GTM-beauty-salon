@@ -154,15 +154,14 @@ class CategoryController extends Controller
     private function ensureUniqueNameAndSlug(string $name, ?int $ignoreId = null): void
     {
         $slug = Str::slug($name);
-        $normalizedName = Str::lower($name);
 
         $duplicate = Category::query()
             ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
-            ->get(['id', 'name'])
-            ->first(function (Category $category) use ($slug, $normalizedName): bool {
-                return Str::lower($category->name) === $normalizedName
-                    || Str::slug($category->name) === $slug;
-            });
+            ->where(function ($query) use ($name, $slug) {
+                $query->where('name', $name)
+                      ->orWhere('slug', $slug);
+            })
+            ->exists();
 
         if ($duplicate) {
             throw ValidationException::withMessages([

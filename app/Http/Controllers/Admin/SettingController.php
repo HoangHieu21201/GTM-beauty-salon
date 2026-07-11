@@ -74,7 +74,7 @@ class SettingController extends Controller
             if (is_string($existingPath) && strpos($existingPath, 'uploads/logos/') === 0) {
                 $fullPath = realpath(public_path($existingPath));
                 $baseLogosPath = realpath(public_path('uploads/logos'));
-                if ($fullPath && $baseLogosPath && strpos($fullPath, $baseLogosPath) === 0 && file_exists($fullPath)) {
+                if ($fullPath && $baseLogosPath && strpos($fullPath, $baseLogosPath . DIRECTORY_SEPARATOR) === 0 && file_exists($fullPath)) {
                     $data['site_logo'] = $existingPath;
                 }
             }
@@ -151,7 +151,7 @@ class SettingController extends Controller
             $fullPath = realpath(public_path($path));
             $baseLogosPath = realpath(public_path('uploads/logos'));
 
-            if ($fullPath && $baseLogosPath && strpos($fullPath, $baseLogosPath) === 0 && file_exists($fullPath)) {
+            if ($fullPath && $baseLogosPath && strpos($fullPath, $baseLogosPath . DIRECTORY_SEPARATOR) === 0 && file_exists($fullPath)) {
                 if (unlink($fullPath)) {
                     // If it's the current logo, remove it from settings
                     if (setting('site_logo') === $path) {

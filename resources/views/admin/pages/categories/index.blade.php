@@ -24,7 +24,7 @@
                         @forelse($categories as $category)
                             @php
                                 $isChild = filled($category->parent_id);
-                                $slug = \Illuminate\Support\Str::slug($category->name);
+                                $slug = $category->slug;
                             @endphp
                             <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group" data-category-row="{{ $category->id }}">
                                 <td class="py-3 px-4">

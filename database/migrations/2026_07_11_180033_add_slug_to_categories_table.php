@@ -19,16 +19,29 @@ return new class extends Migration
 
         // Populate slug for existing categories
         $categories = DB::table('categories')->get();
+        $usedSlugs = [];
+        
         foreach ($categories as $category) {
+            $baseSlug = Str::slug($category->name);
+            $slug = $baseSlug;
+            $counter = 1;
+            
+            while (isset($usedSlugs[$slug])) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+            $usedSlugs[$slug] = true;
+
             DB::table('categories')
                 ->where('id', $category->id)
-                ->update(['slug' => Str::slug($category->name)]);
+                ->update(['slug' => $slug]);
         }
 
         Schema::table('categories', function (Blueprint $table) {
             $table->string('slug')->nullable(false)->change();
-            // SoftDeletes-compatible unique index
-            $table->unique(['slug', 'deleted_at'], 'categories_slug_deleted_at_unique');
+            // MySQL unique index workaround for SoftDeletes
+            $table->string('active_deleted_at')->virtualAs('IFNULL(deleted_at, "0")');
+            $table->unique(['slug', 'active_deleted_at'], 'categories_slug_active_unique');
         });
     }
 
@@ -38,7 +51,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->dropUnique('categories_slug_deleted_at_unique');
+            $table->dropUnique('categories_slug_active_unique');
+            $table->dropColumn('active_deleted_at');
             $table->dropColumn('slug');
         });
     }
