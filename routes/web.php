@@ -414,4 +414,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/users', function () {
         return view('admin.pages.users.index');
     });
+
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
+    Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
+    Route::delete('/settings/logo', [\App\Http\Controllers\Admin\SettingController::class, 'deleteLogo'])->name('admin.settings.logo.delete');
 });
