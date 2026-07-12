@@ -1,13 +1,8 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Thêm cơ sở thẩm mỹ - Review Thẩm Mỹ Admin')
 
 @section('content')
-    @php
-        $inputClass = fn (string $field, string $extra = '') => trim('w-full px-3 py-2 rounded-lg border outline-none transition text-sm ' . ($errors->has($field) ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100' : 'border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20') . ' ' . $extra);
-        $selectClass = fn (string $field, string $extra = '') => trim('w-full px-3 py-2 rounded-lg border bg-white text-sm outline-none transition ' . ($errors->has($field) ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100' : 'border-gray-200 text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/20') . ' ' . $extra);
-    @endphp
-
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-[24px] font-bold text-[#1F2733]">Thêm cơ sở mới</h1>
         <a href="{{ route('admin.clinics.index') }}" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center gap-2">
@@ -35,7 +30,7 @@
             </div>
 
             <div>
-                <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Địa chỉ</label>
+                <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Địa chỉ <span class="text-red-500">*</span></label>
                 <input name="address" value="{{ old('address') }}" type="text" class="{{ $inputClass('address') }}" placeholder="Nhập địa chỉ cơ sở..." @error('address') aria-invalid="true" aria-describedby="address-error" @enderror>
                 @error('address')
                     <p id="address-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
@@ -44,14 +39,14 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Điện thoại</label>
+                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Điện thoại <span class="text-red-500">*</span></label>
                     <input name="phone" value="{{ old('phone') }}" type="text" class="{{ $inputClass('phone') }}" placeholder="Nhập số điện thoại..." @error('phone') aria-invalid="true" aria-describedby="phone-error" @enderror>
                     @error('phone')
                         <p id="phone-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <div>
-                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Website</label>
+                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Website <span class="text-red-500">*</span></label>
                     <input name="website" value="{{ old('website') }}" type="url" class="{{ $inputClass('website') }}" placeholder="https://..." @error('website') aria-invalid="true" aria-describedby="website-error" @enderror>
                     @error('website')
                         <p id="website-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
@@ -60,7 +55,7 @@
             </div>
 
             <div>
-                <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Mô tả</label>
+                <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Mô tả <span class="text-red-500">*</span></label>
                 <textarea name="description" rows="4" class="{{ $inputClass('description', 'py-2.5') }}" placeholder="Nhập mô tả về cơ sở thẩm mỹ..." @error('description') aria-invalid="true" aria-describedby="description-error" @enderror>{{ old('description') }}</textarea>
                 @error('description')
                     <p id="description-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
@@ -68,14 +63,14 @@
             </div>
 
             <div>
-                <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Ảnh cơ sở</label>
+                <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Ảnh cơ sở <span class="text-red-500">*</span></label>
                 <div class="flex flex-wrap gap-3 mb-3" id="imagePreviewWrap"></div>
                 <div class="flex items-center gap-2">
                     <button type="button" onclick="document.getElementById('image_file').click()" class="px-3 py-1.5 rounded-lg border border-gray-200 text-primary hover:bg-blue-50 text-sm font-semibold flex items-center gap-1.5 transition-colors bg-white">
                         <i class="pi pi-cloud-upload"></i> Tải ảnh lên
                     </button>
                     <input id="image_file" name="image_files[]" type="file" accept="image/*" multiple class="hidden">
-                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="flex-1 px-3 py-1.5 rounded-lg border {{ $errors->has('image_url') ? 'border-red-400 bg-red-50 text-red-700 focus:border-red-500' : 'border-gray-100 bg-gray-50 focus:bg-white focus:border-gray-200' }} text-sm outline-none" placeholder="hoặc dán URL ảnh rồi nhấn Enter" @error('image_url') aria-invalid="true" aria-describedby="image-url-error" @enderror>
+                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="{{ $inputClass('image_url', 'flex-1 py-1.5 bg-gray-50 focus:bg-white') }}" placeholder="hoặc dán URL ảnh rồi nhấn Enter" @error('image_url') aria-invalid="true" aria-describedby="image-url-error" @enderror>
                 </div>
                 @error('image_url')
                     <p id="image-url-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
@@ -92,7 +87,7 @@
         <div class="w-full lg:w-[320px] flex-shrink-0 space-y-5">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-5">
                 <div>
-                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Điểm xếp hạng (score)</label>
+                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Điểm xếp hạng (score) <span class="text-red-500">*</span></label>
                     <input name="score" value="{{ old('score') }}" type="number" class="{{ $inputClass('score', 'mb-1') }}" placeholder="Ví dụ: 60" @error('score') aria-invalid="true" aria-describedby="score-error" @enderror>
                     <p class="text-[12px] text-gray-500 font-medium">Càng cao càng đứng đầu bảng xếp hạng.</p>
                     @error('score')
@@ -102,14 +97,14 @@
 
                 <div class="flex gap-4">
                     <div class="flex-1">
-                        <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Rating (0-5)</label>
+                        <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Rating (0-5) <span class="text-red-500">*</span></label>
                         <input name="rating" value="{{ old('rating', '5.0') }}" type="number" step="0.1" class="{{ $inputClass('rating') }}" placeholder="5.0" @error('rating') aria-invalid="true" aria-describedby="rating-error" @enderror>
                         @error('rating')
                             <p id="rating-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="flex-1">
-                        <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Số đánh giá</label>
+                        <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Số đánh giá <span class="text-red-500">*</span></label>
                         <input name="review_count" value="{{ old('review_count') }}" type="number" data-clear-zero class="{{ $inputClass('review_count') }}" placeholder="500" @error('review_count') aria-invalid="true" aria-describedby="review-count-error" @enderror>
                         @error('review_count')
                             <p id="review-count-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
@@ -118,7 +113,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Danh mục</label>
+                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Danh mục <span class="text-red-500">*</span></label>
                     <select name="category_id" class="{{ $selectClass('category_id') }}" @error('category_id') aria-invalid="true" aria-describedby="category-id-error" @enderror>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>{{ $category->name }}</option>
@@ -137,8 +132,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Trạng thái</label>
-                    <select name="status" class="{{ $selectClass('status', $errors->has('status') ? '' : 'border-primary ring-2 ring-primary/10 text-gray-800') }}" @error('status') aria-invalid="true" aria-describedby="status-error" @enderror>
+                    <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Trạng thái <span class="text-red-500">*</span></label>
+                    <select name="status" class="{{ $selectClass('status') }}" @error('status') aria-invalid="true" aria-describedby="status-error" @enderror>
                         <option value="active" @selected(old('status', 'active') === 'active')>Hiển thị</option>
                         <option value="inactive" @selected(old('status') === 'inactive')>Ẩn</option>
                     </select>

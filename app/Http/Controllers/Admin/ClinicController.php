@@ -139,8 +139,11 @@ class ClinicController extends Controller
     public function updateImages(Request $request, Salon $clinic): JsonResponse
     {
         $data = $request->validate([
-            'existing_images' => ['nullable', 'array', 'max:4'],
-            'existing_images.*' => ['string', 'max:500'],
+            'existing_images' => ['required', 'array', 'min:1', 'max:4'],
+            'existing_images.*' => ['required', 'string', 'max:500'],
+        ], [
+            'existing_images.required' => 'Cơ sở phải có ít nhất 1 ảnh.',
+            'existing_images.min' => 'Cơ sở phải có ít nhất 1 ảnh.',
         ]);
 
         $oldImages = $this->decodeImages($clinic->image);

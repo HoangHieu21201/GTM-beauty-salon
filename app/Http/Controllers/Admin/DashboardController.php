@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
+use Illuminate\Database\Eloquent\Builder;
 
 class DashboardController extends Controller
 {
@@ -32,8 +33,8 @@ class DashboardController extends Controller
             'totalSalons' => (clone $salonQuery)->count(),
             'totalCategories' => (clone $categoryQuery)->count(),
             'pendingComments' => $this->pendingCommentsCount(),
-            'recentPosts' => $this->recentPosts(),
-            'topSalons' => $this->topSalons(),
+            'recentPosts' => $this->recentPosts(clone $postQuery),
+            'topSalons' => $this->topSalons(clone $salonQuery),
         ]);
     }
 
@@ -85,13 +86,9 @@ class DashboardController extends Controller
         return $query->count();
     }
 
-    private function recentPosts(): Collection
+    private function recentPosts(Builder $baseQuery): Collection
     {
-        if (! Schema::hasTable('posts')) {
-            return collect();
-        }
-
-        return $this->postQuery()
+        return $baseQuery
             ->with('category')
             ->latest('updated_at')
             ->latest('id')
@@ -99,13 +96,9 @@ class DashboardController extends Controller
             ->get();
     }
 
-    private function topSalons(): Collection
+    private function topSalons(Builder $baseQuery): Collection
     {
-        if (! Schema::hasTable('salons')) {
-            return collect();
-        }
-
-        return $this->salonQuery()
+        return $baseQuery
             ->with('category')
             ->orderByDesc('score')
             ->orderByDesc('rating')

@@ -1,13 +1,8 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Sửa cơ sở thẩm mỹ - Review Thẩm Mỹ Admin')
 
 @section('content')
-    @php
-        $inputClass = fn (string $field, string $extra = '') => trim('w-full px-3 py-2 rounded-lg border outline-none transition text-sm ' . ($errors->has($field) ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100' : 'border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20') . ' ' . $extra);
-        $selectClass = fn (string $field, string $extra = '') => trim('w-full px-3 py-2 rounded-lg border bg-white text-sm outline-none transition ' . ($errors->has($field) ? 'border-red-400 text-red-700 focus:border-red-500 focus:ring-2 focus:ring-red-100' : 'border-gray-200 text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/20') . ' ' . $extra);
-    @endphp
-
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-[24px] font-bold text-[#1F2733]">Sửa cơ sở</h1>
         <a href="{{ route('admin.clinics.index') }}" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center gap-2">
@@ -15,7 +10,7 @@
         </a>
     </div>
 
-    <form action="{{ route('admin.clinics.update', $clinic) }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row gap-5" data-loading-submit data-clinic-form>
+    <form action="{{ route('admin.clinics.update', $clinic) }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row gap-5" data-loading-submit data-clinic-form data-images-required-message="Vui lòng giữ lại ảnh hiện có, tải ảnh mới hoặc nhập URL ảnh.">
         @csrf
         @method('PUT')
         <input type="hidden" name="form_token" value="{{ $formToken }}">
@@ -93,7 +88,7 @@
                         <i class="pi pi-cloud-upload"></i> Tải ảnh lên
                     </button>
                     <input id="image_file" name="image_files[]" type="file" accept="image/*" multiple class="hidden">
-                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="flex-1 px-3 py-1.5 rounded-lg border {{ $errors->has('image_url') ? 'border-red-400 bg-red-50 text-red-700 focus:border-red-500' : 'border-gray-100 bg-gray-50 focus:bg-white focus:border-gray-200' }} text-sm outline-none" placeholder="hoặc dán URL ảnh rồi nhấn Enter" @error('image_url') aria-invalid="true" aria-describedby="image-url-error" @enderror>
+                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="{{ $inputClass('image_url', 'flex-1 py-1.5 bg-gray-50 focus:bg-white') }}" placeholder="hoặc dán URL ảnh rồi nhấn Enter" @error('image_url') aria-invalid="true" aria-describedby="image-url-error" @enderror>
                 </div>
                 @error('image_url')
                     <p id="image-url-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>

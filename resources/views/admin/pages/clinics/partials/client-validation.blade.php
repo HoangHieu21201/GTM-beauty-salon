@@ -111,10 +111,12 @@
             const fileInput = form.querySelector('input[name="image_files[]"]');
             const hasNewFiles = fileInput && fileInput.files && fileInput.files.length > 0;
             const hasExistingImages = form.querySelectorAll('input[name="existing_images[]"]').length > 0;
+            const defaultMessage = 'Vui lòng tải ảnh lên hoặc nhập URL ảnh.';
+            const message = form.dataset.imagesRequiredMessage || defaultMessage;
 
             return imageUrl || hasNewFiles || hasExistingImages
                 ? ''
-                : 'Vui lòng tải ảnh lên hoặc nhập URL ảnh.';
+                : message;
         }
 
         function validateIntegerMin(input, min, message) {
