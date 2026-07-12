@@ -74,11 +74,11 @@
             </div>
             <div>
                 <label class="block text-[13px] font-bold text-[#1F2733] mb-1">Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" required class="w-full border border-gray-200 rounded-md p-2.5 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" />
+                <input type="email" name="email" value="{{ old('email') }}" required autocomplete="off" class="w-full border border-gray-200 rounded-md p-2.5 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" />
             </div>
             <div>
                 <label class="block text-[13px] font-bold text-[#1F2733] mb-1">Mật khẩu</label>
-                <input type="password" name="password" required class="w-full border border-gray-200 rounded-md p-2.5 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" />
+                <input type="password" name="password" required autocomplete="new-password" class="w-full border border-gray-200 rounded-md p-2.5 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" />
             </div>
             <div>
                 <label class="block text-[13px] font-bold text-[#1F2733] mb-1">Vai trò</label>
@@ -122,7 +122,7 @@
             </div>
             <div>
                 <label class="block text-[13px] font-bold text-[#1F2733] mb-1">Email</label>
-                <input type="email" name="email" id="edit_email" required class="w-full border border-gray-200 rounded-md p-2.5 text-[14px] focus:outline-none focus:border-primary" />
+                <input type="email" name="email" id="edit_email" required autocomplete="off" class="w-full border border-gray-200 rounded-md p-2.5 text-[14px] focus:outline-none focus:border-primary" />
             </div>
             <div>
                 <label class="block text-[13px] font-bold text-[#1F2733] mb-1">Vai trò</label>
@@ -135,7 +135,7 @@
             </div>
             <div>
                 <label class="block text-[13px] font-bold text-[#1F2733] mb-1">Mật khẩu mới</label>
-                <input type="password" name="password" placeholder="Để trống nếu không đổi" class="w-full border border-gray-200 rounded-md p-2.5 text-[14px] focus:outline-none focus:border-primary" />
+                <input type="password" name="password" placeholder="Để trống nếu không đổi" autocomplete="new-password" class="w-full border border-gray-200 rounded-md p-2.5 text-[14px] focus:outline-none focus:border-primary" />
             </div>
             <div class="pt-2 flex justify-end gap-2">
                 <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md font-medium transition-colors">Hủy</button>
