@@ -37,7 +37,7 @@ class SettingController extends Controller
         return view('admin.pages.settings.index', compact('settings', 'logos'));
     }
 
-    public function update(Request $request)
+    public function update(\App\Http\Requests\Admin\UpdateSettingRequest $request)
     {
         $data = [];
         $allowedKeys = ['footer_brand_desc', 'footer_copyright'];

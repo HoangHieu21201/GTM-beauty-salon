@@ -25,6 +25,8 @@ Route::get('/', function () {
 Route::get('/bang-xep-hang', [RankingController::class, 'index'])->name('ranking.index');
 Route::get('/bang-xep-hang/chi-tiet/{slug}', [RankingController::class, 'show'])->name('ranking.show');
 
+Route::get('/tim-kiem', [\App\Http\Controllers\Client\SearchController::class, 'index'])->name('search');
+
 Route::get('/bai-viet', function (\Illuminate\Http\Request $request) {
     $type = $request->query('type', 'sub');
     $cat = $request->query('cat', 'phau-thuat-tham-my');
@@ -451,7 +453,7 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\BypassAdminLogin::class
     Route::middleware(['auth'])->group(function () {
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
 
-        Route::middleware(['admin'])->group(function () {
+        Route::middleware([\App\Http\Middleware\CheckSuperAdmin::class])->group(function () {
             Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->only(['store', 'update', 'destroy'])->names('admin.categories');
             Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
             Route::delete('/settings/logo', [\App\Http\Controllers\Admin\SettingController::class, 'deleteLogo'])->name('admin.settings.logo.delete');

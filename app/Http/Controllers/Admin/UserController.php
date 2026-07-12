@@ -28,22 +28,8 @@ class UserController extends Controller implements HasMiddleware
         return view('admin.pages.users.index', compact('users', 'roles'));
     }
 
-    public function store(Request $request)
+    public function store(\App\Http\Requests\Admin\StoreUserRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', Rules\Password::defaults()],
-            'role_id' => ['required', 'exists:roles,id'],
-        ], [
-            'name.required' => 'Vui lòng nhập tên.',
-            'email.required' => 'Vui lòng nhập email.',
-            'email.unique' => 'Email này đã tồn tại.',
-            'password.required' => 'Vui lòng nhập mật khẩu.',
-            'role_id.required' => 'Vui lòng chọn vai trò.',
-            'role_id.exists' => 'Vai trò không hợp lệ.',
-        ]);
-
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
@@ -54,28 +40,10 @@ class UserController extends Controller implements HasMiddleware
         return redirect()->route('admin.users.index')->with('success', 'Đã tạo người dùng mới!');
     }
 
-    public function update(Request $request, string $id)
+    public function update(\App\Http\Requests\Admin\UpdateUserRequest $request, string $id)
     {
         $user = User::findOrFail($id);
         
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'role_id' => ['required', 'exists:roles,id'],
-        ];
-
-        if ($request->filled('password')) {
-            $rules['password'] = [Rules\Password::defaults()];
-        }
-
-        $request->validate($rules, [
-            'name.required' => 'Vui lòng nhập tên.',
-            'email.required' => 'Vui lòng nhập email.',
-            'email.unique' => 'Email này đã tồn tại.',
-            'role_id.required' => 'Vui lòng chọn vai trò.',
-            'role_id.exists' => 'Vai trò không hợp lệ.',
-        ]);
-
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role_id = $request->role_id;
