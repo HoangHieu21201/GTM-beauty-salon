@@ -17,7 +17,6 @@ class CategoryController extends Controller
 {
     public function index(): View
     {
-        $this->ensureDefaultCategories();
 
         $rootCategories = Category::with([
             'children' => fn ($query) => $query->orderBy('name'),
@@ -33,9 +32,10 @@ class CategoryController extends Controller
         return view('admin.pages.categories.index', compact('categories', 'rootCategories'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(\App\Http\Requests\Admin\StoreCategoryRequest $request): RedirectResponse
     {
-        $data = $this->validatedData($request);
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
 
         Category::create($data);
 
@@ -44,9 +44,10 @@ class CategoryController extends Controller
             ->with('success', 'Đã thêm danh mục thành công.');
     }
 
-    public function update(Request $request, Category $category): JsonResponse|RedirectResponse
+    public function update(\App\Http\Requests\Admin\UpdateCategoryRequest $request, Category $category): JsonResponse|RedirectResponse
     {
-        $data = $this->validatedData($request, $category);
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['name']);
 
         $category->update($data);
 
@@ -55,206 +56,32 @@ class CategoryController extends Controller
             'category' => [
                 'id' => $category->id,
                 'name' => $category->name,
-                'slug' => Str::slug($category->name),
+                'slug' => $category->slug,
                 'parent_id' => $category->parent_id,
             ],
         ];
 
-        if ($request->expectsJson()) {
+        if ($request->ajax() || $request->wantsJson()) {
             return response()->json($payload);
         }
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', $payload['message']);
+            ->with('success', 'Đã lưu thay đổi.');
     }
 
-    public function destroy(Request $request, Category $category): JsonResponse|RedirectResponse
+    public function destroy(Category $category): RedirectResponse
     {
-        $category->loadCount(['children', 'salons']);
-
-        if ($category->children_count > 0) {
-            return $this->validationResponse($request, 'Không thể xóa danh mục đang có danh mục con.');
-        }
-
-        if ($category->salons_count > 0) {
-            return $this->validationResponse($request, 'Không thể xóa danh mục đang được cơ sở thẩm mỹ sử dụng.');
+        if ($category->children()->exists()) {
+            return back()->with('error', 'Không thể xóa vì danh mục này đang có danh mục con.');
         }
 
         $category->delete();
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'Đã xóa danh mục thành công.',
-            ]);
-        }
 
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Đã xóa danh mục thành công.');
     }
 
-    private function validatedData(Request $request, ?Category $category = null): array
-    {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'parent_id' => ['nullable', 'integer', Rule::exists('categories', 'id')->whereNull('deleted_at')],
-        ], [
-            'name.required' => 'Vui lòng nhập tên danh mục.',
-            'name.max' => 'Tên danh mục không được vượt quá 255 ký tự.',
-            'parent_id.exists' => 'Danh mục cha không hợp lệ.',
-        ]);
 
-        $name = trim($data['name']);
-        $parentId = $data['parent_id'] ?? null;
-        $parentId = $parentId ? (int) $parentId : null;
-
-        if ($name === '') {
-            throw ValidationException::withMessages([
-                'name' => 'Vui lòng nhập tên danh mục.',
-            ]);
-        }
-
-        if ($category && $parentId === $category->id) {
-            throw ValidationException::withMessages([
-                'parent_id' => 'Danh mục cha không được là chính nó.',
-            ]);
-        }
-
-        if ($parentId) {
-            $parent = Category::find($parentId);
-
-            if (! $parent) {
-                throw ValidationException::withMessages([
-                    'parent_id' => 'Danh mục cha không hợp lệ.',
-                ]);
-            }
-
-            if ($parent->parent_id) {
-                throw ValidationException::withMessages([
-                    'parent_id' => 'Chỉ hỗ trợ danh mục tối đa 2 cấp.',
-                ]);
-            }
-        }
-
-        if ($category && $parentId && $category->children()->exists()) {
-            throw ValidationException::withMessages([
-                'parent_id' => 'Danh mục đang có danh mục con nên không thể chuyển thành danh mục con.',
-            ]);
-        }
-
-        $this->ensureUniqueNameAndSlug($name, $category?->id);
-
-        return [
-            'name' => $name,
-            'parent_id' => $parentId,
-        ];
-    }
-
-    private function ensureUniqueNameAndSlug(string $name, ?int $ignoreId = null): void
-    {
-        $slug = Str::slug($name);
-        $normalizedName = Str::lower($name);
-
-        $duplicate = Category::query()
-            ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
-            ->get(['id', 'name'])
-            ->first(function (Category $category) use ($slug, $normalizedName): bool {
-                return Str::lower($category->name) === $normalizedName
-                    || Str::slug($category->name) === $slug;
-            });
-
-        if ($duplicate) {
-            throw ValidationException::withMessages([
-                'name' => 'Tên hoặc slug danh mục đã tồn tại, vui lòng kiểm tra lại.',
-            ]);
-        }
-    }
-
-    private function validationResponse(Request $request, string $message): JsonResponse|RedirectResponse
-    {
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => $message,
-            ], 422);
-        }
-
-        return redirect()
-            ->route('admin.categories.index')
-            ->with('error', $message);
-    }
-
-    private function ensureDefaultCategories(): Collection
-    {
-        $tree = [
-            'Phẫu thuật thẩm mỹ' => [
-                'Nâng mũi',
-                'Nâng ngực',
-                'Cắt mí',
-                'Hút mỡ',
-                'Gọt cằm',
-                'Độn cằm',
-                'Căng da mặt',
-            ],
-            'Chăm sóc da' => [
-                'Trẻ hóa da',
-                'Trị mụn',
-                'Tắm trắng',
-                'Điều trị nám',
-                'Peel da',
-            ],
-            'Răng - Hàm - Mặt' => [
-                'Niềng răng',
-                'Bọc răng sứ',
-                'Tẩy trắng răng',
-                'Cấy ghép Implant',
-            ],
-        ];
-
-        $categories = Category::orderBy('parent_id')->orderBy('name')->get();
-
-        foreach ($tree as $parentName => $children) {
-            $parent = $this->findCategoryBySlug($categories, $parentName);
-
-            if (! $parent) {
-                $parent = Category::create([
-                    'name' => $parentName,
-                    'parent_id' => null,
-                ]);
-                $categories->push($parent);
-            } elseif ($parent->parent_id !== null) {
-                $parent->update(['parent_id' => null]);
-                $parent->parent_id = null;
-            }
-
-            foreach ($children as $childName) {
-                $child = $this->findCategoryBySlug($categories, $childName);
-
-                if (! $child) {
-                    $child = Category::create([
-                        'name' => $childName,
-                        'parent_id' => $parent->id,
-                    ]);
-                    $categories->push($child);
-                    continue;
-                }
-
-                if ($child->parent_id === null && ! $child->children()->exists()) {
-                    $child->update(['parent_id' => $parent->id]);
-                    $child->parent_id = $parent->id;
-                }
-            }
-        }
-
-        return Category::orderBy('parent_id')->orderBy('name')->get();
-    }
-
-    private function findCategoryBySlug(Collection $categories, string $name): ?Category
-    {
-        $slug = Str::slug($name);
-
-        return $categories->first(
-            fn (Category $category): bool => Str::slug($category->name) === $slug
-        );
-    }
 }

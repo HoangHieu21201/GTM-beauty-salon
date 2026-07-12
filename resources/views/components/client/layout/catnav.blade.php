@@ -6,54 +6,19 @@
     $isTinhThanh = request()->is('tinh-thanh*');
     $isXepHang = request()->is('bang-xep-hang*');
 
-    $dbCategories = ($clientNavCategories ?? collect())->keyBy(fn ($category) => \Illuminate\Support\Str::slug($category->name));
-
-    $menuGroups = collect([
-        [
-            'name' => 'Phẫu thuật thẩm mỹ',
-            'slug' => 'phau-thuat-tham-my',
-            'children' => [
-                ['name' => 'Nâng mũi', 'slug' => 'nang-mui'],
-                ['name' => 'Nâng ngực', 'slug' => 'nang-nguc'],
-                ['name' => 'Cắt mí', 'slug' => 'cat-mi'],
-                ['name' => 'Hút mỡ', 'slug' => 'hut-mo'],
-            ],
-        ],
-        [
-            'name' => 'Chăm sóc da',
-            'slug' => 'cham-soc-da',
-            'children' => [
-                ['name' => 'Trẻ hóa da', 'slug' => 'tre-hoa-da'],
-                ['name' => 'Trị mụn', 'slug' => 'tri-mun'],
-                ['name' => 'Tắm trắng', 'slug' => 'tam-trang'],
-            ],
-        ],
-        [
-            'name' => 'Răng - Hàm - Mặt',
-            'slug' => 'rang-ham-mat',
-            'children' => [
-                ['name' => 'Niềng răng', 'slug' => 'nieng-rang'],
-                ['name' => 'Bọc răng sứ', 'slug' => 'boc-rang-su'],
-            ],
-        ],
-    ])->map(function ($group) use ($dbCategories) {
-        $dbCategory = $dbCategories->get($group['slug']);
-
-        if (! $dbCategory) {
-            return $group;
-        }
-
-        $dbChildren = $dbCategory->children->map(fn ($child) => [
-            'name' => $child->name,
-            'slug' => \Illuminate\Support\Str::slug($child->name),
-        ])->values()->all();
-
-        return [
-            'name' => $dbCategory->name,
-            'slug' => \Illuminate\Support\Str::slug($dbCategory->name),
-            'children' => count($dbChildren) > 0 ? $dbChildren : $group['children'],
-        ];
-    });
+    $menuGroups = \App\Models\Category::whereNull('parent_id')
+        ->with('children')
+        ->get()
+        ->map(function ($cat) {
+            return [
+                'name' => $cat->name,
+                'slug' => $cat->slug ?: \Illuminate\Support\Str::slug($cat->name),
+                'children' => $cat->children->map(fn ($child) => [
+                    'name' => $child->name,
+                    'slug' => $child->slug ?: \Illuminate\Support\Str::slug($child->name),
+                ])->values()->all(),
+            ];
+        });
 
     $megaRegions = [
         'MIỀN BẮC' => [

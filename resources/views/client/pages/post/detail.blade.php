@@ -113,86 +113,154 @@
 
                 <!-- Article Featured Image -->
                 <div class="mb-6 rounded-[12px] overflow-hidden shadow-sm">
-                    <img src="https://picsum.photos/seed/article-4/800/500" alt="Article Cover" class="w-full h-auto object-cover max-h-[500px]" />
+                    <img src="{{ $article['image'] ?? 'https://picsum.photos/seed/article-4/800/500' }}" alt="Article Cover" class="w-full h-auto object-cover max-h-[500px]" />
                 </div>
 
-                <!-- Table of Contents -->
-                <nav class="bg-[#F8FAFC] rounded-[8px] border border-[#e2e8f0] p-5 mb-8">
-                    <div class="flex items-center gap-2 mb-3">
-                        <strong class="text-[16px] text-[#1F2733]">Nội Dung Chính</strong>
-                        <button class="text-[#1668DC] text-[13px] hover:underline">[Ẩn]</button>
+                @if(!empty($article['content']))
+                    <style>
+                        #postContent h2 {
+                            font-size: 22px;
+                            font-weight: bold;
+                            color: #1F2733;
+                            margin-top: 2rem;
+                            margin-bottom: 1rem;
+                            border-left: 3px solid #1668DC;
+                            padding-left: 1rem;
+                        }
+                        #postContent h3 {
+                            font-size: 18px;
+                            font-weight: bold;
+                            color: #1F2733;
+                            margin-top: 1.5rem;
+                            margin-bottom: 0.75rem;
+                            border-left: 3px solid #1668DC;
+                            padding-left: 0.75rem;
+                        }
+                        #postContent blockquote {
+                            background-color: #FFFBEB;
+                            border-left: 4px solid #F59E0B;
+                            padding: 1rem;
+                            border-top-right-radius: 8px;
+                            border-bottom-right-radius: 8px;
+                            margin: 1.5rem 0;
+                            color: #92400E;
+                        }
+                        #postContent ul {
+                            list-style-type: disc !important;
+                            margin-left: 1.5rem !important;
+                            margin-bottom: 1rem !important;
+                            padding-left: 0.5rem !important;
+                        }
+                        #postContent ol {
+                            list-style-type: decimal !important;
+                            margin-left: 1.5rem !important;
+                            margin-bottom: 1rem !important;
+                            padding-left: 0.5rem !important;
+                        }
+                        #postContent li {
+                            margin-bottom: 0.25rem;
+                        }
+                        #postContent table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 1.5rem;
+                        }
+                        #postContent table th, #postContent table td {
+                            border: 1px solid #cbd5e1;
+                            padding: 0.5rem 0.75rem;
+                        }
+                        #postContent table th {
+                            background-color: #f8fafc;
+                            font-weight: bold;
+                        }
+                        #postContent a {
+                            color: #1668DC;
+                            text-decoration: underline;
+                        }
+                    </style>
+                    <!-- Article Content (Dynamic) -->
+                    <div id="postContent" class="prose max-w-none text-[#334155] leading-relaxed mb-8">
+                        {!! $article['content'] !!}
                     </div>
-                    <ol class="list-decimal list-inside space-y-2 text-[#1668DC] text-[15px]">
-                        <li><a href="#muc-1" class="hover:underline">Bảng giá bọc răng sứ 2026</a></li>
-                        <li><a href="#muc-2" class="hover:underline">5 câu phải hỏi trước khi đồng ý mài răng</a></li>
-                        <li><a href="#muc-3" class="hover:underline">Bọc sứ giá rẻ — rủi ro nằm ở đâu?</a></li>
-                        <li><a href="#muc-4" class="hover:underline">Kết luận</a></li>
-                    </ol>
-                </nav>
+                @else
+                    <!-- Table of Contents -->
+                    <nav class="bg-[#F8FAFC] rounded-[8px] border border-[#e2e8f0] p-5 mb-8">
+                        <div class="flex items-center gap-2 mb-3">
+                            <strong class="text-[16px] text-[#1F2733]">Nội Dung Chính</strong>
+                            <button class="text-[#1668DC] text-[13px] hover:underline">[Ẩn]</button>
+                        </div>
+                        <ol class="list-decimal list-inside space-y-2 text-[#1668DC] text-[15px]">
+                            <li><a href="#muc-1" class="hover:underline">Bảng giá bọc răng sứ 2026</a></li>
+                            <li><a href="#muc-2" class="hover:underline">5 câu phải hỏi trước khi đồng ý mài răng</a></li>
+                            <li><a href="#muc-3" class="hover:underline">Bọc sứ giá rẻ — rủi ro nằm ở đâu?</a></li>
+                            <li><a href="#muc-4" class="hover:underline">Kết luận</a></li>
+                        </ol>
+                    </nav>
 
-                <!-- Article Content -->
-                <div class="prose max-w-none text-[#334155] leading-relaxed mb-8">
-                    <p>"<strong>Bọc răng sứ giá</strong> bao nhiêu?" là câu hỏi có câu trả lời dao động gấp 15 lần giữa các phòng khám — từ 1 triệu đến 15 triệu mỗi răng. Chênh lệch này có lý do chính đáng, và cũng có cả bẫy. Bài viết giúp bạn phân biệt hai thứ đó.</p>
-                    
-                    <h2 id="muc-1" class="text-[22px] font-bold text-[#1F2733] mt-8 mb-4">Bảng giá bọc răng sứ 2026</h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[600px]">
-                            <thead>
-                                <tr class="border-b-2 border-[#e2e8f0]">
-                                    <th class="py-3 px-4 font-bold text-[#1F2733]">Dòng sứ</th>
-                                    <th class="py-3 px-4 font-bold text-[#1F2733]">Giá/răng</th>
-                                    <th class="py-3 px-4 font-bold text-[#1F2733]">Tuổi thọ</th>
-                                    <th class="py-3 px-4 font-bold text-[#1F2733]">Đặc điểm</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-[#e2e8f0]">
-                                <tr>
-                                    <td class="py-3 px-4">Sứ kim loại</td>
-                                    <td class="py-3 px-4">1–2.5 triệu</td>
-                                    <td class="py-3 px-4">5–8 năm</td>
-                                    <td class="py-3 px-4">Rẻ, lâu ngày đen viền nướu, hợp răng hàm</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 px-4">Sứ toàn phần (Zirconia)</td>
-                                    <td class="py-3 px-4">3–8 triệu</td>
-                                    <td class="py-3 px-4">10–15 năm</td>
-                                    <td class="py-3 px-4">Trong tự nhiên, không đen viền — lựa chọn phổ biến nhất</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 px-4">Sứ cao cấp (Ceramill, Lava, Emax)</td>
-                                    <td class="py-3 px-4">8–15 triệu</td>
-                                    <td class="py-3 px-4">15–20 năm</td>
-                                    <td class="py-3 px-4">Độ trong như răng thật, hợp răng cửa, có thẻ bảo hành chính hãng</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <!-- Article Content -->
+                    <div class="prose max-w-none text-[#334155] leading-relaxed mb-8">
+                        <p>"<strong>Bọc răng sứ giá</strong> bao nhiêu?" là câu hỏi có câu trả lời dao động gấp 15 lần giữa các phòng khám — từ 1 triệu đến 15 triệu mỗi răng. Chênh lệch này có lý do chính đáng, và cũng có cả bẫy. Bài viết giúp bạn phân biệt hai thứ đó.</p>
+                        
+                        <h2 id="muc-1" class="text-[22px] font-bold text-[#1F2733] mt-8 mb-4">Bảng giá bọc răng sứ 2026</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[600px]">
+                                <thead>
+                                    <tr class="border-b-2 border-[#e2e8f0]">
+                                        <th class="py-3 px-4 font-bold text-[#1F2733]">Dòng sứ</th>
+                                        <th class="py-3 px-4 font-bold text-[#1F2733]">Giá/răng</th>
+                                        <th class="py-3 px-4 font-bold text-[#1F2733]">Tuổi thọ</th>
+                                        <th class="py-3 px-4 font-bold text-[#1F2733]">Đặc điểm</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-[#e2e8f0]">
+                                    <tr>
+                                        <td class="py-3 px-4">Sứ kim loại</td>
+                                        <td class="py-3 px-4">1–2.5 triệu</td>
+                                        <td class="py-3 px-4">5–8 năm</td>
+                                        <td class="py-3 px-4">Rẻ, lâu ngày đen viền nướu, hẹp răng hàm</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4">Sứ toàn phần (Zirconia)</td>
+                                        <td class="py-3 px-4">3–8 triệu</td>
+                                        <td class="py-3 px-4">10–15 năm</td>
+                                        <td class="py-3 px-4">Trong tự nhiên, không đen viền — lựa chọn phổ biến nhất</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4">Sứ cao cấp (Ceramill, Lava, Emax)</td>
+                                        <td class="py-3 px-4">8–15 triệu</td>
+                                        <td class="py-3 px-4">15–20 năm</td>
+                                        <td class="py-3 px-4">Độ trong như răng thật, hợp răng cửa, có thẻ bảo hành chính hãng</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <blockquote class="bg-[#FFFBEB] border-l-4 border-[#F59E0B] p-4 rounded-r-[8px] my-6 text-[#92400E]">
+                            <strong>⚠️ Cảnh báo quan trọng:</strong> mài răng là thủ thuật <em>không thể hoàn tác</em>. Răng đã mài phải mang mão sứ suốt đời. Vì vậy đừng bao giờ quyết định trong buổi tư vấn đầu tiên, và tuyệt đối tránh các gói "bọc 20 răng giá sốc" — răng khỏe không có lý do gì phải mài đi 20 chiếc.
+                        </blockquote>
+
+                        <img src="https://picsum.photos/seed/article-rangsu-body/800/500" alt="Các mão răng sứ zirconia trên mẫu hàm tại labo nha khoa" class="w-full rounded-[8px] my-6">
+
+                        <h2 id="muc-2" class="text-[22px] font-bold text-[#1F2733] mt-8 mb-4">5 câu phải hỏi trước khi đồng ý mài răng</h2>
+                        <ol class="list-decimal list-outside ml-5 space-y-2">
+                            <li><strong>"Răng tôi có thực sự cần bọc không, hay chỉ cần tẩy trắng/dán veneer?"</strong> — veneer chỉ mài 0.3–0.5mm, bảo tồn răng gấp nhiều lần.</li>
+                            <li><strong>"Ai là người mài răng — bác sĩ hay phụ tá?"</strong> — chỉ bác sĩ có chứng chỉ hành nghề được làm.</li>
+                            <li><strong>"Sứ này của hãng nào, có thẻ bảo hành chính hãng không?"</strong> — sứ xịn luôn có thẻ điện tử tra cứu được.</li>
+                            <li><strong>"Có chụp phim kiểm tra tủy trước khi mài không?"</strong> — bỏ qua bước này là nguyên nhân số 1 gây đau tủy sau bọc.</li>
+                            <li><strong>"Chính sách nếu mão sứ hở, cộm, lệch khớp cắn?"</strong> — phải có cam kết chỉnh sửa miễn phí bằng văn bản.</li>
+                        </ol>
+
+                        <h2 id="muc-3" class="text-[22px] font-bold text-[#1F2733] mt-8 mb-4">Bọc sứ giá rẻ — rủi ro nằm ở đâu?</h2>
+                        <ul class="list-disc list-outside ml-5 space-y-2">
+                            <li>Mài quá tay cho nhanh → xâm phạm tủy, đau kéo dài, phải điều trị tủy</li>
+                            <li>Sứ không rõ nguồn gốc → đổi màu, sứt mẻ sau 1–2 năm</li>
+                            <li>Mão không khít → giắt thức ăn, hôi miệng, sâu răng bên trong mão</li>
+                        </ul>
+
+                        <h2 id="muc-4" class="text-[22px] font-bold text-[#1F2733] mt-8 mb-4">Kết luận</h2>
+                        <p>Mức hợp lý nhất 2026 cho răng cửa là <strong>sứ toàn phần 4–6 triệu/răng</strong> tại phòng khám có labo riêng. Nếu răng bạn lệch lạc nhiều, cân nhắc <a href="#" class="text-[#1668DC] hover:underline">niềng răng</a> trước thay vì bọc sứ cả hàm — chậm hơn nhưng giữ được răng thật. Xem điểm đánh giá các phòng khám nha tại <a href="#" class="text-[#1668DC] hover:underline">bảng xếp hạng</a>, nổi bật là <a href="#" class="text-[#1668DC] hover:underline">Bệnh viện Thẩm mỹ Hoàn Mỹ</a> và <a href="#" class="text-[#1668DC] hover:underline">Thẩm mỹ viện Sài Gòn Venus</a>.</p>
                     </div>
-
-                    <blockquote class="bg-[#FFFBEB] border-l-4 border-[#F59E0B] p-4 rounded-r-[8px] my-6 text-[#92400E]">
-                        <strong>⚠️ Cảnh báo quan trọng:</strong> mài răng là thủ thuật <em>không thể hoàn tác</em>. Răng đã mài phải mang mão sứ suốt đời. Vì vậy đừng bao giờ quyết định trong buổi tư vấn đầu tiên, và tuyệt đối tránh các gói "bọc 20 răng giá sốc" — răng khỏe không có lý do gì phải mài đi 20 chiếc.
-                    </blockquote>
-
-                    <img src="https://picsum.photos/seed/article-rangsu-body/800/500" alt="Các mão răng sứ zirconia trên mẫu hàm tại labo nha khoa" class="w-full rounded-[8px] my-6">
-
-                    <h2 id="muc-2" class="text-[22px] font-bold text-[#1F2733] mt-8 mb-4">5 câu phải hỏi trước khi đồng ý mài răng</h2>
-                    <ol class="list-decimal list-outside ml-5 space-y-2">
-                        <li><strong>"Răng tôi có thực sự cần bọc không, hay chỉ cần tẩy trắng/dán veneer?"</strong> — veneer chỉ mài 0.3–0.5mm, bảo tồn răng gấp nhiều lần.</li>
-                        <li><strong>"Ai là người mài răng — bác sĩ hay phụ tá?"</strong> — chỉ bác sĩ có chứng chỉ hành nghề được làm.</li>
-                        <li><strong>"Sứ này của hãng nào, có thẻ bảo hành chính hãng không?"</strong> — sứ xịn luôn có thẻ điện tử tra cứu được.</li>
-                        <li><strong>"Có chụp phim kiểm tra tủy trước khi mài không?"</strong> — bỏ qua bước này là nguyên nhân số 1 gây đau tủy sau bọc.</li>
-                        <li><strong>"Chính sách nếu mão sứ hở, cộm, lệch khớp cắn?"</strong> — phải có cam kết chỉnh sửa miễn phí bằng văn bản.</li>
-                    </ol>
-
-                    <h2 id="muc-3" class="text-[22px] font-bold text-[#1F2733] mt-8 mb-4">Bọc sứ giá rẻ — rủi ro nằm ở đâu?</h2>
-                    <ul class="list-disc list-outside ml-5 space-y-2">
-                        <li>Mài quá tay cho nhanh → xâm phạm tủy, đau kéo dài, phải điều trị tủy</li>
-                        <li>Sứ không rõ nguồn gốc → đổi màu, sứt mẻ sau 1–2 năm</li>
-                        <li>Mão không khít → giắt thức ăn, hôi miệng, sâu răng bên trong mão</li>
-                    </ul>
-
-                    <h2 id="muc-4" class="text-[22px] font-bold text-[#1F2733] mt-8 mb-4">Kết luận</h2>
-                    <p>Mức hợp lý nhất 2026 cho răng cửa là <strong>sứ toàn phần 4–6 triệu/răng</strong> tại phòng khám có labo riêng. Nếu răng bạn lệch lạc nhiều, cân nhắc <a href="#" class="text-[#1668DC] hover:underline">niềng răng</a> trước thay vì bọc sứ cả hàm — chậm hơn nhưng giữ được răng thật. Xem điểm đánh giá các phòng khám nha tại <a href="#" class="text-[#1668DC] hover:underline">bảng xếp hạng</a>, nổi bật là <a href="#" class="text-[#1668DC] hover:underline">Bệnh viện Thẩm mỹ Hoàn Mỹ</a> và <a href="#" class="text-[#1668DC] hover:underline">Thẩm mỹ viện Sài Gòn Venus</a>.</p>
-                </div>
+                @endif
 
                 <hr class="border-t border-dashed border-[#e2e8f0] my-8" />
 

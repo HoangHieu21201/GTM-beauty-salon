@@ -3,48 +3,157 @@
 @section('title', 'Viết bài mới - Review Thẩm Mỹ Admin')
 
 @section('content')
-    <!-- Top Header Bar -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <div class="flex items-center gap-4">
-            <a href="{{ url('/admin/posts') }}" class="text-gray-500 hover:text-gray-800 transition-colors">
-                <i class="pi pi-arrow-left text-[18px]"></i>
-            </a>
-            <h1 class="text-[24px] font-bold text-[#1F2733] flex items-center gap-3">
-                Cập nhật bài viết
-                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-green-100 text-green-600 uppercase tracking-wider">Đã xuất bản</span>
-            </h1>
+    <style>
+        #postContent h2 {
+            font-size: 24px !important;
+            font-weight: 700 !important;
+            margin-top: 1.75rem !important;
+            margin-bottom: 1rem !important;
+            border-left: 4px solid #2563eb !important;
+            padding-left: 1rem !important;
+            color: #1f2937 !important;
+            line-height: 1.4 !important;
+            display: block !important;
+        }
+        #postContent h3 {
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            margin-top: 1.5rem !important;
+            margin-bottom: 0.75rem !important;
+            color: #1f2937 !important;
+            line-height: 1.4 !important;
+            display: block !important;
+        }
+        #postContent table {
+            table-layout: fixed !important;
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+        #postContent td, #postContent th {
+            word-break: break-word !important;
+        }
+        #postContent blockquote {
+            border-left: 4px solid #2563eb !important;
+            padding-left: 1rem !important;
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
+            padding-right: 0.75rem !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            margin-top: 1rem !important;
+            margin-bottom: 1rem !important;
+            font-size: 15px !important;
+            color: #4b5563 !important;
+            background-color: #eff6ff !important;
+            border-top-right-radius: 8px !important;
+            border-bottom-right-radius: 8px !important;
+            display: block !important;
+        }
+        #postContent ul.checklist-list {
+            list-style: none !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+        }
+        #postContent ul.checklist-list li {
+            list-style-type: none !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            margin-bottom: 0.5rem !important;
+        }
+        #postContent ul:not(.checklist-list) {
+            list-style-type: disc !important;
+            padding-left: 2rem !important;
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+        }
+        #postContent ol {
+            list-style-type: decimal !important;
+            padding-left: 2rem !important;
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+        }
+        #postContent li {
+            display: list-item !important;
+            margin-bottom: 0.25rem !important;
+        }
+        #postContent ul.checklist-list li {
+            display: flex !important;
+        }
+        #postContent a {
+            color: #2563eb !important;
+            text-decoration: underline !important;
+            font-weight: 500 !important;
+        }
+    </style>
+    @if(session('success'))
+        <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-semibold flex items-center gap-2 shadow-sm">
+            <i class="pi pi-check-circle"></i>
+            {{ session('success') }}
         </div>
-        <div class="flex items-center gap-5">
-            <div class="text-sm text-gray-500 font-medium" id="readingStats">0 từ - 0 phút đọc</div>
-            <div class="flex gap-2">
-                <button type="button" onclick="openPreview()" class="px-4 py-2 font-semibold text-sm bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm">
-                    <i class="pi pi-eye"></i> Xem trước
-                </button>
-                <button type="button" class="px-4 py-2 font-semibold text-sm bg-primary border border-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2 shadow-sm">
-                    <i class="pi pi-check"></i> Lưu bài viết
-                </button>
+    @endif
+
+    @if($errors->any())
+        <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-semibold shadow-sm">
+            <ul class="list-disc pl-5 space-y-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('admin.posts.update', $post->id) }}" method="POST" id="editPostForm" class="post-form" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+
+        <!-- Top Header Bar -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div class="flex items-center gap-4">
+                <a href="{{ url('/admin/posts') }}" class="text-gray-500 hover:text-gray-800 transition-colors">
+                    <i class="pi pi-arrow-left text-[18px]"></i>
+                </a>
+                <h1 class="text-[24px] font-bold text-[#1F2733] flex items-center gap-3">
+                    Cập nhật bài viết
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-green-100 text-green-600 uppercase tracking-wider">
+                        {{ $post->status === 'published' ? 'Đã xuất bản' : 'Nháp' }}
+                    </span>
+                </h1>
+            </div>
+            <div class="flex items-center gap-5">
+                <div class="text-sm text-gray-500 font-medium" id="readingStats">0 từ - 0 phút đọc</div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="openPreview()" class="px-4 py-2 font-semibold text-sm bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm">
+                        <i class="pi pi-eye"></i> Xem trước
+                    </button>
+                    <button type="submit" class="px-4 py-2 font-semibold text-sm bg-primary border border-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2 shadow-sm">
+                        <i class="pi pi-check"></i> Lưu bài viết
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Main 2-Column Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- LEFT COLUMN (Main Content) -->
-        <div class="lg:col-span-8 space-y-6">
+        <!-- Main 2-Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- Editor Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <!-- Title & Slug -->
-                <div class="mb-6">
-                    <input type="text" id="postTitle" value="Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm" class="w-full text-[22px] font-bold text-[#1f2937] placeholder-gray-400 border border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary transition-colors mb-3 outline-none shadow-sm">
-                    
-                    <div class="flex items-center gap-2 text-[13px] text-gray-500 font-mono">
-                        <i class="pi pi-at text-gray-400"></i>
-                        <span>/bai-viet/</span>
-                        <span id="postSlug" class="text-primary px-2 py-1 border border-dashed border-gray-300 rounded bg-gray-50/50">boc-rang-su-gia-bao-nhieu-bang-gia-2026-va-5-dieu-phai-hoi-truoc-khi-lam</span>
+            <!-- LEFT COLUMN (Main Content) -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Editor Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+                    <!-- Title & Slug -->
+                    <div class="mb-6">
+                        <input type="text" id="postTitle" name="title" value="{{ old('title', $post->title) }}" class="w-full text-[22px] font-bold text-[#1f2937] placeholder-gray-400 border border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary transition-colors mb-3 outline-none shadow-sm">
+                        
+                        <div class="flex items-center gap-2 text-[13px] text-gray-500 font-mono">
+                            <i class="pi pi-at text-gray-400"></i>
+                            <span>/bai-viet/</span>
+                            <span id="postSlug" class="text-primary px-2 py-1 border border-dashed border-gray-300 rounded bg-gray-50/50">{{ $post->slug }}</span>
+                            <input type="hidden" name="slug" id="hiddenSlug" value="{{ old('slug', $post->slug) }}">
+                        </div>
                     </div>
-                </div>
 
                 <!-- Short Description -->
                 <div class="mb-6">
@@ -53,8 +162,8 @@
                             Mô tả ngắn <span class="text-gray-400 font-normal normal-case tracking-normal ml-1">(hiển thị ở danh sách & mặc định làm meta description)</span>
                         </label>
                     </div>
-                    <textarea id="postExcerpt" rows="3" class="w-full bg-white border border-gray-200 rounded-xl p-3 text-[14px] text-[#4b5563] focus:border-primary focus:ring-1 focus:ring-primary transition resize-none outline-none shadow-sm">Giá bọc răng sứ chênh từ 1 đến 15 triệu mỗi răng — vì sao? Phân tích từng dòng sứ, cảnh báo bọc sứ giá rẻ và 5 câu hỏi bắt buộc trước khi để nha sĩ mài răng thật của bạn.</textarea>
-                    <div class="text-right mt-2 font-bold text-[13px] text-orange-500 transition-colors" id="excerptCounter">170/160</div>
+                    <textarea id="postExcerpt" name="short_description" rows="3" class="w-full bg-white border border-gray-200 rounded-xl p-3 text-[14px] text-[#4b5563] focus:border-primary focus:ring-1 focus:ring-primary transition resize-none outline-none shadow-sm">{{ old('short_description', $post->short_description) }}</textarea>
+                    <div class="text-right mt-2 font-bold text-[13px] text-orange-500 transition-colors" id="excerptCounter">0/160</div>
                 </div>
 
                 <!-- WYSIWYG Editor Mockup -->
@@ -70,9 +179,9 @@
                     </div>
                     
                     <!-- Editor Box -->
-                    <div class="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                    <div class="border border-gray-200 rounded-xl bg-white shadow-sm relative">
                         <!-- Toolbar -->
-                        <div class="border-b border-gray-200 bg-white p-3 flex flex-wrap items-center gap-x-1 gap-y-2">
+                        <div class="sticky top-0 z-20 border-b border-gray-200 bg-white p-3 flex flex-wrap items-center gap-x-1 gap-y-2 rounded-t-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)]" style="position: sticky; top: 0; z-index: 20; background-color: #ffffff;">
                             <button type="button" onclick="formatDoc('undo')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors" title="Undo"><i class="pi pi-undo"></i></button>
                             <button type="button" onclick="formatDoc('redo')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors" title="Redo"><i class="pi pi-refresh"></i></button>
                             
@@ -134,7 +243,26 @@
 
                             <div class="w-px h-5 bg-gray-200 mx-2"></div>
 
-                            <button type="button" onclick="formatDoc('insertUnorderedList')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors"><i class="pi pi-list"></i></button>
+                            <button type="button" onclick="formatDoc('insertOrderedList')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors" title="Danh sách số">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6h10M10 12h10M10 18h10" />
+                                    <text x="2" y="9" font-family="sans-serif" font-size="8px" font-weight="bold" fill="currentColor">1</text>
+                                    <text x="2" y="15" font-family="sans-serif" font-size="8px" font-weight="bold" fill="currentColor">2</text>
+                                </svg>
+                            </button>
+                            <button type="button" onclick="formatDoc('insertUnorderedList')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors" title="Danh sách dấu chấm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <circle cx="4" cy="6" r="1.5" fill="currentColor"/>
+                                    <circle cx="4" cy="12" r="1.5" fill="currentColor"/>
+                                    <circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 6h12M9 12h12M9 18h12" />
+                                </svg>
+                            </button>
+                            <button type="button" onclick="insertChecklist()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors" title="Danh sách công việc (Checklist)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                </svg>
+                            </button>
                             <button type="button" onclick="formatDoc('justifyFull')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors"><i class="pi pi-align-justify"></i></button>
                             <button type="button" onclick="formatDoc('justifyLeft')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors"><i class="pi pi-align-left"></i></button>
                             <button type="button" onclick="formatDoc('justifyCenter')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors"><i class="pi pi-align-center"></i></button>
@@ -144,36 +272,50 @@
                             
                             <button type="button" onclick="formatDoc('formatBlock', 'blockquote')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 font-bold font-serif text-[18px]">"</button>
                             <button type="button" onclick="formatDoc('formatBlock', 'pre')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 font-bold font-mono">&lt;/&gt;</button>
-                            <button type="button" onclick="const url=prompt('Nhập link liên kết:'); if(url) formatDoc('createLink', url)" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors"><i class="pi pi-link"></i></button>
-                            <button type="button" onclick="const url=prompt('Nhập URL hình ảnh:'); if(url) formatDoc('insertImage', url)" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors"><i class="pi pi-image"></i></button>
+                            <button type="button" onmousedown="event.preventDefault()" onclick="showLinkPopover()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors" title="Chèn liên kết"><i class="pi pi-link"></i></button>
+                            <button type="button" onclick="document.getElementById('editorImageInput').click()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors" title="Chèn ảnh từ máy tính"><i class="pi pi-image"></i></button>
+                            <input type="file" id="editorImageInput" accept="image/*" class="hidden" style="display: none;">
                             <button type="button" onclick="const code=prompt('Nhập mã nhúng Video (Iframe):'); if(code) formatDoc('insertHTML', code)" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 transition-colors"><i class="pi pi-video"></i></button>
 
-                            <button type="button" onclick="formatDoc('removeFormat')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 font-serif italic transition-colors relative"><span class="absolute text-[10px] bottom-1 right-0 font-sans not-italic">x</span>T</button>
+                            <button type="button" onclick="formatDoc('removeFormat')" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-700 font-serif italic transition-colors relative" title="Xóa định dạng"><span class="absolute text-[10px] bottom-1 right-0 font-sans not-italic">x</span>T</button>
+
+                            <div class="w-px h-5 bg-gray-200 mx-2"></div>
+                            
+                            <!-- Table Tools -->
+                            <div class="relative z-10 mx-1" id="tableGeneratorContainer">
+                                <button type="button" onclick="toggleDropdown('tableGeneratorDropdown')" class="px-2.5 h-8 flex items-center justify-center rounded border border-gray-200 hover:bg-gray-100 text-gray-700 text-xs font-semibold gap-1.5 transition-colors focus:bg-gray-100 shadow-sm" title="Tạo bảng">
+                                    <i class="pi pi-table text-primary"></i> Bảng
+                                </button>
+                                <div id="tableGeneratorDropdown" class="absolute top-full right-0 mt-1 hidden bg-white p-4 rounded-xl shadow-[0_4px_25px_-5px_rgba(0,0,0,0.15)] border border-gray-100 space-y-3" style="width: 250px !important; min-width: 250px !important; box-sizing: border-box; text-align: left;">
+                                    <div class="text-xs font-bold text-gray-500 uppercase tracking-wider" style="font-size: 12px; margin-bottom: 8px;">Tạo bảng mới</div>
+                                    <div class="grid grid-cols-2 gap-3" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px;">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-gray-400 uppercase mb-1" style="font-size: 11px; display: block; margin-bottom: 4px;">Số dòng</label>
+                                            <input type="number" id="tblRows" value="3" min="1" max="20" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 outline-none focus:bg-white focus:border-primary transition-all" style="width: 100%; box-sizing: border-box; padding: 6px 10px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-gray-400 uppercase mb-1" style="font-size: 11px; display: block; margin-bottom: 4px;">Số cột</label>
+                                            <input type="number" id="tblCols" value="4" min="1" max="10" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 outline-none focus:bg-white focus:border-primary transition-all" style="width: 100%; box-sizing: border-box; padding: 6px 10px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="createCustomTable(); toggleDropdown('tableGeneratorDropdown');" class="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-bold transition-colors shadow-sm flex items-center justify-center gap-1.5" style="width: 100%; padding: 8px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: bold; font-size: 12px;">
+                                        <i class="pi pi-plus-circle"></i> Chèn bảng
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Content Area -->
                         <div class="p-6 min-h-[500px] outline-none text-[15.5px] leading-relaxed text-[#4b5563] cursor-text caret-primary" contenteditable="true" id="postContent">
-                            <p class="mb-4"><strong class="font-semibold text-gray-800">"Bọc răng sứ giá bao nhiêu?"</strong> là câu hỏi có câu trả lời dao động gấp 15 lần giữa các phòng khám — từ 1 triệu đến 15 triệu mỗi răng. Chênh lệch này có lý do chính đáng, và cũng có cả bẫy. Bài viết giúp bạn phân biệt hai thứ đó.</p>
-                            
-                            <h2 class="text-[22px] font-bold mt-8 mb-4 border-l-[3px] border-primary pl-4 text-gray-800">Bảng giá bọc răng sứ 2026</h2>
-                            <table class="w-full border-collapse border border-gray-300">
-                                <thead>
-                                    <tr class="bg-gray-50">
-                                        <th class="border border-gray-300 p-2.5 text-left font-semibold text-gray-700">Dòng sứ</th>
-                                        <th class="border border-gray-300 p-2.5 text-left font-semibold text-gray-700">Giá/răng</th>
-                                        <th class="border border-gray-300 p-2.5 text-left font-semibold text-gray-700">Tuổi thọ</th>
-                                        <th class="border border-gray-300 p-2.5 text-left font-semibold text-gray-700">Đặc điểm</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="border border-gray-300 p-2.5"></td>
-                                        <td class="border border-gray-300 p-2.5"></td>
-                                        <td class="border border-gray-300 p-2.5"></td>
-                                        <td class="border border-gray-300 p-2.5"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            {!! old('content', $post->content) !!}
+                        </div>
+                        <input type="hidden" name="content" id="hiddenContent" value="{{ old('content', $post->content) }}">
+
+                        <!-- Link Popover -->
+                        <div id="linkPopover" class="absolute hidden bg-white border border-gray-200 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] p-2 z-30 flex items-center gap-2" style="width: 280px !important; box-sizing: border-box;">
+                            <span class="text-xs text-gray-500 font-semibold flex-shrink-0" style="font-size: 12px; color: #6b7280; font-weight: 600;">Enter link:</span>
+                            <input type="text" id="linkPopoverInput" onkeydown="if(event.key==='Enter'){event.preventDefault();savePopoverLink();}" class="flex-1 bg-gray-50 border border-gray-200 rounded px-2.5 py-1 text-xs text-gray-700 outline-none focus:bg-white focus:border-primary transition-all" placeholder="https://" style="width: 140px; font-size: 12px; padding: 4px 8px; border: 1px solid #e5e7eb; border-radius: 4px; box-sizing: border-box;">
+                            <button type="button" onclick="savePopoverLink()" class="text-primary hover:text-primary-dark font-bold text-xs px-2 py-1" style="color: #2563eb; font-weight: 700; font-size: 12px; background: none; border: none; cursor: pointer;">Save</button>
                         </div>
                     </div>
                 </div>
@@ -184,29 +326,70 @@
         <!-- RIGHT COLUMN (Sidebar & SEO) -->
         <div class="lg:col-span-4 space-y-6">
             
-            <!-- Box 1: Xuất bản & Thuộc tính -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <!-- Box 1: Cấu hình bài viết -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-6">
                 <h3 class="font-bold text-[14px] text-gray-800 flex items-center gap-2 mb-5 uppercase tracking-wider">
-                    <i class="pi pi-send text-primary"></i> Thuộc tính
+                    <i class="pi pi-cog text-blue-500"></i> Cấu hình bài viết
                 </h3>
                 
-                <div class="space-y-4">
+                <div class="space-y-5">
+                    <!-- Post Category -->
                     <div>
-                        <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">Trạng thái</label>
-                        <select class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
-                            <option>Nháp</option>
-                            <option>Đã đăng</option>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Chuyên mục <span class="text-red-500">*</span></label>
+                        <select name="category_id" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-shadow">
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}" {{ (old('category_id') ?? $post->category_id) == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->name }}
+                                </option>
+                            @endforeach
                         </select>
+                        @error('category_id') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- Post Status -->
                     <div>
-                        <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">Danh mục</label>
-                        <select class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
-                            <option>-- Chọn danh mục --</option>
-                            <option>Bọc răng sứ</option>
-                            <option>Niềng răng</option>
-                            <option>Trị mụn</option>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Trạng thái</label>
+                        <select name="status" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-shadow">
+                            <option value="draft" {{ (old('status') ?? $post->status) == 'draft' ? 'selected' : '' }}>Bản nháp</option>
+                            <option value="published" {{ (old('status') ?? $post->status) == 'published' ? 'selected' : '' }}>Xuất bản</option>
                         </select>
+                        @error('status') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Attach Provinces -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Gắn thẻ tỉnh/thành phố</label>
+                        <select name="provinces[]" multiple class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-shadow h-32">
+                            @php
+                                $selectedProvinces = old('provinces', $post->provinces->pluck('id')->toArray());
+                            @endphp
+                            @foreach($provinces as $province)
+                                <option value="{{ $province->id }}" {{ in_array($province->id, $selectedProvinces) ? 'selected' : '' }}>
+                                    {{ $province->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-400 mt-1">Giữ Ctrl (hoặc Cmd) để chọn nhiều</p>
+                        @error('provinces') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @error('provinces.*') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Attach Salons -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Liên kết cơ sở thẩm mỹ</label>
+                        <select name="salons[]" multiple class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-shadow h-32">
+                            @php
+                                $selectedSalons = old('salons', $post->salons->pluck('id')->toArray());
+                            @endphp
+                            @foreach($salons as $salon)
+                                <option value="{{ $salon->id }}" {{ in_array($salon->id, $selectedSalons) ? 'selected' : '' }}>
+                                    {{ $salon->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-400 mt-1">Giữ Ctrl (hoặc Cmd) để chọn nhiều</p>
+                        @error('salons') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @error('salons.*') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
             </div>
@@ -219,46 +402,20 @@
                 
                 <!-- Mockup of selected image -->
                 <div class="relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 mb-3 group bg-gray-50">
-                    <img src="https://picsum.photos/400/250?random=10" alt="Cover" class="w-full h-full object-cover">
+                    <img src="{{ old('thumbnail', $post->thumbnail ?? 'https://picsum.photos/400/250?random=10') }}" alt="Cover" class="w-full h-full object-cover">
                     <!-- Delete Button -->
-                    <button class="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow">
+                    <button type="button" id="deleteCoverBtn" class="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow">
                         <i class="pi pi-times text-[12px]"></i>
                     </button>
                 </div>
                 
                 <div class="flex gap-2">
-                    <button class="px-4 py-2 text-[13px] font-bold bg-gray-50 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 flex items-center gap-2 transition-colors">
-                        <i class="pi pi-cloud-upload"></i> Tải ảnh
+                    <button type="button" onclick="document.getElementById('coverImageInput').click()" class="px-4 py-2 text-[13px] font-bold bg-gray-50 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 flex items-center gap-2 transition-colors flex-shrink-0">
+                        <i class="pi pi-cloud-upload"></i> Chọn file
                     </button>
-                    <input type="text" placeholder="Hoặc dán URL ảnh..." class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 text-[13px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition">
-                </div>
-            </div>
-
-            <!-- Box 3: Meta Đính kèm -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">Cơ sở liên quan</label>
-                        <select class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
-                            <option>-- Chọn cơ sở --</option>
-                            <option>Bệnh viện Thẩm mỹ Hoàn Mỹ</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">
-                            Tỉnh thành <span class="normal-case font-normal text-gray-400">(có thể chọn nhiều)</span>
-                        </label>
-                        <!-- Fake Multi-select UI -->
-                        <div class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 flex flex-wrap gap-2 cursor-pointer hover:border-primary transition-colors">
-                            <span class="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded text-[13px] font-semibold text-gray-700 shadow-sm">
-                                Hà Nội <i class="pi pi-times text-[10px] text-gray-400 hover:text-red-500 ml-1"></i>
-                            </span>
-                            <span class="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded text-[13px] font-semibold text-gray-700 shadow-sm">
-                                Hải Phòng <i class="pi pi-times text-[10px] text-gray-400 hover:text-red-500 ml-1"></i>
-                            </span>
-                        </div>
-                    </div>
+                    <input type="file" name="thumbnail_file" id="coverImageInput" accept="image/*" class="hidden" style="display: none;">
+                    <input type="hidden" name="remove_thumbnail" id="removeThumbnailInput" value="0">
+                    <input type="text" name="thumbnail" id="postThumbnail" value="{{ old('thumbnail', $post->thumbnail) }}" placeholder="Hoặc dán URL ảnh..." class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 text-[13px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition">
                 </div>
             </div>
 
@@ -280,7 +437,7 @@
                     <!-- Focus Keyword -->
                     <div>
                         <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">Từ khóa chính</label>
-                        <input type="text" id="seoKeyword" placeholder="Nhập từ khóa cần SEO..." class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
+                        <input type="text" id="seoKeyword" name="keyword" value="{{ old('keyword', $post->keyword) }}" placeholder="Nhập từ khóa cần SEO..." class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
                     </div>
 
                     <!-- Meta Title -->
@@ -288,7 +445,7 @@
                         <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">
                             Meta Title <span class="normal-case font-normal text-gray-400">(trống = dùng tiêu đề)</span>
                         </label>
-                        <input type="text" id="seoTitle" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
+                        <input type="text" id="seoTitle" name="meta_title" value="{{ old('meta_title', $post->meta_title) }}" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
                         <div class="text-right mt-1 font-bold text-[12px] transition-colors" id="seoTitleCounter">0/65</div>
                     </div>
 
@@ -297,7 +454,7 @@
                         <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">
                             Meta Description <span class="normal-case font-normal text-gray-400">(trống = dùng mô tả ngắn)</span>
                         </label>
-                        <textarea id="seoDesc" rows="4" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition resize-none"></textarea>
+                        <textarea id="seoDesc" name="meta_description" rows="4" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition resize-none">{{ old('meta_description', $post->meta_description) }}</textarea>
                         <div class="text-right mt-1 font-bold text-[12px] transition-colors" id="seoDescCounter">0/160</div>
                     </div>
 
@@ -334,6 +491,7 @@
 
         </div>
     </div>
+    </form>
 
     <!-- Preview Modal -->
     <div id="previewModal" class="fixed inset-0 z-[100] hidden bg-[#111827] flex-col transition-opacity duration-300 opacity-0">
@@ -384,252 +542,5 @@
 @endsection
 
 @push('scripts')
-<script>
-    /**
-     * Editor Format Logic
-     */
-    window.formatDoc = function(cmd, value = null) {
-        document.execCommand(cmd, false, value);
-        document.getElementById('postContent').focus();
-    };
-
-    /**
-     * Dropdown Logic
-     */
-    window.toggleDropdown = function(id) {
-        // Hide others
-        if (id !== 'textColorDropdown') document.getElementById('textColorDropdown').classList.add('hidden');
-        if (id !== 'bgColorDropdown') document.getElementById('bgColorDropdown').classList.add('hidden');
-        
-        const el = document.getElementById(id);
-        el.classList.toggle('hidden');
-    };
-
-    // Close dropdowns on outside click
-    document.addEventListener('click', function(event) {
-        const isClickInsideTextColor = document.getElementById('textColorContainer').contains(event.target);
-        const isClickInsideBgColor = document.getElementById('bgColorContainer').contains(event.target);
-        
-        if (!isClickInsideTextColor) {
-            document.getElementById('textColorDropdown').classList.add('hidden');
-        }
-        if (!isClickInsideBgColor) {
-            document.getElementById('bgColorDropdown').classList.add('hidden');
-        }
-    });
-
-    /**
-     * Preview Modal Logic
-     */
-    window.openPreview = function() {
-        const modal = document.getElementById('previewModal');
-        
-        // Populate data
-        document.getElementById('previewTitle').innerText = document.getElementById('postTitle').value || 'Chưa có tiêu đề';
-        document.getElementById('previewBody').innerHTML = document.getElementById('postContent').innerHTML;
-        
-        const today = new Date();
-        document.getElementById('previewDate').innerText = today.toLocaleDateString('vi-VN');
-        
-        const stats = document.getElementById('readingStats').innerText.split(' - ');
-        if(stats.length > 1) {
-            document.getElementById('previewReadTime').innerText = stats[1].trim();
-        }
-        
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-        }, 10);
-        document.body.style.overflow = 'hidden'; // prevent background scrolling
-    };
-
-    window.closePreview = function() {
-        const modal = document.getElementById('previewModal');
-        modal.classList.add('opacity-0');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }, 300);
-    };
-
-    window.setPreviewMode = function(mode) {
-        const container = document.getElementById('previewContainer');
-        const btnDesktop = document.getElementById('btnPreviewDesktop');
-        const btnMobile = document.getElementById('btnPreviewMobile');
-        
-        if (mode === 'desktop') {
-            container.style.maxWidth = '800px';
-            btnDesktop.className = 'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-colors bg-[#2563eb] text-white';
-            btnMobile.className = 'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-colors text-gray-400 hover:text-white';
-        } else {
-            container.style.maxWidth = '375px'; // standard mobile width
-            btnMobile.className = 'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-colors bg-[#2563eb] text-white';
-            btnDesktop.className = 'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-colors text-gray-400 hover:text-white';
-        }
-    };
-
-    /**
-     * SEO Analyzer Logic (Mockup for Real-time scoring)
-     */
-    document.addEventListener('DOMContentLoaded', function() {
-        const titleInput = document.getElementById('postTitle');
-        const slugSpan = document.getElementById('postSlug');
-        const excerptInput = document.getElementById('postExcerpt');
-        const excerptCounter = document.getElementById('excerptCounter');
-        
-        const contentDiv = document.getElementById('postContent');
-        const readingStats = document.getElementById('readingStats');
-        
-        const keywordInput = document.getElementById('seoKeyword');
-        const seoTitleInput = document.getElementById('seoTitle');
-        const seoTitleCounter = document.getElementById('seoTitleCounter');
-        const seoDescInput = document.getElementById('seoDesc');
-        const seoDescCounter = document.getElementById('seoDescCounter');
-        
-        const previewTitle = document.getElementById('previewTitle');
-        const previewDesc = document.getElementById('previewDesc');
-        const previewSlug = document.getElementById('previewSlug');
-        
-        const scoreRing = document.getElementById('seoScoreRing');
-        const scoreText = document.getElementById('seoScoreText');
-        const checklist = document.getElementById('seoChecklist');
-
-        // Utils
-        const generateSlug = (text) => {
-            return text.toString().toLowerCase()
-                .replace(/\s+/g, '-')           
-                .replace(/[^\w\-]+/g, '')       
-                .replace(/\-\-+/g, '-')         
-                .replace(/^-+/, '')             
-                .replace(/-+$/, '');            
-        };
-
-        const countWords = (str) => {
-            return str.trim().split(/\s+/).filter(word => word.length > 0).length;
-        };
-
-        const updateCounter = (el, count, max) => {
-            el.innerText = `${count}/${max}`;
-            if (count > max) {
-                el.classList.add('text-orange-500');
-                el.classList.remove('text-gray-400', 'text-green-600');
-            } else if (count > 0) {
-                el.classList.add('text-green-600');
-                el.classList.remove('text-gray-400', 'text-orange-500');
-            } else {
-                el.classList.add('text-gray-400');
-                el.classList.remove('text-green-600', 'text-orange-500');
-            }
-        };
-
-        // Main Engine
-        const analyzeSEO = () => {
-            const title = titleInput.value;
-            const excerpt = excerptInput.value;
-            const content = contentDiv.innerText;
-            const wordCount = countWords(content);
-            const readTime = Math.max(1, Math.ceil(wordCount / 200)); // Average 200 wpm
-            
-            readingStats.innerText = `${wordCount} từ - ${readTime} phút đọc`;
-            
-            slugSpan.innerText = generateSlug(title) || 'tieu-de-bai-viet';
-            previewSlug.innerText = generateSlug(title) || 'tieu-de-bai-viet';
-            
-            // Sync Excerpt Counter
-            updateCounter(excerptCounter, excerpt.length, 160);
-
-            // Sync SEO Meta (fallback to post title/excerpt)
-            const metaTitle = seoTitleInput.value || title;
-            const metaDesc = seoDescInput.value || excerpt;
-            const keyword = keywordInput.value.toLowerCase().trim();
-
-            updateCounter(seoTitleCounter, metaTitle.length, 65);
-            updateCounter(seoDescCounter, metaDesc.length, 160);
-
-            previewTitle.innerText = metaTitle || 'Tiêu đề SEO sẽ hiển thị ở đây';
-            previewDesc.innerText = metaDesc || 'Vui lòng cung cấp Meta Description hoặc Mô tả ngắn để Google có thể hiển thị đoạn mã trích dẫn này...';
-
-            // Scoring Logic
-            let score = 0;
-            let maxScore = 100;
-            const checks = [];
-
-            const addCheck = (condition, textPass, textFail) => {
-                if (condition) {
-                    checks.push(`<li class="flex items-start gap-2 text-green-600"><i class="pi pi-check-circle mt-0.5"></i> <span>${textPass}</span></li>`);
-                    score += 15;
-                } else {
-                    checks.push(`<li class="flex items-start gap-2 text-orange-500"><i class="pi pi-circle mt-0.5"></i> <span>${textFail}</span></li>`);
-                }
-            };
-
-            // Rule 1: Meta Title Length
-            addCheck(metaTitle.length >= 30 && metaTitle.length <= 65, 
-                `Meta title độ dài chuẩn (hiện ${metaTitle.length})`, 
-                `Meta title nên từ 30-65 ký tự (hiện ${metaTitle.length})`);
-            
-            // Rule 2: Meta Desc Length
-            addCheck(metaDesc.length >= 70 && metaDesc.length <= 160, 
-                `Meta description độ dài chuẩn (hiện ${metaDesc.length})`, 
-                `Meta description nên từ 70-160 ký tự (hiện ${metaDesc.length})`);
-
-            // Rule 3: Content Length
-            addCheck(wordCount >= 600, 
-                `Nội dung đủ dài ≥ 600 từ (hiện ${wordCount})`, 
-                `Nội dung quá ngắn < 600 từ (hiện ${wordCount})`);
-
-            // Rule 4: Headings
-            const h2Count = (contentDiv.innerHTML.match(/<h2/gi) || []).length;
-            addCheck(h2Count >= 2, 
-                `Có ≥ 2 thẻ H2 để tạo mục lục (hiện ${h2Count})`, 
-                `Nên có ≥ 2 thẻ H2 để cấu trúc bài viết rõ ràng (hiện ${h2Count})`);
-
-            // Rule 5: Focus Keyword (if provided)
-            if (keyword) {
-                const keywordInTitle = metaTitle.toLowerCase().includes(keyword);
-                const keywordInDesc = metaDesc.toLowerCase().includes(keyword);
-                const keywordInContent = content.toLowerCase().includes(keyword);
-                
-                addCheck(keywordInTitle, `Từ khóa xuất hiện trong meta title`, `Từ khóa chưa có trong meta title`);
-                addCheck(keywordInDesc, `Từ khóa xuất hiện trong meta description`, `Từ khóa chưa có trong meta description`);
-                addCheck(keywordInContent, `Từ khóa xuất hiện trong nội dung`, `Từ khóa chưa xuất hiện trong nội dung`);
-                maxScore = 105; // 7 rules * 15
-            } else {
-                checks.push(`<li class="flex items-start gap-2 text-gray-400"><i class="pi pi-info-circle mt-0.5"></i> <span>Nhập từ khóa chính để đánh giá sâu hơn</span></li>`);
-                maxScore = 60; // 4 rules * 15
-            }
-
-            // Calculate percentage
-            const percentage = Math.round((score / maxScore) * 100) || 0;
-            scoreText.innerText = `${percentage}%`;
-
-            // Color gradient logic based on score
-            let color = '#ef4444'; // Red < 50
-            if (percentage >= 50 && percentage < 80) color = '#f59e0b'; // Orange
-            if (percentage >= 80) color = '#10b981'; // Green
-
-            if (percentage > 0) {
-                scoreText.style.color = color;
-                scoreRing.style.background = `conic-gradient(${color} ${percentage}%, #e5e7eb ${percentage}%)`;
-            } else {
-                scoreText.style.color = '#9ca3af';
-                scoreRing.style.background = `#e5e7eb`;
-            }
-
-            // Render Checklist
-            checklist.innerHTML = checks.join('');
-        };
-
-        // Event Listeners
-        titleInput.addEventListener('input', analyzeSEO);
-        excerptInput.addEventListener('input', analyzeSEO);
-        contentDiv.addEventListener('input', analyzeSEO);
-        keywordInput.addEventListener('input', analyzeSEO);
-        seoTitleInput.addEventListener('input', analyzeSEO);
-        seoDescInput.addEventListener('input', analyzeSEO);
-
-        // Initial Run
-        analyzeSEO();
-    });
-</script>
+<script src="{{ asset('js/admin/editor.js') }}"></script>
 @endpush
