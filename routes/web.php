@@ -150,19 +150,20 @@ Route::get('/bai-viet', function (\Illuminate\Http\Request $request) {
         })
         ->where('status', 'published')
         ->latest('id')
-        ->limit(10)
-        ->get()
-        ->map(function ($post) {
-            return [
-                'category' => mb_strtoupper($post->category->name ?? 'CHUNG'),
-                'title' => $post->title,
-                'excerpt' => $post->short_description,
-                'date' => $post->created_at->format('d/m/Y'),
-                'views' => random_int(100, 2000),
-                'image' => str_starts_with($post->thumbnail, 'http') ? $post->thumbnail : asset($post->thumbnail),
-                'url' => url('/bai-viet/chi-tiet/' . $post->slug)
-            ];
-        });
+        ->paginate(12)
+        ->appends(request()->query());
+
+    $articles->getCollection()->transform(function ($post) {
+        return [
+            'category' => mb_strtoupper($post->category->name ?? 'CHUNG'),
+            'title' => $post->title,
+            'excerpt' => $post->short_description,
+            'date' => $post->created_at->format('d/m/Y'),
+            'views' => random_int(100, 2000),
+            'image' => str_starts_with($post->thumbnail, 'http') ? $post->thumbnail : asset($post->thumbnail),
+            'url' => url('/bai-viet/chi-tiet/' . $post->slug)
+        ];
+    });
 
 
 
