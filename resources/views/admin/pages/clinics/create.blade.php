@@ -1,168 +1,104 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Thêm cơ sở thẩm mỹ - Review Thẩm Mỹ Admin')
 
 @section('content')
-    <!-- Top Header Bar -->
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-[24px] font-bold text-[#1F2733]">Thêm cơ sở mới</h1>
-        <a href="{{ url('/admin/clinics') }}" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center gap-2">
+        <a href="{{ route('admin.clinics.index') }}" class="text-primary hover:text-primary-dark font-medium text-sm flex items-center gap-2">
             <i class="pi pi-arrow-left"></i> Quay lại
         </a>
     </div>
 
-    <form action="#" method="POST" class="flex flex-col lg:flex-row gap-5">
-        <!-- Left Column -->
+    <form action="{{ route('admin.clinics.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row gap-5" data-loading-submit>
+        @csrf
+        <input type="hidden" name="form_token" value="{{ $formToken }}">
+        <input type="hidden" name="images_synced" value="1">
         <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-5">
-            
-            <!-- Tên cơ sở -->
             <div>
                 <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Tên cơ sở <span class="text-red-500">*</span></label>
-                <input type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập tên cơ sở...">
+                <input name="name" value="{{ old('name') }}" type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập tên cơ sở...">
             </div>
 
-            <!-- Địa chỉ -->
             <div>
                 <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Địa chỉ</label>
-                <input type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập địa chỉ cơ sở...">
+                <input name="address" value="{{ old('address') }}" type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập địa chỉ cơ sở...">
             </div>
 
-            <!-- Điện thoại & Website -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Điện thoại</label>
-                    <input type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập số điện thoại...">
+                    <input name="phone" value="{{ old('phone') }}" type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập số điện thoại...">
                 </div>
                 <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Website</label>
-                    <input type="url" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="https://...">
+                    <input name="website" value="{{ old('website') }}" type="url" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="https://...">
                 </div>
             </div>
 
-            <!-- Mô tả -->
             <div>
                 <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Mô tả</label>
-                <textarea rows="4" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập mô tả về cơ sở thẩm mỹ..."></textarea>
+                <textarea name="description" rows="4" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập mô tả về cơ sở thẩm mỹ...">{{ old('description') }}</textarea>
             </div>
 
-            <!-- Ảnh cơ sở -->
             <div>
                 <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Ảnh cơ sở</label>
-                <div class="flex flex-wrap gap-3 mb-3">
-                    <!-- Image Mockup -->
-                    <div class="relative w-[110px] h-[75px] rounded-lg border border-gray-200">
-                        <img src="https://picsum.photos/200/150?random=1" class="w-full h-full object-cover rounded-lg">
-                        <button type="button" class="absolute -top-2 -right-2 w-[18px] h-[18px] bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 shadow-sm">
-                            <i class="pi pi-times text-[9px]"></i>
-                        </button>
-                    </div>
-                    <div class="relative w-[110px] h-[75px] rounded-lg border border-gray-200">
-                        <img src="https://picsum.photos/200/150?random=2" class="w-full h-full object-cover grayscale rounded-lg">
-                        <button type="button" class="absolute -top-2 -right-2 w-[18px] h-[18px] bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 shadow-sm">
-                            <i class="pi pi-times text-[9px]"></i>
-                        </button>
-                    </div>
-                </div>
+                <div class="flex flex-wrap gap-3 mb-3" id="imagePreviewWrap"></div>
                 <div class="flex items-center gap-2">
-                    <button type="button" class="px-3 py-1.5 rounded-lg border border-gray-200 text-primary hover:bg-blue-50 text-sm font-semibold flex items-center gap-1.5 transition-colors bg-white">
+                    <button type="button" onclick="document.getElementById('image_file').click()" class="px-3 py-1.5 rounded-lg border border-gray-200 text-primary hover:bg-blue-50 text-sm font-semibold flex items-center gap-1.5 transition-colors bg-white">
                         <i class="pi pi-cloud-upload"></i> Tải ảnh lên
                     </button>
-                    <input type="text" class="flex-1 px-3 py-1.5 rounded-lg border border-gray-100 bg-gray-50 text-sm outline-none focus:bg-white focus:border-gray-200" placeholder="hoặc dán URL ảnh rồi nhấn Enter">
+                    <input id="image_file" name="image_files[]" type="file" accept="image/*" multiple class="hidden">
+                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="flex-1 px-3 py-1.5 rounded-lg border border-gray-100 bg-gray-50 text-sm outline-none focus:bg-white focus:border-gray-200" placeholder="hoặc dán URL ảnh rồi nhấn Enter">
                 </div>
             </div>
-            
         </div>
 
-        <!-- Right Column -->
         <div class="w-full lg:w-[320px] flex-shrink-0 space-y-5">
-            
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-5">
-                
-                <!-- Điểm xếp hạng -->
                 <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Điểm xếp hạng (score)</label>
-                    <input type="number" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm mb-1" placeholder="Ví dụ: 60">
+                    <input name="score" value="{{ old('score') }}" type="number" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm mb-1" placeholder="Ví dụ: 60">
                     <p class="text-[12px] text-gray-500 font-medium">Càng cao càng đứng đầu bảng xếp hạng.</p>
                 </div>
 
-                <!-- Rating & Số đánh giá -->
                 <div class="flex gap-4">
                     <div class="flex-1">
                         <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Rating (0-5)</label>
-                        <input type="number" step="0.1" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="5.0">
+                        <input name="rating" value="{{ old('rating', '5.0') }}" type="number" step="0.1" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="5.0">
                     </div>
                     <div class="flex-1">
                         <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Số đánh giá</label>
-                        <input type="number" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="500">
+                        <input name="review_count" value="{{ old('review_count') }}" type="number" data-clear-zero class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="500">
                     </div>
                 </div>
 
-                <!-- Danh mục -->
-                <div class="relative" id="categoryDropdownWrapper">
+                <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Danh mục</label>
-                    <button type="button" onclick="toggleDropdown('categoryDropdown')" class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white flex justify-between items-center text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-gray-700 text-left">
-                        <span class="truncate">Chọn danh mục</span>
-                        <i class="pi pi-chevron-down text-gray-400 text-[12px]"></i>
-                    </button>
-                    <!-- Dropdown Content -->
-                    <div id="categoryDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.08)] rounded-xl z-50 overflow-hidden">
-                        <div class="p-3 border-b border-gray-50">
-                            <div class="relative">
-                                <input type="text" class="w-full pl-3 pr-8 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Tìm kiếm...">
-                                <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            </div>
-                        </div>
-                        <div class="max-h-[220px] overflow-y-auto p-2 scrollbar-thin">
-                            <!-- Options -->
-                            <label class="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                <input type="checkbox" class="w-[18px] h-[18px] rounded border-gray-300 accent-[#4D8AFF]">
-                                <span class="text-sm text-gray-700">Niềng răng</span>
-                            </label>
-                            <label class="flex items-center gap-3 px-3 py-2 bg-blue-50/40 hover:bg-blue-50/80 rounded-lg cursor-pointer">
-                                <input type="checkbox" checked class="w-[18px] h-[18px] rounded border-gray-300 accent-[#4D8AFF]">
-                                <span class="text-sm text-primary font-medium">Nâng mũi</span>
-                            </label>
-                            <label class="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                <input type="checkbox" class="w-[18px] h-[18px] rounded border-gray-300 accent-[#4D8AFF]">
-                                <span class="text-sm text-gray-700">Phẫu thuật thẩm mỹ</span>
-                            </label>
-                            <label class="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                <input type="checkbox" class="w-[18px] h-[18px] rounded border-gray-300 accent-[#4D8AFF]">
-                                <span class="text-sm text-gray-700">Trẻ hóa da</span>
-                            </label>
-                            <label class="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                <input type="checkbox" class="w-[18px] h-[18px] rounded border-gray-300 accent-[#4D8AFF]">
-                                <span class="text-sm text-gray-700">Bọc răng sứ</span>
-                            </label>
-                        </div>
-                    </div>
+                    <select name="category_id" class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-gray-700">
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <!-- Cơ sở nổi bật -->
                 <div class="pt-1">
                     <label class="flex items-center gap-3 cursor-pointer p-1">
-                        <input type="checkbox" checked class="w-[18px] h-[18px] rounded border-gray-300 accent-[#4D8AFF]">
+                        <input name="is_featured" value="1" type="checkbox" @checked(old('is_featured', true)) class="w-[18px] h-[18px] rounded border-gray-300 accent-[#4D8AFF]">
                         <span class="text-[13px] font-bold text-gray-800">Cơ sở nổi bật</span>
                     </label>
                 </div>
 
-                <!-- Trạng thái -->
-                <div class="relative" id="statusDropdownWrapper">
+                <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Trạng thái</label>
-                    <button type="button" onclick="toggleDropdown('statusDropdown')" class="w-full px-3 py-2 rounded-lg border border-primary bg-white flex justify-between items-center text-sm ring-2 ring-primary/10 outline-none transition text-gray-800">
-                        <span>Hiển thị</span>
-                        <i class="pi pi-chevron-down text-gray-400 text-[12px]"></i>
-                    </button>
-                    <!-- Dropdown Content -->
-                    <div id="statusDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.08)] rounded-xl z-50 overflow-hidden py-1">
-                        <button type="button" class="w-full text-left px-3 py-2 hover:bg-blue-50/80 text-sm text-primary font-medium transition-colors bg-blue-50/40">Hiển thị</button>
-                        <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm text-gray-700 transition-colors">Ẩn</button>
-                    </div>
+                    <select name="status" class="w-full px-3 py-2 rounded-lg border border-primary bg-white text-sm ring-2 ring-primary/10 outline-none transition text-gray-800">
+                        <option value="active" @selected(old('status', 'active') === 'active')>Hiển thị</option>
+                        <option value="inactive" @selected(old('status') === 'inactive')>Ẩn</option>
+                    </select>
                 </div>
 
-                <!-- Nút Lưu -->
                 <div class="pt-1">
-                    <button type="button" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm">
+                    <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm">
                         <i class="pi pi-save"></i> Lưu
                     </button>
                 </div>
@@ -173,29 +109,61 @@
 
 @push('scripts')
 <script>
-    function toggleDropdown(id) {
-        const dropdown = document.getElementById(id);
-        const isHidden = dropdown.classList.contains('hidden');
-        
-        // Hide all other dropdowns
-        document.querySelectorAll('[id$="Dropdown"]').forEach(el => el.classList.add('hidden'));
-        
-        if (isHidden) {
-            dropdown.classList.remove('hidden');
-            // If it's the category dropdown, maybe simulate focus state on the button
-            const button = document.querySelector(`[onclick="toggleDropdown('${id}')"]`);
-            if(button && !button.classList.contains('border-primary')) {
-                 // For status dropdown which already has border-primary in the mock, this is optional
-                 // We can leave it as CSS handles :focus, but since we use click, let's keep it simple.
-            }
-        }
+    const imageInput = document.getElementById('image_file');
+    const imagePreviewWrap = document.getElementById('imagePreviewWrap');
+    const selectedImages = new DataTransfer();
+
+    imageInput?.addEventListener('change', function () {
+        [...(this.files || [])].slice(0, 4 - selectedImages.files.length).forEach((file) => {
+            selectedImages.items.add(file);
+        });
+
+        this.files = selectedImages.files;
+        renderSelectedImages();
+    });
+
+    function renderSelectedImages() {
+        imagePreviewWrap.innerHTML = '';
+
+        [...selectedImages.files].forEach((file, index) => {
+            const url = URL.createObjectURL(file);
+            imagePreviewWrap.insertAdjacentHTML('beforeend', `
+                <div class="relative w-[110px] h-[75px] rounded-lg border border-gray-200">
+                    <img src="${url}" class="w-full h-full object-cover rounded-lg">
+                    <button type="button" data-remove-new-image="${index}" class="absolute -top-2 -right-2 w-[18px] h-[18px] bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 shadow-sm">
+                        <i class="pi pi-times text-[9px]"></i>
+                    </button>
+                </div>
+            `);
+        });
     }
 
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('#categoryDropdownWrapper') && !e.target.closest('#statusDropdownWrapper')) {
-            document.querySelectorAll('[id$="Dropdown"]').forEach(el => el.classList.add('hidden'));
-        }
+    imagePreviewWrap?.addEventListener('click', function (event) {
+        const removeButton = event.target.closest('[data-remove-new-image]');
+
+        if (!removeButton) return;
+
+        const removeIndex = Number(removeButton.dataset.removeNewImage);
+        const nextImages = new DataTransfer();
+
+        [...selectedImages.files].forEach((file, index) => {
+            if (index !== removeIndex) nextImages.items.add(file);
+        });
+
+        selectedImages.items.clear();
+        [...nextImages.files].forEach((file) => selectedImages.items.add(file));
+        imageInput.files = selectedImages.files;
+        renderSelectedImages();
+    });
+
+    document.querySelectorAll('[data-clear-zero]').forEach((input) => {
+        input.addEventListener('focus', () => {
+            if (input.value === '0') input.value = '';
+        });
+
+        input.addEventListener('blur', () => {
+            if (input.value.trim() === '') input.value = '0';
+        });
     });
 </script>
 @endpush

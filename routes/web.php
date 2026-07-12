@@ -1,47 +1,29 @@
 <?php
 
+use App\Http\Controllers\Admin\ClinicController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Client\RankingController;
+use App\Models\Category;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PostController;
+
+// Auth Routes
+Route::prefix('admin')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
 // Client Routes
 Route::get('/', function () {
     return view('client.pages.home.index');
 });
 
-Route::get('/bang-xep-hang', function () {
-    $breadcrumb = [
-        ['label' => 'Trang chủ', 'url' => url('/')],
-        ['label' => 'Bảng xếp hạng']
-    ];
-    return view('client.pages.ranking.index', compact('breadcrumb'));
-});
-
-Route::get('/bang-xep-hang/chi-tiet/{slug}', function ($slug) {
-    // Giả lập data cơ sở
-    $clinic = [
-        'name' => 'Bệnh viện Thẩm mỹ Kim Cương',
-        'category' => 'NÂNG MŨI · NÂNG NGỰC',
-        'rating' => 5.0,
-        'votes' => 500,
-        'score' => 60,
-        'address' => '100 Đường Thẩm Mỹ, Hà Nội',
-        'phone' => '19000000',
-        'website' => 'example.com',
-        'description' => 'Cơ sở thẩm mỹ uy tín với đội ngũ bác sĩ giàu kinh nghiệm, trang thiết bị hiện đại, được khách hàng đánh giá cao.',
-        'images' => [
-            'https://picsum.photos/seed/clinic-0-a/800/500',
-            'https://picsum.photos/seed/clinic-0-b/800/500'
-        ]
-    ];
-
-    $breadcrumb = [
-        ['label' => 'Trang chủ', 'url' => url('/')],
-        ['label' => 'Xếp hạng', 'url' => url('/bang-xep-hang')],
-        ['label' => $clinic['name']]
-    ];
-
-    return view('client.pages.ranking.detail', compact('clinic', 'breadcrumb'));
-});
+Route::get('/bang-xep-hang', [RankingController::class, 'index'])->name('ranking.index');
+Route::get('/bang-xep-hang/chi-tiet/{slug}', [RankingController::class, 'show'])->name('ranking.show');
 
 Route::get('/bai-viet', function (\Illuminate\Http\Request $request) {
     $type = $request->query('type', 'sub');
@@ -129,6 +111,27 @@ Route::get('/bai-viet', function (\Illuminate\Http\Request $request) {
         ];
     }
 
+    $dbCategories = Category::with('children')->get();
+    $currentDbCategory = $dbCategories->first(
+        fn (Category $item): bool => \Illuminate\Support\Str::slug($item->name) === $cat
+    );
+
+    if ($type === 'main') {
+        $clinicCategorySlugs = $currentDbCategory
+            ? $currentDbCategory->children
+                ->map(fn (Category $child): string => \Illuminate\Support\Str::slug($child->name))
+                ->push(\Illuminate\Support\Str::slug($currentDbCategory->name))
+                ->all()
+            : collect($category['children'] ?? [])
+                ->pluck('slug')
+                ->push($cat)
+                ->all();
+    } else {
+        $clinicCategorySlugs = [$cat];
+    }
+
+    $categoryClinics = RankingController::rankedClinics(null, $clinicCategorySlugs);
+
     $articles = [
         [
             'category' => 'HÚT MỠ',
@@ -204,7 +207,7 @@ Route::get('/bai-viet', function (\Illuminate\Http\Request $request) {
         ]
     ];
 
-    return view('client.pages.category.index', compact('category', 'articles', 'breadcrumb'));
+    return view('client.pages.category.index', compact('category', 'articles', 'breadcrumb', 'categoryClinics'));
 });
 
 Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
@@ -408,7 +411,7 @@ Route::get('/chinh-sach', function () {
 });
 
 // Admin Routes
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', function () {
         return view('admin.pages.dashboard');
     });
@@ -428,27 +431,26 @@ Route::prefix('admin')->group(function () {
     Route::put('/posts/{id}', [PostController::class, 'update'])->name('admin.posts.update');
     Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
 
-    Route::get('/clinics', function () {
-        return view('admin.pages.clinics.index');
-    });
+    Route::patch('/clinics/reorder', [ClinicController::class, 'reorder'])->name('admin.clinics.reorder');
+    Route::patch('/clinics/{clinic}/images', [ClinicController::class, 'updateImages'])->name('admin.clinics.images');
+    Route::resource('clinics', ClinicController::class)->except(['show'])->names('admin.clinics');
 
-    Route::get('/clinics/create', function () {
-        return view('admin.pages.clinics.create');
-    });
-
-    Route::get('/clinics/{id}/edit', function () {
-        return view('admin.pages.clinics.edit');
-    });
-
-    Route::get('/categories', function () {
-        return view('admin.pages.categories.index');
-    });
+    Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
 
     Route::get('/comments', function () {
         return view('admin.pages.comments.index');
     });
 
-    Route::get('/users', function () {
-        return view('admin.pages.users.index');
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show', 'create', 'edit'])->names('admin.users');
+    Route::post('/roles', [\App\Http\Controllers\Admin\RoleController::class, 'store'])->name('admin.roles.store');
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
+
+        Route::middleware(['admin'])->group(function () {
+            Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->only(['store', 'update', 'destroy'])->names('admin.categories');
+            Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
+            Route::delete('/settings/logo', [\App\Http\Controllers\Admin\SettingController::class, 'deleteLogo'])->name('admin.settings.logo.delete');
+        });
     });
 });

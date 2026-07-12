@@ -1,4 +1,4 @@
-@props(['title' => 'Xếp hạng cơ sở thẩm mỹ', 'icon' => false, 'hideTitle' => false, 'disableTopMargin' => false])
+@props(['title' => 'Xếp hạng cơ sở thẩm mỹ', 'icon' => false, 'hideTitle' => false, 'disableTopMargin' => false, 'clinics' => null])
 
 <div class="{{ $disableTopMargin ? '' : 'max-w-[1200px] mx-auto px-4 mt-12 mb-8' }}">
     @if(!$hideTitle)
@@ -10,7 +10,7 @@
                 {{ $title }}
             </h2>
         </div>
-        <a href="{{ url('/bang-xep-hang') }}" class="text-[#1668DC] text-[14px] font-medium hover:underline flex items-center gap-1">
+        <a href="{{ request('cat') ? url('/bang-xep-hang?cat=' . request('cat')) : url('/bang-xep-hang') }}" class="text-[#1668DC] text-[14px] font-medium hover:underline flex items-center gap-1">
             Xem tất cả <span class="text-[16px]">&rarr;</span>
         </a>
     </div>
@@ -18,89 +18,26 @@
 
     <div class="flex flex-col gap-[12px]">
         @php
-            $clinics = [
-                [
-                    'rank' => 1,
-                    'category' => 'NÂNG MŨI · NÂNG NGỰC',
-                    'name' => 'Bệnh viện Thẩm mỹ Kim Cương',
-                    'rating' => 5.0,
-                    'votes' => 500,
-                    'address' => '100 Đường Thẩm Mỹ, Hà Nội',
-                    'score' => 60,
-                    'image' => 'https://picsum.photos/seed/clinic1/300/200',
-                    'featured' => true
-                ],
-                [
-                    'rank' => 2,
-                    'category' => 'CẮT MÍ · HÚT MỠ',
-                    'name' => 'Bệnh viện Thẩm mỹ Á Âu',
-                    'rating' => 4.4,
-                    'votes' => 380,
-                    'address' => '102 Đường Thẩm Mỹ, Hà Nội',
-                    'score' => 50,
-                    'image' => 'https://picsum.photos/seed/clinic2/300/200',
-                    'featured' => true
-                ],
-                [
-                    'rank' => 3,
-                    'category' => 'NÂNG NGỰC · CẮT MÍ',
-                    'name' => 'Thẩm mỹ viện Ngọc Dung',
-                    'rating' => 4.7,
-                    'votes' => 440,
-                    'address' => '101 Đường Thẩm Mỹ, Hà Nội',
-                    'score' => 40,
-                    'image' => 'https://picsum.photos/seed/clinic3/300/200',
-                    'featured' => true
-                ],
-                [
-                    'rank' => 4,
-                    'category' => 'HÚT MỠ · TRẺ HÓA DA',
-                    'name' => 'Thẩm mỹ viện Đông Á',
-                    'rating' => 4.1,
-                    'votes' => 320,
-                    'address' => '103 Đường Thẩm Mỹ, Hà Nội',
-                    'score' => 30,
-                    'image' => 'https://picsum.photos/seed/clinic4/300/200',
-                    'featured' => false
-                ],
-                [
-                    'rank' => 5,
-                    'category' => 'TRẺ HÓA DA · TRỊ MỤN',
-                    'name' => 'Bệnh viện Thẩm mỹ Hoàn Mỹ',
-                    'rating' => 3.8,
-                    'votes' => 260,
-                    'address' => '104 Đường Thẩm Mỹ, Hà Nội',
-                    'score' => 20,
-                    'image' => 'https://picsum.photos/seed/clinic5/300/200',
-                    'featured' => false
-                ],
-                [
-                    'rank' => 6,
-                    'category' => 'TRỊ MỤN · TẮM TRẮNG',
-                    'name' => 'Thẩm mỹ viện Sài Gòn Venus',
-                    'rating' => 3.5,
-                    'votes' => 200,
-                    'address' => '105 Đường Thẩm Mỹ, Hà Nội',
-                    'score' => 10,
-                    'image' => 'https://picsum.photos/seed/clinic6/300/200',
-                    'featured' => false
-                ]
-            ];
-            
-            function getRankColor($rank) {
-                if ($rank == 1) return 'bg-gradient-to-br from-[#ff9d00] to-[#ff6a00]';
-                if ($rank == 2) return 'bg-gradient-to-br from-[#7f93a8] to-[#5b6f86]';
-                if ($rank == 3) return 'bg-gradient-to-br from-[#cd7f32] to-[#a9621f]';
-                return 'bg-[#4B5563]';
-            }
-        @endphp
+    $clinics = collect($clinics ?? \App\Http\Controllers\Client\RankingController::rankedClinics(6))->values();
+    $perPage = 8;
+    $totalPages = max(1, (int) ceil($clinics->count() / $perPage));
+    $currentPage = max(1, min((int) request('clinic_page', 1), $totalPages));
+    $visibleClinics = $clinics->slice(($currentPage - 1) * $perPage, $perPage)->values();
+    $pageUrl = fn (int $page) => request()->fullUrlWithQuery(['clinic_page' => $page]);
+    $rankColor = function ($rank) {
+        if ($rank == 1) return 'bg-gradient-to-br from-[#ff9d00] to-[#ff6a00]';
+        if ($rank == 2) return 'bg-gradient-to-br from-[#7f93a8] to-[#5b6f86]';
+        if ($rank == 3) return 'bg-gradient-to-br from-[#cd7f32] to-[#a9621f]';
+        return 'bg-[#4B5563]';
+    };
+@endphp
 
-        @foreach($clinics as $clinic)
+        @forelse($visibleClinics as $clinic)
         <div class="bg-white rounded-[12px] p-4 flex flex-col md:flex-row items-center gap-4 border border-[#e6e9ee] card-hover">
             
             <!-- Rank Badge -->
             <div class="flex-shrink-0 w-full md:w-[80px] flex justify-center md:justify-start pl-2">
-                <span class="{{ getRankColor($clinic['rank']) }} text-white text-[13px] font-bold px-3 py-1.5 rounded-[6px] shadow-sm tracking-wide">
+                <span class="{{ $rankColor($clinic['rank']) }} text-white text-[13px] font-bold px-3 py-1.5 rounded-[6px] shadow-sm tracking-wide">
                     TOP {{ $clinic['rank'] }}
                 </span>
             </div>
@@ -163,6 +100,38 @@
             </div>
             
         </div>
-        @endforeach
+        @empty
+        <div class="bg-white rounded-[12px] p-6 border border-[#e6e9ee] text-center text-[#6B7280] text-[14px]">
+            Chưa có cơ sở thẩm mỹ nào.
+        </div>
+        @endforelse
     </div>
+
+    @if($totalPages > 1)
+        <nav class="mt-6 flex items-center justify-center gap-2" aria-label="Phân trang cơ sở">
+            @if($currentPage > 1)
+                <a href="{{ $pageUrl($currentPage - 1) }}" class="min-w-[84px] h-10 px-4 rounded-[8px] border border-[#cbe0fb] bg-white text-[#1668DC] text-[14px] font-bold flex items-center justify-center hover:bg-[#e9f1fe] transition-colors">
+                    Trước
+                </a>
+            @else
+                <span class="min-w-[84px] h-10 px-4 rounded-[8px] border border-gray-200 bg-gray-100 text-gray-400 text-[14px] font-bold flex items-center justify-center cursor-not-allowed">
+                    Trước
+                </span>
+            @endif
+
+            <span class="min-w-[72px] h-10 px-4 rounded-[8px] border border-[#1668DC] bg-[#1668DC] text-white text-[14px] font-bold flex items-center justify-center shadow-sm">
+                {{ $currentPage }} / {{ $totalPages }}
+            </span>
+
+            @if($currentPage < $totalPages)
+                <a href="{{ $pageUrl($currentPage + 1) }}" class="min-w-[84px] h-10 px-4 rounded-[8px] border border-[#cbe0fb] bg-white text-[#1668DC] text-[14px] font-bold flex items-center justify-center hover:bg-[#e9f1fe] transition-colors">
+                    Sau
+                </a>
+            @else
+                <span class="min-w-[84px] h-10 px-4 rounded-[8px] border border-gray-200 bg-gray-100 text-gray-400 text-[14px] font-bold flex items-center justify-center cursor-not-allowed">
+                    Sau
+                </span>
+            @endif
+        </nav>
+    @endif
 </div>

@@ -25,7 +25,7 @@
 
         <!-- Top Clinics Section -->
         <div class="mb-12">
-            <x-client.home.clinics-ranking :title="'TOP CƠ SỞ ' . mb_strtoupper($category['name'], 'UTF-8')" :icon="true" />
+            <x-client.home.clinics-ranking :title="'TOP CƠ SỞ ' . mb_strtoupper($category['name'], 'UTF-8')" :icon="true" :clinics="$categoryClinics" />
         </div>
         
         <!-- Loop qua các danh mục con để hiển thị 1 dòng (4 bài) cho mỗi danh mục -->
@@ -35,15 +35,21 @@
                     return \Illuminate\Support\Str::slug($item['category']) === $child['slug'];
                 })->all();
             @endphp
-            <section class="mb-[34px]">
-                <x-client.ui.section-title :title="$child['name']" :link="url('/bai-viet?type=sub&cat='.$child['slug'])" />
-                <x-client.ui.posts-grid :articles="$childArticles" :limit="4" />
-            </section>
+            @if(count($childArticles) > 0)
+                <section class="mb-[34px]">
+                    <x-client.ui.section-title :title="$child['name']" :link="url('/bai-viet?type=sub&cat='.$child['slug'])" />
+                    <x-client.ui.posts-grid :articles="$childArticles" :limit="4" />
+                </section>
+            @endif
         @endforeach
 
     @else
         <!-- Section Title for Sub Category -->
         <x-client.ui.section-title :title="$category['name']" />
+
+        <div class="mb-[34px]">
+            <x-client.home.clinics-ranking :title="'TOP CƠ SỞ ' . mb_strtoupper($category['name'], 'UTF-8')" :icon="true" :clinics="$categoryClinics" :disableTopMargin="true" />
+        </div>
         
         <!-- Hiển thị tất cả bài viết -->
         <div class="mb-[34px]">

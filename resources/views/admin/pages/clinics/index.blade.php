@@ -32,40 +32,38 @@
                 </tr>
             </thead>
             <tbody id="sortableList" class="divide-y divide-gray-100">
-                @php
-                    $clinics = [
-                        ['Bệnh viện Thẩm mỹ Kim Cương', 60, '5.0', true],
-                        ['Thẩm mỹ viện Ngọc Dung', 50, '4.7', true],
-                        ['Bệnh viện Thẩm mỹ Á Âu', 40, '4.4', true],
-                        ['Thẩm mỹ viện Đông Á', 30, '4.1', false],
-                        ['Bệnh viện Thẩm mỹ Hoàn Mỹ', 20, '3.8', false],
-                        ['Thẩm mỹ viện Sài Gòn Venus', 10, '3.5', false],
-                    ];
-                @endphp
-                @foreach($clinics as $index => $clinic)
-                <tr class="hover:bg-gray-50/50 transition-colors group draggable-row">
+                @forelse($clinics as $index => $clinic)
+                <tr class="hover:bg-gray-50/50 transition-colors group draggable-row" data-clinic-id="{{ $clinic->id }}">
                     <td class="py-3 px-4 text-center">
                         <div class="flex items-center justify-center gap-4">
                             <i class="pi pi-bars text-gray-400 cursor-move hover:text-black drag-handle p-2 -m-2"></i>
                             <span class="font-bold text-primary rank-number text-[14px]">{{ $index + 1 }}</span>
                         </div>
                     </td>
-                    <td class="py-3 px-4 font-bold text-primary text-[14px]">{{ $clinic[0] }}</td>
-                    <td class="py-3 px-4 text-center font-bold text-gray-700 score-number text-[14px]">{{ $clinic[1] }}</td>
-                    <td class="py-3 px-4 text-center text-[13.5px] text-gray-600 font-medium">{{ $clinic[2] }} <span class="text-gray-500">★</span></td>
+                    <td class="py-3 px-4 font-bold text-primary text-[14px]">{{ $clinic->name }}</td>
+                    <td class="py-3 px-4 text-center font-bold text-gray-700 score-number text-[14px]">{{ $clinic->score }}</td>
+                    <td class="py-3 px-4 text-center text-[13.5px] text-gray-600 font-medium">{{ number_format((float) $clinic->rating, 1) }} <span class="text-gray-500">★</span></td>
                     <td class="py-3 px-4 text-center">
-                        @if($clinic[3])
+                        @if($clinic->is_featured)
                             <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-orange-100 text-orange-600 uppercase">Nổi bật</span>
                         @endif
                     </td>
                     <td class="py-3 px-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                            <a href="{{ url('/admin/clinics/1/edit') }}" class="w-8 h-8 flex items-center justify-center rounded-full text-primary hover:bg-blue-50 transition-colors"><i class="pi pi-pencil text-[13px]"></i></a>
-                            <button class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 transition-colors"><i class="pi pi-trash text-[13px]"></i></button>
+                            <a href="{{ route('admin.clinics.edit', $clinic) }}" class="w-8 h-8 flex items-center justify-center rounded-full text-primary hover:bg-blue-50 transition-colors"><i class="pi pi-pencil text-[13px]"></i></a>
+                            <form action="{{ route('admin.clinics.destroy', $clinic) }}" method="POST" data-confirm-submit data-confirm-title="Xóa cơ sở" data-confirm-message="Bạn có chắc chắn muốn xóa cơ sở này?">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 transition-colors"><i class="pi pi-trash text-[13px]"></i></button>
+                            </form>
                         </div>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="6" class="py-8 px-4 text-center text-gray-500 text-[14px]">Chưa có cơ sở thẩm mỹ nào.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
@@ -113,7 +111,7 @@
                 draggedItem.setAttribute('draggable', 'false');
                 draggedItem = null;
                 updateRankings(list);
-                showToast();
+                saveNewOrder(list);
             }
         });
 
@@ -153,9 +151,33 @@
             });
         }
 
+        async function saveNewOrder(container) {
+            const rows = container.querySelectorAll('.draggable-row');
+            const order = Array.from(rows).map(row => parseInt(row.getAttribute('data-clinic-id')));
+
+            try {
+                const response = await fetch('{{ route('admin.clinics.reorder') }}', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ order })
+                });
+
+                if (response.ok) {
+                    showToast();
+                } else {
+                    console.error('Failed to save order');
+                }
+            } catch (error) {
+                console.error('Error saving order:', error);
+            }
+        }
+
         function showToast() {
             if(window.showToast) {
-                window.showToast('Đã cập nhật thứ hạng', 'success');
+                window.showToast('Đã lưu thay đổi thứ hạng', 'success');
             }
         }
     }

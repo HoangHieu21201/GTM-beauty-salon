@@ -3,197 +3,116 @@
 @section('title', 'Danh mục - Review Thẩm Mỹ Admin')
 
 @section('content')
-    <!-- Header -->
     <div class="mb-6">
         <h1 class="text-[24px] font-bold text-[#1F2733] mb-1">Danh mục</h1>
         <p class="text-sm text-gray-500">Menu trang public hiển thị 2 cấp: danh mục gốc là mục cha trên thanh menu, mục nào có "Danh mục cha" sẽ nằm trong dropdown của cha đó.</p>
     </div>
 
-    <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <!-- Categories Table (Left Column) -->
         <div class="lg:col-span-3">
             <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-x-auto">
                 <table class="w-full text-left border-collapse min-w-[750px]">
                     <thead>
                         <tr class="bg-white border-b border-gray-100 text-[11px] uppercase tracking-wider font-bold text-gray-500">
-                            <th class="py-3 px-4 w-[40%]">TÊN DANH MỤC</th>
-                            <th class="py-3 px-4 w-[30%]">SLUG</th>
-                            <th class="py-3 px-4 w-[25%]">DANH MỤC CHA</th>
+                            <th class="py-3 px-4 w-[40%]">Tên danh mục</th>
+                            <th class="py-3 px-4 w-[30%]">Slug</th>
+                            <th class="py-3 px-4 w-[25%]">Danh mục cha</th>
                             <th class="py-3 px-4 w-[5%] text-center"></th>
                         </tr>
                     </thead>
-                    <tbody class="text-sm">
-                        <!-- Parent Category 1 -->
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="py-3 px-4">
-                                <input type="text" class="inline-edit-input w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-[14px] text-gray-800" value="Phẫu thuật thẩm mỹ" data-original-value="Phẫu thuật thẩm mỹ">
-                            </td>
-                            <td class="py-3 px-4">
-                                <span class="text-gray-500 text-[14px]">/phau-thuat-tham-my</span>
-                            </td>
-                            <td class="py-3 px-4">
-                                <select class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer" data-original-value="">
-                                    <option value="">&mdash; Danh mục gốc &mdash;</option>
-                                    <option value="1">Chăm sóc da</option>
-                                    <option value="2">Răng - Hàm - Mặt</option>
-                                </select>
-                            </td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-2" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Child 1.1 -->
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="py-3 px-4">
-                                <div class="flex items-center gap-3 pl-6">
-                                    <i class="pi pi-angle-right text-gray-400 text-xs"></i>
-                                    <input type="text" class="inline-edit-input w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-[14px] text-gray-800" value="Nâng mũi" data-original-value="Nâng mũi">
-                                </div>
-                            </td>
-                            <td class="py-3 px-4">
-                                <span class="text-gray-500 text-[14px]">/nang-mui</span>
-                            </td>
-                            <td class="py-3 px-4">
-                                <select class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer" data-original-value="3">
-                                    <option value="">&mdash; Danh mục gốc &mdash;</option>
-                                    <option value="3" selected>Phẫu thuật thẩm mỹ</option>
-                                    <option value="1">Chăm sóc da</option>
-                                    <option value="2">Răng - Hàm - Mặt</option>
-                                </select>
-                            </td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-2" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Child 1.2 -->
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="py-3 px-4">
-                                <div class="flex items-center gap-3 pl-6">
-                                    <i class="pi pi-angle-right text-gray-400 text-xs"></i>
-                                    <input type="text" class="inline-edit-input w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-[14px] text-gray-800" value="Nâng ngực" data-original-value="Nâng ngực">
-                                </div>
-                            </td>
-                            <td class="py-3 px-4">
-                                <span class="text-gray-500 text-[14px]">/nang-nguc</span>
-                            </td>
-                            <td class="py-3 px-4">
-                                <select class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer" data-original-value="3">
-                                    <option value="">&mdash; Danh mục gốc &mdash;</option>
-                                    <option value="3" selected>Phẫu thuật thẩm mỹ</option>
-                                    <option value="1">Chăm sóc da</option>
-                                    <option value="2">Răng - Hàm - Mặt</option>
-                                </select>
-                            </td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-2" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Child 1.3 -->
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="py-3 px-4">
-                                <div class="flex items-center gap-3 pl-6">
-                                    <i class="pi pi-angle-right text-gray-400 text-xs"></i>
-                                    <input type="text" class="inline-edit-input w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-[14px] text-gray-800" value="Cắt mí" data-original-value="Cắt mí">
-                                </div>
-                            </td>
-                            <td class="py-3 px-4">
-                                <span class="text-gray-500 text-[14px]">/cat-mi</span>
-                            </td>
-                            <td class="py-3 px-4">
-                                <select class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer" data-original-value="3">
-                                    <option value="">&mdash; Danh mục gốc &mdash;</option>
-                                    <option value="3" selected>Phẫu thuật thẩm mỹ</option>
-                                    <option value="1">Chăm sóc da</option>
-                                    <option value="2">Răng - Hàm - Mặt</option>
-                                </select>
-                            </td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-2" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Parent Category 2 -->
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="py-3 px-4">
-                                <input type="text" class="inline-edit-input w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-[14px] text-gray-800" value="Chăm sóc da" data-original-value="Chăm sóc da">
-                            </td>
-                            <td class="py-3 px-4">
-                                <span class="text-gray-500 text-[14px]">/cham-soc-da</span>
-                            </td>
-                            <td class="py-3 px-4">
-                                <select class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer" data-original-value="">
-                                    <option value="" selected>&mdash; Danh mục gốc &mdash;</option>
-                                    <option value="3">Phẫu thuật thẩm mỹ</option>
-                                    <option value="2">Răng - Hàm - Mặt</option>
-                                </select>
-                            </td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-2" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Child 2.1 -->
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="py-3 px-4">
-                                <div class="flex items-center gap-3 pl-6">
-                                    <i class="pi pi-angle-right text-gray-400 text-xs"></i>
-                                    <input type="text" class="inline-edit-input w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-[14px] text-gray-800" value="Trẻ hóa da" data-original-value="Trẻ hóa da">
-                                </div>
-                            </td>
-                            <td class="py-3 px-4">
-                                <span class="text-gray-500 text-[14px]">/tre-hoa-da</span>
-                            </td>
-                            <td class="py-3 px-4">
-                                <select class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer" data-original-value="1">
-                                    <option value="">&mdash; Danh mục gốc &mdash;</option>
-                                    <option value="3">Phẫu thuật thẩm mỹ</option>
-                                    <option value="1" selected>Chăm sóc da</option>
-                                    <option value="2">Răng - Hàm - Mặt</option>
-                                </select>
-                            </td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-2" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                    <tbody class="text-sm" id="categoriesTableBody">
+                        @forelse($categories as $category)
+                            @php
+                                $isChild = filled($category->parent_id);
+                                $slug = $category->slug;
+                            @endphp
+                            <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group" data-category-row="{{ $category->id }}">
+                                <td class="py-3 px-4">
+                                    <div class="{{ $isChild ? 'flex items-center gap-3 pl-6' : '' }}">
+                                        @if($isChild)
+                                            <i class="pi pi-angle-right text-gray-400 text-xs"></i>
+                                        @endif
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value="{{ $category->name }}"
+                                            data-original-value="{{ $category->name }}"
+                                            data-category-name
+                                            data-update-url="{{ route('admin.categories.update', $category) }}"
+                                            class="inline-edit-input w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-[14px] text-gray-800"
+                                        >
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="text-gray-500 text-[14px]" data-category-slug>/{{ $slug }}</span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <select
+                                        name="parent_id"
+                                        data-original-value="{{ $category->parent_id }}"
+                                        data-category-parent
+                                        data-update-url="{{ route('admin.categories.update', $category) }}"
+                                        @disabled($category->parent_id === null && $category->children->count() > 0)
+                                        class="inline-edit-select w-full border border-gray-200 bg-white rounded-md px-3 py-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary text-[14px] text-gray-600 transition-colors cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                    >
+                                        <option value="">— Danh mục gốc —</option>
+                                        @foreach($rootCategories as $rootCategory)
+                                            @if($rootCategory->id !== $category->id)
+                                                <option value="{{ $rootCategory->id }}" @selected($category->parent_id === $rootCategory->id)>{{ $rootCategory->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    <button
+                                        type="button"
+                                        data-delete-category
+                                        data-delete-url="{{ route('admin.categories.destroy', $category) }}"
+                                        class="text-red-400 hover:text-red-600 transition-colors p-2"
+                                        title="Xóa"
+                                    >
+                                        <i class="pi pi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="py-8 px-4 text-center text-gray-500 text-[14px]">Chưa có danh mục nào.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Add Category Form (Right Column) -->
         <div class="lg:col-span-1">
             <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 p-5 sticky top-[28px]">
                 <h3 class="font-bold text-[16px] text-[#1F2733] mb-4">Thêm danh mục</h3>
-                
-                <form action="#" method="POST" class="space-y-4">
+
+                <form action="{{ route('admin.categories.store') }}" method="POST" class="space-y-4" data-loading-submit>
+                    @csrf
                     <div>
                         <label class="block text-[13px] font-bold text-[#1F2733] mb-1.5">Tên</label>
-                        <input type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-gray-400" placeholder="VD: Nâng mũi">
+                        <input
+                            type="text"
+                            name="name"
+                            value="{{ old('name') }}"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-gray-400"
+                            placeholder="VD: Nâng mũi"
+                        >
                     </div>
-                    
+
                     <div>
                         <label class="block text-[13px] font-bold text-[#1F2733] mb-1.5">Danh mục cha</label>
-                        <select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-[14px] text-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors bg-white">
-                            <option value="">&mdash; Danh mục gốc &mdash;</option>
-                            <option value="3">Phẫu thuật thẩm mỹ</option>
-                            <option value="1">Chăm sóc da</option>
-                            <option value="2">Răng - Hàm - Mặt</option>
+                        <select name="parent_id" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-[14px] text-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors bg-white">
+                            <option value="">— Danh mục gốc —</option>
+                            @foreach($rootCategories as $rootCategory)
+                                <option value="{{ $rootCategory->id }}" @selected((string) old('parent_id') === (string) $rootCategory->id)>{{ $rootCategory->name }}</option>
+                            @endforeach
                         </select>
                     </div>
 
-                    <button type="button" onclick="window.showToast('Thêm thành công', 'success')" class="w-full bg-[#6B9DFE] hover:bg-[#5a8af0] text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm text-[14px]">
+                    <button type="submit" class="w-full bg-[#6B9DFE] hover:bg-[#5a8af0] text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm text-[14px]">
                         <i class="pi pi-plus text-[12px]"></i> Thêm
                     </button>
                 </form>
@@ -204,94 +123,175 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Setup inline editing for Text Inputs
-        const textInputs = document.querySelectorAll('.inline-edit-input');
-        
-        textInputs.forEach(input => {
-            // Validate and save on blur
-            input.addEventListener('blur', function() {
-                validateAndSaveInput(this);
+    document.addEventListener('DOMContentLoaded', function () {
+        const csrfToken = @json(csrf_token());
+
+        document.querySelectorAll('[data-category-name]').forEach((input) => {
+            input.addEventListener('blur', function () {
+                saveCategory(this.closest('[data-category-row]'), 'name');
             });
 
-            // Validate and save on Enter key
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.blur(); // Triggers the blur event
+            input.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    this.blur();
                 }
             });
         });
 
-        function validateAndSaveInput(input) {
-            const newValue = input.value.trim();
-            const originalValue = input.getAttribute('data-original-value');
+        document.querySelectorAll('[data-category-parent]').forEach((select) => {
+            select.addEventListener('change', function () {
+                saveCategory(this.closest('[data-category-row]'), 'parent_id');
+            });
+        });
 
-            // Skip if not changed
-            if (newValue === originalValue) {
-                input.value = originalValue; // Reset formatting if any
+        document.querySelectorAll('[data-delete-category]').forEach((button) => {
+            button.addEventListener('click', async function () {
+                const confirmed = window.confirmAction
+                    ? await window.confirmAction({
+                        title: 'Xóa danh mục',
+                        message: 'Bạn có chắc chắn muốn xóa danh mục này?',
+                    })
+                    : window.confirm('Bạn có chắc chắn muốn xóa danh mục này?');
+
+                if (!confirmed) return;
+
+                deleteCategory(this);
+            });
+        });
+
+        async function saveCategory(row, changedField) {
+            if (!row) return;
+
+            const nameInput = row.querySelector('[data-category-name]');
+            const parentSelect = row.querySelector('[data-category-parent]');
+            const name = nameInput.value.trim();
+            const parentId = parentSelect.value;
+
+            if (name === '') {
+                rollbackField(nameInput, 'Tên danh mục không được để trống.');
                 return;
             }
 
-            // Validation: Cannot be empty
-            if (newValue === '') {
-                if(window.showToast) {
-                    window.showToast('Tên danh mục không được để trống!', 'error');
+            const originalName = nameInput.dataset.originalValue || '';
+            const originalParentId = parentSelect.dataset.originalValue || '';
+
+            if (name === originalName && parentId === originalParentId) {
+                nameInput.value = originalName;
+                parentSelect.value = originalParentId;
+                return;
+            }
+
+            setRowBusy(row, true);
+
+            try {
+                const response = await fetch(nameInput.dataset.updateUrl, {
+                    method: 'PATCH',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        parent_id: parentId || null,
+                    }),
+                });
+
+                const payload = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(firstValidationMessage(payload) || payload.message || 'Không thể lưu danh mục.');
                 }
-                
-                // Rollback with visual feedback
-                input.classList.add('bg-red-50', 'text-red-600');
-                setTimeout(() => {
-                    input.value = originalValue;
-                    input.classList.remove('bg-red-50', 'text-red-600');
-                }, 500);
-                
-                return;
-            }
 
-            // Simulate API Call / Save successful
-            input.setAttribute('data-original-value', newValue);
-            
-            // Update slug format temporarily just for visual demo
-            const slugCell = input.closest('tr').querySelector('td:nth-child(2) span');
-            if(slugCell) {
-                const newSlug = '/' + newValue.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-                slugCell.textContent = newSlug;
+                nameInput.value = payload.category.name;
+                nameInput.dataset.originalValue = payload.category.name;
+                parentSelect.dataset.originalValue = payload.category.parent_id || '';
+
+                const slug = row.querySelector('[data-category-slug]');
+                if (slug) slug.textContent = '/' + payload.category.slug;
+
+                markSaved(changedField === 'parent_id' ? parentSelect : nameInput);
+                window.showToast?.(payload.message || 'Đã lưu thay đổi.', 'success');
+
+                if (changedField === 'parent_id') {
+                    setTimeout(() => window.location.reload(), 450);
+                }
+            } catch (error) {
+                if (changedField === 'parent_id') {
+                    parentSelect.value = originalParentId;
+                } else {
+                    nameInput.value = originalName;
+                }
+
+                window.showToast?.(error.message, 'error');
+            } finally {
+                setRowBusy(row, false);
             }
-            
-            // Visual success feedback
+        }
+
+        async function deleteCategory(button) {
+            const row = button.closest('[data-category-row]');
+            const originalHtml = button.innerHTML;
+
+            button.disabled = true;
+            button.innerHTML = '<i class="pi pi-spin pi-spinner"></i>';
+
+            try {
+                const response = await fetch(button.dataset.deleteUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+
+                const payload = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(firstValidationMessage(payload) || payload.message || 'Không thể xóa danh mục.');
+                }
+
+                row?.remove();
+                window.showToast?.(payload.message || 'Đã xóa danh mục thành công.', 'success');
+            } catch (error) {
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+                window.showToast?.(error.message, 'error');
+            }
+        }
+
+        function rollbackField(input, message) {
+            input.classList.add('bg-red-50', 'text-red-600');
+            window.showToast?.(message, 'error');
+
+            setTimeout(() => {
+                input.value = input.dataset.originalValue || '';
+                input.classList.remove('bg-red-50', 'text-red-600');
+            }, 500);
+        }
+
+        function markSaved(input) {
             input.classList.add('bg-green-50', 'text-green-700');
             setTimeout(() => {
                 input.classList.remove('bg-green-50', 'text-green-700');
             }, 600);
-            
-            if(window.showToast) {
-                window.showToast('Đã lưu thay đổi!', 'success');
-            }
         }
 
-        // Setup inline editing for Select Dropdowns
-        const selects = document.querySelectorAll('.inline-edit-select');
-        
-        selects.forEach(select => {
-            select.addEventListener('change', function() {
-                const newValue = this.value;
-                const originalValue = this.getAttribute('data-original-value');
-
-                // Simulate API save
-                this.setAttribute('data-original-value', newValue);
-                
-                // Visual success feedback
-                this.classList.add('bg-green-50', 'text-green-700');
-                setTimeout(() => {
-                    this.classList.remove('bg-green-50', 'text-green-700');
-                }, 600);
-
-                if(window.showToast) {
-                    window.showToast('Đã thay đổi danh mục cha!', 'success');
-                }
+        function setRowBusy(row, busy) {
+            row.querySelectorAll('input, select, button').forEach((element) => {
+                element.disabled = busy;
+                element.classList.toggle('opacity-70', busy);
+                element.classList.toggle('cursor-not-allowed', busy);
             });
-        });
+        }
+
+        function firstValidationMessage(payload) {
+            if (!payload.errors) return null;
+
+            const firstKey = Object.keys(payload.errors)[0];
+            return firstKey ? payload.errors[firstKey][0] : null;
+        }
     });
 </script>
 @endpush
