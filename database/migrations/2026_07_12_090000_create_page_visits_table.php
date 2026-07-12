@@ -20,11 +20,12 @@ return new class extends Migration
             $table->string('route_name')->nullable();
             $table->string('referrer', 1000)->nullable();
             $table->unsignedSmallInteger('status_code')->default(200);
-            $table->timestamp('visited_at')->index();
+            $table->timestamp('visited_at');
             $table->timestamps();
 
             $table->index(['visited_at', 'status_code', 'path']);
             $table->index(['visited_at', 'status_code', 'visitor_id']);
+            $table->index(['visitor_id', 'path', 'visited_at']);
         });
     }
 

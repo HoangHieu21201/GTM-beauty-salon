@@ -88,7 +88,7 @@
                         <i class="pi pi-cloud-upload"></i> Tải ảnh lên
                     </button>
                     <input id="image_file" name="image_files[]" type="file" accept="image/*" multiple class="hidden">
-                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="flex-1 px-3 py-1.5 rounded-lg border {{ $errors->has('image_url') ? 'border-red-400 bg-red-50 text-red-700 focus:border-red-500' : 'border-gray-100 bg-gray-50 focus:bg-white focus:border-gray-200' }} text-sm outline-none" placeholder="hoặc dán URL ảnh rồi nhấn Enter" @error('image_url') aria-invalid="true" aria-describedby="image-url-error" @enderror>
+                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="{{ $inputClass('image_url', 'flex-1 py-1.5 bg-gray-50 focus:bg-white') }}" placeholder="hoặc dán URL ảnh rồi nhấn Enter" @error('image_url') aria-invalid="true" aria-describedby="image-url-error" @enderror>
                 </div>
                 @error('image_url')
                     <p id="image-url-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>

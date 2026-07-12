@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
+use Illuminate\Database\Eloquent\Builder;
 
 class DashboardController extends Controller
 {
@@ -85,7 +86,7 @@ class DashboardController extends Controller
         return $query->count();
     }
 
-    private function recentPosts($baseQuery): Collection
+    private function recentPosts(Builder $baseQuery): Collection
     {
         return $baseQuery
             ->with('category')
@@ -95,7 +96,7 @@ class DashboardController extends Controller
             ->get();
     }
 
-    private function topSalons($baseQuery): Collection
+    private function topSalons(Builder $baseQuery): Collection
     {
         return $baseQuery
             ->with('category')
