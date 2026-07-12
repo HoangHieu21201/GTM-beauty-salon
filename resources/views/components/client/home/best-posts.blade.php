@@ -1,33 +1,49 @@
 @php
-$articles = [
-    [
-        'category' => 'HÚT MỠ',
-        'title' => 'Hút mỡ bụng 2026: chi phí, công nghệ và những sự thật ít ai nói',
-        'excerpt' => 'Hút mỡ bụng không phải phương pháp giảm cân. Bài viết so sánh 3 công nghệ phổ biến, chi phí thực tế từng hạng mục...',
-        'date' => '05/07/2026',
-        'views' => 1022,
-        'image' => 'https://picsum.photos/seed/article1/400/250',
-        'url' => '#'
-    ],
-    [
-        'category' => 'TRẺ HÓA DA',
-        'title' => 'Trẻ hóa da công nghệ cao: so sánh HIFU, RF và Laser chi tiết 2026',
-        'excerpt' => 'HIFU, RF hay Laser — mỗi công nghệ trẻ hóa da giải quyết một tầng lão hóa khác nhau. Hiểu đúng cơ chế để không c...',
-        'date' => '04/07/2026',
-        'views' => 914,
-        'image' => 'https://picsum.photos/seed/article2/400/250',
-        'url' => '#'
-    ],
-    [
-        'category' => 'TRỊ MỤN',
-        'title' => 'Trị mụn chuẩn y khoa: lộ trình 3 tháng sạch mụn, hạn chế tái phát',
-        'excerpt' => 'Mụn không thể hết sau một buổi lấy nhân. Đây là lộ trình trị mụn 3 tháng theo phác đồ da liễu — kiểm soát viêm, xử lý...',
-        'date' => '03/07/2026',
-        'views' => 802,
-        'image' => 'https://picsum.photos/seed/article3/400/250',
-        'url' => '#'
-    ]
-];
+$dbPosts = \App\Models\Post::with('category')->where('status', 'published')->latest()->take(3)->get();
+
+if ($dbPosts->count() > 0) {
+    $articles = $dbPosts->map(function($post) {
+        return [
+            'category' => $post->category ? mb_strtoupper($post->category->name) : 'TIN TỨC',
+            'title' => $post->title,
+            'excerpt' => $post->short_description ?? \Illuminate\Support\Str::limit(strip_tags($post->content), 100),
+            'date' => $post->created_at->format('d/m/Y'),
+            'views' => 100,
+            'image' => $post->thumbnail ?? 'https://picsum.photos/seed/article1/400/250',
+            'url' => url('/bai-viet/chi-tiet/' . $post->slug)
+        ];
+    });
+} else {
+    $articles = [
+        [
+            'category' => 'HÚT MỠ',
+            'title' => 'Hút mỡ bụng 2026: chi phí, công nghệ và những sự thật ít ai nói',
+            'excerpt' => 'Hút mỡ bụng không phải phương pháp giảm cân. Bài viết so sánh 3 công nghệ phổ biến, chi phí thực tế từng hạng mục...',
+            'date' => '05/07/2026',
+            'views' => 1022,
+            'image' => 'https://picsum.photos/seed/article1/400/250',
+            'url' => '#'
+        ],
+        [
+            'category' => 'TRẺ HÓA DA',
+            'title' => 'Trẻ hóa da công nghệ cao: so sánh HIFU, RF và Laser chi tiết 2026',
+            'excerpt' => 'HIFU, RF hay Laser — mỗi công nghệ trẻ hóa da giải quyết một tầng lão hóa khác nhau. Hiểu đúng cơ chế để không c...',
+            'date' => '04/07/2026',
+            'views' => 914,
+            'image' => 'https://picsum.photos/seed/article2/400/250',
+            'url' => '#'
+        ],
+        [
+            'category' => 'TRỊ MỤN',
+            'title' => 'Trị mụn chuẩn y khoa: lộ trình 3 tháng sạch mụn, hạn chế tái phát',
+            'excerpt' => 'Mụn không thể hết sau một buổi lấy nhân. Đây là lộ trình trị mụn 3 tháng theo phác đồ da liễu — kiểm soát viêm, xử lý...',
+            'date' => '03/07/2026',
+            'views' => 802,
+            'image' => 'https://picsum.photos/seed/article3/400/250',
+            'url' => '#'
+        ]
+    ];
+}
 @endphp
 
 <section class="max-w-[1200px] mx-auto px-4 mt-12 mb-0 pb-0">
