@@ -40,6 +40,7 @@ class AnalyticsController extends Controller
             ->count();
         $onlineVisitors = PageVisit::query()
             ->where('visited_at', '>=', now()->subMinutes(5))
+            ->whereBetween('status_code', [200, 499])
             ->distinct('visitor_id')
             ->count('visitor_id');
 

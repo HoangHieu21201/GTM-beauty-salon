@@ -23,8 +23,8 @@ return new class extends Migration
             $table->timestamp('visited_at')->index();
             $table->timestamps();
 
-            $table->index(['visitor_id', 'visited_at']);
-            $table->index(['status_code', 'visited_at']);
+            $table->index(['visited_at', 'status_code', 'path']);
+            $table->index(['visited_at', 'status_code', 'visitor_id']);
         });
     }
 

@@ -13,6 +13,8 @@ use Throwable;
 
 class TrackPageVisit
 {
+    private static ?bool $hasTable = null;
+
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
@@ -22,7 +24,11 @@ class TrackPageVisit
         }
 
         try {
-            if (! Schema::hasTable('page_visits')) {
+            if (self::$hasTable === null) {
+                self::$hasTable = Schema::hasTable('page_visits');
+            }
+
+            if (! self::$hasTable) {
                 return $response;
             }
 
@@ -55,7 +61,8 @@ class TrackPageVisit
             if (! $request->cookies->has('rtm_visitor_id')) {
                 Cookie::queue(cookie('rtm_visitor_id', $visitorId, 60 * 24 * 365, null, null, false, true, false, 'Lax'));
             }
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Page visit tracking failed: ' . $e->getMessage(), ['exception' => $e]);
             return $response;
         }
 

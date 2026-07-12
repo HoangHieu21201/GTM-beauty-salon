@@ -438,7 +438,7 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\BypassAdminLogin::class
     Route::resource('clinics', ClinicController::class)->except(['show'])->names('admin.clinics');
 
     Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
-    Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->only(['store', 'update', 'destroy'])->names('admin.categories');
+    Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->only(['store', 'update', 'destroy'])->names('admin.categories')->middleware(\App\Http\Middleware\CheckSuperAdmin::class);
 
     Route::get('/comments', function () {
         return view('admin.pages.comments.index');

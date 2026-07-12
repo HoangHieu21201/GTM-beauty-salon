@@ -32,8 +32,8 @@ class DashboardController extends Controller
             'totalSalons' => (clone $salonQuery)->count(),
             'totalCategories' => (clone $categoryQuery)->count(),
             'pendingComments' => $this->pendingCommentsCount(),
-            'recentPosts' => $this->recentPosts(),
-            'topSalons' => $this->topSalons(),
+            'recentPosts' => $this->recentPosts(clone $postQuery),
+            'topSalons' => $this->topSalons(clone $salonQuery),
         ]);
     }
 
@@ -85,13 +85,9 @@ class DashboardController extends Controller
         return $query->count();
     }
 
-    private function recentPosts(): Collection
+    private function recentPosts($baseQuery): Collection
     {
-        if (! Schema::hasTable('posts')) {
-            return collect();
-        }
-
-        return $this->postQuery()
+        return $baseQuery
             ->with('category')
             ->latest('updated_at')
             ->latest('id')
@@ -99,13 +95,9 @@ class DashboardController extends Controller
             ->get();
     }
 
-    private function topSalons(): Collection
+    private function topSalons($baseQuery): Collection
     {
-        if (! Schema::hasTable('salons')) {
-            return collect();
-        }
-
-        return $this->salonQuery()
+        return $baseQuery
             ->with('category')
             ->orderByDesc('score')
             ->orderByDesc('rating')
