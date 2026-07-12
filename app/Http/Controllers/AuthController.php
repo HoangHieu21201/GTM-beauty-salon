@@ -34,7 +34,9 @@ class AuthController extends Controller
             'password' => ['required'],
         ], $messages);
 
-        if (Auth::attempt($credentials)) {
+        $remember = $request->boolean('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             // Redirect based on role logic if needed in the future, currently just redirect to intended or admin
@@ -78,11 +80,13 @@ class AuthController extends Controller
         // Mặc định đăng ký là role user bình thường (VD: id 2).
         // Trong thực tế cần có logic lấy role_id đúng. 
         // Ở đây tạm gán role_id = 2 (cần có role có id = 2 trong db).
+        $defaultRole = \App\Models\Role::where('name', 'user')->first();
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => 2, // Assuming 2 is a default 'user' role
+            'role_id' => $defaultRole ? $defaultRole->id : null,
         ]);
 
         Auth::login($user);
