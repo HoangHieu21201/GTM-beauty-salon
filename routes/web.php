@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Client\RankingController;
 use App\Models\Category;
 use App\Http\Controllers\AuthController;
@@ -417,17 +419,11 @@ Route::get('/chinh-sach', function () {
 
 // Admin Routes
 Route::prefix('admin')->middleware([\App\Http\Middleware\BypassAdminLogin::class, 'auth'])->group(function () {
-    Route::get('/', function () {
-        return view('admin.pages.dashboard');
-    });
+    Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    Route::get('/dashboard', function () {
-        return view('admin.pages.dashboard');
-    });
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard.index');
 
-    Route::get('/analytics', function () {
-        return view('admin.pages.analytics');
-    });
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('admin.analytics.index');
 
     Route::get('/posts', [PostController::class, 'index'])->name('admin.posts.index');
     Route::get('/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
@@ -442,6 +438,7 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\BypassAdminLogin::class
     Route::resource('clinics', ClinicController::class)->except(['show'])->names('admin.clinics');
 
     Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->only(['store', 'update', 'destroy'])->names('admin.categories');
 
     Route::get('/comments', function () {
         return view('admin.pages.comments.index');
@@ -454,7 +451,6 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\BypassAdminLogin::class
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
 
         Route::middleware([\App\Http\Middleware\CheckSuperAdmin::class])->group(function () {
-            Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->only(['store', 'update', 'destroy'])->names('admin.categories');
             Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
             Route::delete('/settings/logo', [\App\Http\Controllers\Admin\SettingController::class, 'deleteLogo'])->name('admin.settings.logo.delete');
         });
