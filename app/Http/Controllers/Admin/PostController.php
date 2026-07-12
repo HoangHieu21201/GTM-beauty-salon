@@ -37,25 +37,9 @@ class PostController extends Controller
     /**
      * Store a newly created post in database.
      */
-    public function store(Request $request)
+    public function store(\App\Http\Requests\Admin\StorePostRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'slug' => 'nullable|string|max:255',
-            'short_description' => 'nullable|string',
-            'content' => 'nullable|string',
-            'thumbnail' => 'nullable|string',
-            'status' => 'required|string|in:draft,published',
-            'category_id' => 'nullable|exists:categories,id',
-            'keyword' => 'nullable|string|max:255',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
-            'provinces' => 'nullable|array',
-            'provinces.*' => 'exists:provinces,id',
-            'salons' => 'nullable|array',
-            'salons.*' => 'exists:salons,id',
-        ]);
+        $validated = $request->validated();
 
         $title = $validated['title'] ?? ('Bài viết nháp ' . date('d/m/Y H:i'));
         $slug = $validated['slug'] ?? null;
@@ -125,27 +109,11 @@ class PostController extends Controller
     /**
      * Update the specified post in database.
      */
-    public function update(Request $request, $id)
+    public function update(\App\Http\Requests\Admin\UpdatePostRequest $request, $id)
     {
         $post = Post::findOrFail($id);
 
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'slug' => 'nullable|string|max:255',
-            'short_description' => 'nullable|string',
-            'content' => 'nullable|string',
-            'thumbnail' => 'nullable|string',
-            'status' => 'required|string|in:draft,published',
-            'category_id' => 'nullable|exists:categories,id',
-            'keyword' => 'nullable|string|max:255',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-            'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
-            'provinces' => 'nullable|array',
-            'provinces.*' => 'exists:provinces,id',
-            'salons' => 'nullable|array',
-            'salons.*' => 'exists:salons,id',
-        ]);
+        $validated = $request->validated();
 
         $title = $validated['title'] ?? $post->title;
         $slug = $validated['slug'] ?? $post->slug;

@@ -18,15 +18,9 @@ class RoleController extends Controller implements HasMiddleware
         ];
     }
 
-    public function store(Request $request)
+    public function store(\App\Http\Requests\Admin\StoreRoleRequest $request)
     {
-        if ($request->has('name')) {
-            $request->merge(['name' => strtolower($request->name)]);
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name'
-        ]);
+        $validated = $request->validated();
 
         $role = Role::create([
             'name' => $request->name

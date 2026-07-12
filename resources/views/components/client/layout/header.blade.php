@@ -26,20 +26,20 @@
 
             <!-- Search Bar -->
             <div class="flex-1 max-w-2xl mx-auto relative hidden md:block">
-                <div class="flex items-center bg-[#F3F4F6] rounded-full p-1">
+                <form action="{{ route('search') }}" method="GET" class="flex items-center bg-[#F3F4F6] rounded-full p-1">
                     <div class="pl-4 pr-2 text-gray-400">
                         <i class="pi pi-search"></i>
                     </div>
-                    <input type="text" placeholder="Tìm kiếm bài viết, đánh giá thẩm mỹ..." class="flex-1 bg-transparent border-none focus:ring-0 text-[14px] text-gray-700 placeholder-gray-400 py-2 outline-none">
-                    <button class="bg-[#4D8AFF] hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium text-[14px] transition-colors flex items-center gap-2">
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Tìm kiếm cơ sở, bài viết, danh mục, tỉnh thành..." class="flex-1 bg-transparent border-none focus:ring-0 text-[14px] text-gray-700 placeholder-gray-400 py-2 outline-none" required>
+                    <button type="submit" class="bg-[#4D8AFF] hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium text-[14px] transition-colors flex items-center gap-2">
                         <i class="pi pi-search text-[12px]"></i> Tìm kiếm
                     </button>
-                </div>
+                </form>
                 <div class="mt-2 px-2 text-[13px] flex items-center gap-3">
                     <span class="text-gray-500">Gợi ý:</span>
-                    <a href="#" class="text-[#4D8AFF] font-medium hover:underline">Nâng mũi</a>
-                    <a href="#" class="text-[#4D8AFF] font-medium hover:underline">Cắt mí</a>
-                    <a href="#" class="text-[#4D8AFF] font-medium hover:underline">Top cơ sở</a>
+                    <a href="{{ route('search', ['q' => 'Nâng mũi']) }}" class="text-[#4D8AFF] font-medium hover:underline">Nâng mũi</a>
+                    <a href="{{ route('search', ['q' => 'Cắt mí']) }}" class="text-[#4D8AFF] font-medium hover:underline">Cắt mí</a>
+                    <a href="{{ route('search', ['q' => 'Hà Nội']) }}" class="text-[#4D8AFF] font-medium hover:underline">Hà Nội</a>
                 </div>
             </div>
 
