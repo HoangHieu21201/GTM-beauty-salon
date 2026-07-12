@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PostController;
 
 // Client Routes
 Route::get('/', function () {
@@ -207,21 +208,45 @@ Route::get('/bai-viet', function (\Illuminate\Http\Request $request) {
 });
 
 Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
-    $article = [
-        'title' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm',
-        'category' => 'BỌC RĂNG SỨ',
-        'date' => '09/07/2026',
-        'author' => 'Quản trị viên',
-        'locations' => 'Hà Nội, Hải Phòng',
-        'views' => 608,
-        'read_time' => 2,
-    ];
+    $post = \App\Models\Post::with(['category', 'provinces', 'salons', 'user'])->where('slug', $slug)->first();
 
-    $breadcrumb = [
-        ['label' => 'Trang chủ', 'url' => url('/')],
-        ['label' => 'Bọc răng sứ', 'url' => url('/bai-viet?type=sub&cat=boc-rang-su')],
-        ['label' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm']
-    ];
+    if ($post) {
+        $article = [
+            'title' => $post->title,
+            'category' => $post->category ? mb_strtoupper($post->category->name) : 'TIN TỨC',
+            'date' => $post->created_at->format('d/m/Y'),
+            'author' => $post->user->name ?? 'Quản trị viên',
+            'locations' => $post->provinces->pluck('name')->implode(', ') ?: 'Toàn quốc',
+            'views' => 608,
+            'read_time' => 2,
+            'image' => $post->thumbnail ?? 'https://picsum.photos/seed/article-4/800/500',
+            'content' => $post->content,
+        ];
+
+        $breadcrumb = [
+            ['label' => 'Trang chủ', 'url' => url('/')],
+            ['label' => $post->category->name ?? 'Tin tức', 'url' => url('/bai-viet?type=sub&cat=' . \Illuminate\Support\Str::slug($post->category->name ?? 'tin-tuc'))],
+            ['label' => $post->title]
+        ];
+    } else {
+        $article = [
+            'title' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm',
+            'category' => 'BỌC RĂNG SỨ',
+            'date' => '09/07/2026',
+            'author' => 'Quản trị viên',
+            'locations' => 'Hà Nội, Hải Phòng',
+            'views' => 608,
+            'read_time' => 2,
+            'image' => 'https://picsum.photos/seed/article-4/800/500',
+            'content' => null,
+        ];
+
+        $breadcrumb = [
+            ['label' => 'Trang chủ', 'url' => url('/')],
+            ['label' => 'Bọc răng sứ', 'url' => url('/bai-viet?type=sub&cat=boc-rang-su')],
+            ['label' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm']
+        ];
+    }
 
     $relatedArticles = [
         [
@@ -396,17 +421,12 @@ Route::prefix('admin')->group(function () {
         return view('admin.pages.analytics');
     });
 
-    Route::get('/posts', function () {
-        return view('admin.pages.posts.index');
-    });
-
-    Route::get('/posts/create', function () {
-        return view('admin.pages.posts.create');
-    });
-
-    Route::get('/posts/{id}/edit', function () {
-        return view('admin.pages.posts.edit');
-    });
+    Route::get('/posts', [PostController::class, 'index'])->name('admin.posts.index');
+    Route::get('/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
+    Route::post('/posts', [PostController::class, 'store'])->name('admin.posts.store');
+    Route::get('/posts/{id}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('admin.posts.update');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
 
     Route::get('/clinics', function () {
         return view('admin.pages.clinics.index');
