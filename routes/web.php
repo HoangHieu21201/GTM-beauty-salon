@@ -3,7 +3,17 @@
 use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Client\RankingController;
 use App\Models\Category;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+
+// Auth Routes
+Route::prefix('admin')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
 // Client Routes
 Route::get('/', function () {
@@ -375,7 +385,7 @@ Route::get('/chinh-sach', function () {
 });
 
 // Admin Routes
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', function () {
         return view('admin.pages.dashboard');
     });
@@ -411,7 +421,6 @@ Route::prefix('admin')->group(function () {
         return view('admin.pages.comments.index');
     });
 
-    Route::get('/users', function () {
-        return view('admin.pages.users.index');
-    });
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show', 'create', 'edit'])->names('admin.users');
+    Route::post('/roles', [\App\Http\Controllers\Admin\RoleController::class, 'store'])->name('admin.roles.store');
 });
