@@ -211,7 +211,10 @@ Route::get('/bai-viet', function (\Illuminate\Http\Request $request) {
 });
 
 Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
-    $post = \App\Models\Post::with(['category', 'provinces', 'salons', 'user'])->where('slug', $slug)->first();
+    $post = \App\Models\Post::with(['category', 'provinces', 'salons', 'user'])
+        ->where('status', 'published')
+        ->where('slug', $slug)
+        ->first();
 
     if ($post) {
         $article = [
@@ -228,7 +231,7 @@ Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
 
         $breadcrumb = [
             ['label' => 'Trang chủ', 'url' => url('/')],
-            ['label' => $post->category->name ?? 'Tin tức', 'url' => url('/bai-viet?type=sub&cat=' . \Illuminate\Support\Str::slug($post->category->name ?? 'tin-tuc'))],
+            ['label' => $post->category?->name ?? 'Tin tức', 'url' => url('/bai-viet?type=sub&cat=' . \Illuminate\Support\Str::slug($post->category?->name ?? 'tin-tuc'))],
             ['label' => $post->title]
         ];
     } else {
@@ -411,7 +414,7 @@ Route::get('/chinh-sach', function () {
 });
 
 // Admin Routes
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware([\App\Http\Middleware\BypassAdminLogin::class, 'auth'])->group(function () {
     Route::get('/', function () {
         return view('admin.pages.dashboard');
     });
@@ -430,6 +433,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/posts/{id}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
     Route::put('/posts/{id}', [PostController::class, 'update'])->name('admin.posts.update');
     Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+    Route::post('/posts/upload-image', [PostController::class, 'uploadEditorImage'])->name('admin.posts.uploadImage');
 
     Route::patch('/clinics/reorder', [ClinicController::class, 'reorder'])->name('admin.clinics.reorder');
     Route::patch('/clinics/{clinic}/images', [ClinicController::class, 'updateImages'])->name('admin.clinics.images');

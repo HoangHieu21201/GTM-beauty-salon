@@ -44,12 +44,12 @@ class UserController extends Controller implements HasMiddleware
             'role_id.exists' => 'Vai trò không hợp lệ.',
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $request->role_id,
-        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role_id = $request->role_id;
+        $user->save();
 
         return redirect()->route('admin.users.index')->with('success', 'Đã tạo người dùng mới!');
     }
