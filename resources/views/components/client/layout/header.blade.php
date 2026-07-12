@@ -4,19 +4,24 @@
         <div class="flex items-center justify-between gap-8">
             <!-- Logo -->
             <a href="{{ url('/') }}" class="logo flex-shrink-0 text-[var(--text)]">
-                <svg viewBox="0 0 48 48" aria-hidden="true" class="w-10 h-10">
-                    <defs>
-                        <linearGradient id="rtmGradH" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0" stop-color="#3f86ff"></stop>
-                            <stop offset="1" stop-color="#1668dc"></stop>
-                        </linearGradient>
-                    </defs>
-                    <path d="M24 5 C13.5 5 5 12.3 5 21.5 C5 30.7 13.5 38 24 38 c1.6 0 3.2-.2 4.7-.5 L36.5 42 l-1.2-7.4 C40.3 31.4 43 26.8 43 21.5 43 12.3 34.5 5 24 5 Z" fill="url(#rtmGradH)"></path>
-                    <polygon points="24,12.5 26.2,18.4 32.6,18.7 27.6,22.7 29.3,28.8 24,25.3 18.7,28.8 20.4,22.7 15.4,18.7 21.8,18.4" fill="#fff"></polygon>
-                    <path d="M39 1 l1.5 3.9 3.9 1.5 -3.9 1.5 -1.5 3.9 -1.5 -3.9 -3.9 -1.5 3.9 -1.5 Z" fill="#ff7a00"></path>
-                </svg>
-                <span>Review</span>
-                <span class="text-[var(--primary)]">Thẩm Mỹ</span>
+                @php $siteLogo = setting('site_logo'); @endphp
+                @if($siteLogo)
+                    <img src="{{ asset($siteLogo) }}" alt="Review Thẩm Mỹ" class="h-10 object-contain" onerror="this.outerHTML='<svg viewBox=\'0 0 48 48\' aria-hidden=\'true\' class=\'w-10 h-10\'><defs><linearGradient id=\'rtmGradH\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0\' stop-color=\'#3f86ff\'></stop><stop offset=\'1\' stop-color=\'#1668dc\'></stop></linearGradient></defs><path d=\'M24 5 C13.5 5 5 12.3 5 21.5 C5 30.7 13.5 38 24 38 c1.6 0 3.2-.2 4.7-.5 L36.5 42 l-1.2-7.4 C40.3 31.4 43 26.8 43 21.5 43 12.3 34.5 5 24 5 Z\' fill=\'url(#rtmGradH)\'></path><polygon points=\'24,12.5 26.2,18.4 32.6,18.7 27.6,22.7 29.3,28.8 24,25.3 18.7,28.8 20.4,22.7 15.4,18.7 21.8,18.4\' fill=\'#fff\'></polygon><path d=\'M39 1 l1.5 3.9 3.9 1.5 -3.9 1.5 -1.5 3.9 -1.5 -3.9 -3.9 -1.5 3.9 -1.5 Z\' fill=\'#ff7a00\'></path></svg><span>Review</span><span class=\'text-[var(--primary)]\'>Thẩm Mỹ</span>'">
+                @else
+                    <svg viewBox="0 0 48 48" aria-hidden="true" class="w-10 h-10">
+                        <defs>
+                            <linearGradient id="rtmGradH" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0" stop-color="#3f86ff"></stop>
+                                <stop offset="1" stop-color="#1668dc"></stop>
+                            </linearGradient>
+                        </defs>
+                        <path d="M24 5 C13.5 5 5 12.3 5 21.5 C5 30.7 13.5 38 24 38 c1.6 0 3.2-.2 4.7-.5 L36.5 42 l-1.2-7.4 C40.3 31.4 43 26.8 43 21.5 43 12.3 34.5 5 24 5 Z" fill="url(#rtmGradH)"></path>
+                        <polygon points="24,12.5 26.2,18.4 32.6,18.7 27.6,22.7 29.3,28.8 24,25.3 18.7,28.8 20.4,22.7 15.4,18.7 21.8,18.4" fill="#fff"></polygon>
+                        <path d="M39 1 l1.5 3.9 3.9 1.5 -3.9 1.5 -1.5 3.9 -1.5 -3.9 -3.9 -1.5 3.9 -1.5 Z" fill="#ff7a00"></path>
+                    </svg>
+                    <span>Review</span>
+                    <span class="text-[var(--primary)]">Thẩm Mỹ</span>
+                @endif
             </a>
 
             <!-- Search Bar -->

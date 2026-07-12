@@ -61,6 +61,12 @@
         </a>
         @endif
 
+        <!-- Cấu hình Website -->
+        <a href="{{ url('/admin/settings') }}" class="flex items-center gap-[10px] px-[14px] py-[10px] rounded-lg font-medium transition-colors text-[14px] {{ request()->is('admin/settings*') ? 'bg-primary text-white' : 'text-[#cfd9e6] hover:bg-white/5 hover:text-white' }}">
+            <i class="pi pi-cog text-[18px]"></i>
+            <span>Cấu hình Website</span>
+        </a>
+
     </nav>
 
     <!-- User Profile & Logout -->

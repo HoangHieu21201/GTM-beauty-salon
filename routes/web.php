@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ClinicController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Client\RankingController;
 use App\Models\Category;
 use App\Http\Controllers\AuthController;
@@ -410,12 +411,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         return view('admin.pages.posts.edit');
     });
 
+    Route::patch('/clinics/reorder', [ClinicController::class, 'reorder'])->name('admin.clinics.reorder');
     Route::patch('/clinics/{clinic}/images', [ClinicController::class, 'updateImages'])->name('admin.clinics.images');
     Route::resource('clinics', ClinicController::class)->except(['show'])->names('admin.clinics');
 
-    Route::get('/categories', function () {
-        return view('admin.pages.categories.index');
-    });
+    Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
 
     Route::get('/comments', function () {
         return view('admin.pages.comments.index');
@@ -423,4 +423,14 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show', 'create', 'edit'])->names('admin.users');
     Route::post('/roles', [\App\Http\Controllers\Admin\RoleController::class, 'store'])->name('admin.roles.store');
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
+
+        Route::middleware(['admin'])->group(function () {
+            Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->only(['store', 'update', 'destroy'])->names('admin.categories');
+            Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
+            Route::delete('/settings/logo', [\App\Http\Controllers\Admin\SettingController::class, 'deleteLogo'])->name('admin.settings.logo.delete');
+        });
+    });
 });
