@@ -4,7 +4,18 @@ use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Client\RankingController;
 use App\Models\Category;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PostController;
+
+// Auth Routes
+Route::prefix('admin')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
 // Client Routes
 Route::get('/', function () {
@@ -200,21 +211,45 @@ Route::get('/bai-viet', function (\Illuminate\Http\Request $request) {
 });
 
 Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
-    $article = [
-        'title' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm',
-        'category' => 'BỌC RĂNG SỨ',
-        'date' => '09/07/2026',
-        'author' => 'Quản trị viên',
-        'locations' => 'Hà Nội, Hải Phòng',
-        'views' => 608,
-        'read_time' => 2,
-    ];
+    $post = \App\Models\Post::with(['category', 'provinces', 'salons', 'user'])->where('slug', $slug)->first();
 
-    $breadcrumb = [
-        ['label' => 'Trang chủ', 'url' => url('/')],
-        ['label' => 'Bọc răng sứ', 'url' => url('/bai-viet?type=sub&cat=boc-rang-su')],
-        ['label' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm']
-    ];
+    if ($post) {
+        $article = [
+            'title' => $post->title,
+            'category' => $post->category ? mb_strtoupper($post->category->name) : 'TIN TỨC',
+            'date' => $post->created_at->format('d/m/Y'),
+            'author' => $post->user->name ?? 'Quản trị viên',
+            'locations' => $post->provinces->pluck('name')->implode(', ') ?: 'Toàn quốc',
+            'views' => 608,
+            'read_time' => 2,
+            'image' => $post->thumbnail ?? 'https://picsum.photos/seed/article-4/800/500',
+            'content' => $post->content,
+        ];
+
+        $breadcrumb = [
+            ['label' => 'Trang chủ', 'url' => url('/')],
+            ['label' => $post->category->name ?? 'Tin tức', 'url' => url('/bai-viet?type=sub&cat=' . \Illuminate\Support\Str::slug($post->category->name ?? 'tin-tuc'))],
+            ['label' => $post->title]
+        ];
+    } else {
+        $article = [
+            'title' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm',
+            'category' => 'BỌC RĂNG SỨ',
+            'date' => '09/07/2026',
+            'author' => 'Quản trị viên',
+            'locations' => 'Hà Nội, Hải Phòng',
+            'views' => 608,
+            'read_time' => 2,
+            'image' => 'https://picsum.photos/seed/article-4/800/500',
+            'content' => null,
+        ];
+
+        $breadcrumb = [
+            ['label' => 'Trang chủ', 'url' => url('/')],
+            ['label' => 'Bọc răng sứ', 'url' => url('/bai-viet?type=sub&cat=boc-rang-su')],
+            ['label' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm']
+        ];
+    }
 
     $relatedArticles = [
         [
@@ -376,7 +411,7 @@ Route::get('/chinh-sach', function () {
 });
 
 // Admin Routes
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', function () {
         return view('admin.pages.dashboard');
     });
@@ -389,17 +424,12 @@ Route::prefix('admin')->group(function () {
         return view('admin.pages.analytics');
     });
 
-    Route::get('/posts', function () {
-        return view('admin.pages.posts.index');
-    });
-
-    Route::get('/posts/create', function () {
-        return view('admin.pages.posts.create');
-    });
-
-    Route::get('/posts/{id}/edit', function () {
-        return view('admin.pages.posts.edit');
-    });
+    Route::get('/posts', [PostController::class, 'index'])->name('admin.posts.index');
+    Route::get('/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
+    Route::post('/posts', [PostController::class, 'store'])->name('admin.posts.store');
+    Route::get('/posts/{id}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('admin.posts.update');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
 
     Route::patch('/clinics/reorder', [ClinicController::class, 'reorder'])->name('admin.clinics.reorder');
     Route::patch('/clinics/{clinic}/images', [ClinicController::class, 'updateImages'])->name('admin.clinics.images');
@@ -411,9 +441,8 @@ Route::prefix('admin')->group(function () {
         return view('admin.pages.comments.index');
     });
 
-    Route::get('/users', function () {
-        return view('admin.pages.users.index');
-    });
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show', 'create', 'edit'])->names('admin.users');
+    Route::post('/roles', [\App\Http\Controllers\Admin\RoleController::class, 'store'])->name('admin.roles.store');
 
     Route::middleware(['auth'])->group(function () {
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');

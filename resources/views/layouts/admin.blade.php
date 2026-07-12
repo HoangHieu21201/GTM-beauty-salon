@@ -175,6 +175,7 @@
                     const confirmed = await window.confirmAction({
                         title: form.dataset.confirmTitle,
                         message: form.dataset.confirmMessage,
+                        acceptHtml: form.dataset.confirmAcceptHtml,
                     });
 
                     if (confirmed) {
