@@ -9,9 +9,9 @@
         
         <!-- Filters -->
         <div class="flex items-center gap-2 mb-2">
-            <button onclick="switchTab('pending')" id="tab-pending" class="tab-btn px-4 py-2 text-[14px] font-medium text-white bg-primary border border-primary rounded-full shadow-sm transition-all duration-300">Chờ duyệt</button>
+            <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-4 py-2 text-[14px] font-medium text-white bg-primary border border-primary rounded-full shadow-sm transition-all duration-300">Tất cả</button>
+            <button onclick="switchTab('pending')" id="tab-pending" class="tab-btn px-4 py-2 text-[14px] font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50 shadow-sm transition-all duration-300">Chờ duyệt</button>
             <button onclick="switchTab('approved')" id="tab-approved" class="tab-btn px-4 py-2 text-[14px] font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50 shadow-sm transition-all duration-300">Đã duyệt</button>
-            <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-4 py-2 text-[14px] font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50 shadow-sm transition-all duration-300">Tất cả</button>
         </div>
     </div>
 
@@ -30,7 +30,7 @@
                 </thead>
                 <tbody class="text-[14px]" id="comments-tbody">
                     @forelse($comments as $comment)
-                        <tr class="comment-row border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-500 opacity-100 align-top {{ $comment->status == 0 ? '' : 'hidden opacity-0' }}" data-status="{{ $comment->status == 1 ? 'approved' : 'pending' }}">
+                        <tr class="comment-row border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-500 opacity-100 align-top" data-status="{{ $comment->status == 1 ? 'approved' : 'pending' }}">
                             <td class="py-4 px-5">
                                 <div class="flex items-center gap-2 mb-1">
                                     <span class="font-bold text-[#1F2733]">{{ $comment->name }}</span>
@@ -108,6 +108,11 @@
                                                 <i class="pi pi-check text-[15px]"></i>
                                             </button>
                                         </form>
+                                    @endif
+                                    @if($comment->post)
+                                        <a href="{{ url('/bai-viet/chi-tiet/' . $comment->post->slug) . '#comments' }}" target="_blank" class="text-blue-500 hover:text-blue-700 transition-colors p-1" title="Xem trên trang">
+                                            <i class="pi pi-eye text-[15px]"></i>
+                                        </a>
                                     @endif
                                     <button onclick="toggleReplyBox('{{ $comment->id }}')" class="text-primary hover:text-primary-dark transition-colors p-1" title="Trả lời">
                                         <i class="pi pi-reply"></i>
@@ -208,9 +213,9 @@
         }, 300);
     }
 
-    // Tự động kích hoạt tab pending khi load trang
+    // Tự động kích hoạt tab all khi load trang
     document.addEventListener('DOMContentLoaded', function() {
-        switchTab('pending');
+        switchTab('all');
     });
 </script>
 @endpush
