@@ -317,32 +317,102 @@
                 <hr class="border-t border-dashed border-[#e2e8f0] my-8" />
 
                 <!-- Comments Section -->
+                <!-- Comments Section -->
                 <section id="binh-luan" class="comments mt-[36px] pt-[20px] border-t-4 border-[#E8F1FF]">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-[18px] font-bold text-[#1F2733]">Bình luận (0)</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-[18px] font-bold text-[#1F2733]">Bình luận ({{ $comments->count() + $comments->sum(fn($c) => $c->replies->count()) }})</h3>
                         <span class="bg-[#e2ffe9] text-[#16a34a] px-2 py-1 rounded-[4px] text-[12px] font-bold flex items-center gap-1">
                             <i class="pi pi-check text-[10px]"></i> Đã kiểm duyệt
                         </span>
                     </div>
-                    <p class="text-[#64748b] text-[14px] mb-6">Trở thành người đầu tiên bình luận cho bài viết này!</p>
+
+                    <!-- List of comments -->
+                    @if($comments->isEmpty())
+                        <p class="text-[#64748b] text-[14px] mb-6">Trở thành người đầu tiên bình luận cho bài viết này!</p>
+                    @else
+                        <div class="space-y-4 mb-8">
+                            @foreach($comments as $comment)
+                                <div class="bg-white p-4 rounded-[8px] border border-[#e2e8f0] shadow-sm">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-bold text-[#1F2733]">{{ $comment->name }}</span>
+                                            @if($comment->user_id && $comment->user && $comment->user->role_id == 1)
+                                                <span class="bg-[#EBF3FF] text-[#1668DC] text-[10px] font-bold px-1.5 py-0.5 rounded">Admin</span>
+                                            @endif
+                                        </div>
+                                        <span class="text-[#94a3b8] text-[12px]">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
+                                    </div>
+                                    <div class="text-[#334155] text-[14px] leading-relaxed">
+                                        {!! nl2br(e($comment->content)) !!}
+                                    </div>
+
+                                    <!-- Nested Replies -->
+                                    @if($comment->replies->isNotEmpty())
+                                        <div class="mt-3 pl-4 border-l-2 border-[#1668DC]/20 space-y-3">
+                                            @foreach($comment->replies as $reply)
+                                                <div class="bg-[#f8fafc] p-3 rounded-[6px] border border-[#e2e8f0]">
+                                                    <div class="flex items-center justify-between mb-1">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="font-bold text-[#1F2733]">{{ $reply->name }}</span>
+                                                            @if($reply->user_id && $reply->user && $reply->user->role_id == 1)
+                                                                <span class="bg-[#EBF3FF] text-[#1668DC] text-[10px] font-bold px-1.5 py-0.5 rounded">Admin</span>
+                                                            @endif
+                                                        </div>
+                                                        <span class="text-[#94a3b8] text-[11px]">{{ $reply->created_at->format('d/m/Y H:i') }}</span>
+                                                    </div>
+                                                    <div class="text-[#334155] text-[13.5px] leading-relaxed">
+                                                        {!! nl2br(e($reply->content)) !!}
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    @if(session('success'))
+                        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-[6px] text-[14px] mb-4 flex items-center gap-2">
+                            <i class="pi pi-check-circle"></i>
+                            <span>{{ session('success') }}</span>
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-[6px] text-[14px] mb-4">
+                            <ul class="list-disc list-inside">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     
-                    <form class="bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] p-5">
-                        <h4 class="font-bold text-[#1F2733] mb-4">Viết bình luận</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <input type="text" placeholder="Họ tên *" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC]" required>
-                            <input type="email" placeholder="Email (không bắt buộc)" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC]">
+                    @if($post)
+                        <form action="{{ route('posts.comments.store', $post->slug) }}" method="POST" class="bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] p-5">
+                            @csrf
+                            <h4 class="font-bold text-[#1F2733] mb-4">Viết bình luận</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <input type="text" name="name" placeholder="Họ tên *" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC]" value="{{ auth()->user()->name ?? old('name') }}" required>
+                                <input type="email" name="email" placeholder="Email (không bắt buộc)" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC]" value="{{ auth()->user()->email ?? old('email') }}">
+                            </div>
+                            <div class="mb-4 relative">
+                                <textarea name="content" placeholder="Nội dung bình luận *" rows="4" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC] resize-none" required>{{ old('content') }}</textarea>
+                                <i class="pi pi-pencil absolute bottom-3 right-3 text-[#94a3b8]"></i>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <small class="text-[#94a3b8]">Bình luận sẽ hiển thị sau khi được kiểm duyệt.</small>
+                                <button type="submit" class="bg-[#1668DC] hover:bg-[#1254b0] text-white px-5 py-2.5 rounded-[6px] font-bold text-[14px] transition-colors">
+                                    Gửi bình luận
+                                </button>
+                            </div>
+                        </form>
+                    @else
+                        <div class="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-[6px] text-[14px]">
+                            Chức năng bình luận chỉ khả dụng đối với bài viết chính thức.
                         </div>
-                        <div class="mb-4 relative">
-                            <textarea placeholder="Nội dung bình luận *" rows="4" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC] resize-none" required></textarea>
-                            <i class="pi pi-pencil absolute bottom-3 right-3 text-[#94a3b8]"></i>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <small class="text-[#94a3b8]">Bình luận sẽ hiển thị sau khi được kiểm duyệt.</small>
-                            <button type="submit" class="bg-[#1668DC] hover:bg-[#1254b0] text-white px-5 py-2.5 rounded-[6px] font-bold text-[14px] transition-colors">
-                                Gửi bình luận
-                            </button>
-                        </div>
-                    </form>
+                    @endif
                 </section>
             </article>
         </div>
