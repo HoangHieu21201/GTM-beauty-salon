@@ -1,6 +1,23 @@
+# GITHUB LINK : https://github.com/HoangHieu21201/GTM-beauty-salon.git
+
 # GTM Beauty Salon System
 
 This project is a complete beauty salon management system and customer booking portal built with Laravel. It features an admin dashboard for managing clinics, services, posts, comments, and settings, alongside a client-facing frontend for browsing and booking.
+
+---
+
+## 🚀 Công Cụ Hỗ Trợ Deploy (KHÔNG CẦN TERMINAL)
+
+Dành cho các hosting (như cPanel, DirectAdmin) không hỗ trợ truy cập SSH/Terminal. Bạn có thể sử dụng các file PHP có sẵn ở thư mục gốc để thực thi các lệnh cài đặt cơ bản.
+
+**Cách sử dụng:**
+Truy cập các đường dẫn sau trên trình duyệt (thay `ten-mien-cua-ban.com` bằng tên miền thực tế của bạn):
+- Xóa cache & Cập nhật code mới: `https://ten-mien-cua-ban.com/clear-cache.php`
+- Sửa lỗi không hiển thị ảnh: `https://ten-mien-cua-ban.com/link.php`
+- Cài đặt Database tự động: `https://ten-mien-cua-ban.com/migrate.php`
+
+> [!CAUTION]
+> **BẢO MẬT:** Sau khi chạy thành công các đường dẫn trên, bạn PHẢI xoá 3 file (`link.php`, `clear-cache.php`, `migrate.php`) ra khỏi thư mục gốc trên hosting để tránh bị người khác truy cập và phá hoại hệ thống.
 
 ---
 
@@ -11,67 +28,69 @@ Dưới đây là các bước chi tiết để chạy dự án này trên môi 
 ### 1. Cài đặt trên Local (Máy tính cá nhân)
 
 1. **Yêu cầu hệ thống:**
-   - PHP >= 8.2
-   - Composer
-   - MySQL (XAMPP, Laragon, v.v.)
-   - Node.js & NPM
+    - PHP >= 8.2
+    - Composer
+    - MySQL (XAMPP, Laragon, v.v.)
+    - Node.js & NPM
 
 2. **Các bước cài đặt:**
-   ```bash
-   # 1. Clone hoặc tải source code về máy
-   # 2. Mở terminal tại thư mục dự án và cài đặt các thư viện PHP
-   composer install
 
-   # 3. Tạo file cấu hình môi trường
-   cp .env.example .env
+    ```bash
+    # 1. Clone hoặc tải source code về máy
+    # 2. Mở terminal tại thư mục dự án và cài đặt các thư viện PHP
+    composer install
 
-   # 4. Mở file .env và cấu hình Database
-   DB_DATABASE=ten_database_cua_ban
-   DB_USERNAME=root
-   DB_PASSWORD=
+    # 3. Tạo file cấu hình môi trường
+    cp .env.example .env
 
-   # 5. Khởi tạo khoá ứng dụng
-   php artisan key:generate
+    # 4. Mở file .env và cấu hình Database
+    DB_DATABASE=ten_database_cua_ban
+    DB_USERNAME=root
+    DB_PASSWORD=
 
-   # 6. Khởi tạo cơ sở dữ liệu (đã được cấu hình tự động import bảng chuẩn)
-   php artisan migrate
+    # 5. Khởi tạo khoá ứng dụng
+    php artisan key:generate
 
-   # 7. Cài đặt thư viện Frontend và build
-   npm install
-   npm run build
+    # 6. Khởi tạo cơ sở dữ liệu (đã được cấu hình tự động import bảng chuẩn)
+    php artisan migrate
 
-   # 8. Khởi chạy server
-   php artisan serve
-   ```
+    # 7. Cài đặt thư viện Frontend và build
+    npm install
+    npm run build
+
+    # 8. Khởi chạy server
+    php artisan serve
+    ```
 
 ### 2. Hướng dẫn Deploy lên Server/Hosting (Linux)
 
 Dự án đã được tối ưu hóa toàn bộ đường dẫn để tương thích 100% với hệ thống Linux (case-sensitive). Bạn chỉ cần thực hiện theo các bước sau:
 
 1. **Chuẩn bị file .env:**
-   - Xóa file `.env` hiện tại trên server (nếu có).
-   - Đổi tên file `.env-deploy-sample` thành `.env` (hoặc copy nội dung của nó vào file `.env` mới).
-   - Mở file `.env` và cập nhật thông tin:
-     - `APP_URL=https://ten-mien-cua-ban.com`
-     - Cập nhật thông tin `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` tương ứng với Hosting của bạn.
+    - Xóa file `.env` hiện tại trên server (nếu có).
+    - Đổi tên file `.env-deploy-sample` thành `.env` (hoặc copy nội dung của nó vào file `.env` mới).
+    - Mở file `.env` và cập nhật thông tin:
+        - `APP_URL=https://ten-mien-cua-ban.com`
+        - Cập nhật thông tin `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` tương ứng với Hosting của bạn.
 
 2. **Chạy các lệnh tối ưu trên Server:**
    Bật Terminal/SSH trên hosting và chạy lần lượt các lệnh sau tại thư mục gốc của dự án:
-   ```bash
-   # Tải các thư viện mà không bao gồm các gói dành cho dev
-   composer install --optimize-autoloader --no-dev
 
-   # Xoá toàn bộ cache cũ và tạo cache mới để tăng tốc độ website
-   php artisan optimize:clear
-   php artisan optimize
-   php artisan view:cache
+    ```bash
+    # Tải các thư viện mà không bao gồm các gói dành cho dev
+    composer install --optimize-autoloader --no-dev
 
-   # Tạo tự động các bảng cơ sở dữ liệu chuẩn xác
-   php artisan migrate --force
+    # Xoá toàn bộ cache cũ và tạo cache mới để tăng tốc độ website
+    php artisan optimize:clear
+    php artisan optimize
+    php artisan view:cache
 
-   # Chú ý: Đảm bảo thư mục storage và bootstrap/cache có quyền ghi (chmod 775)
-   chmod -R 775 storage bootstrap/cache
-   ```
+    # Tạo tự động các bảng cơ sở dữ liệu chuẩn xác
+    php artisan migrate --force
+
+    # Chú ý: Đảm bảo thư mục storage và bootstrap/cache có quyền ghi (chmod 775)
+    chmod -R 775 storage bootstrap/cache
+    ```
 
 ---
 
@@ -82,64 +101,66 @@ Below are detailed instructions for running this project on your local environme
 ### 1. Local Installation
 
 1. **System Requirements:**
-   - PHP >= 8.2
-   - Composer
-   - MySQL
-   - Node.js & NPM
+    - PHP >= 8.2
+    - Composer
+    - MySQL
+    - Node.js & NPM
 
 2. **Installation Steps:**
-   ```bash
-   # 1. Clone or download the source code
-   # 2. Open terminal in the project directory and install PHP dependencies
-   composer install
 
-   # 3. Create the environment configuration file
-   cp .env.example .env
+    ```bash
+    # 1. Clone or download the source code
+    # 2. Open terminal in the project directory and install PHP dependencies
+    composer install
 
-   # 4. Open .env and configure your Database connection
-   DB_DATABASE=your_database_name
-   DB_USERNAME=root
-   DB_PASSWORD=
+    # 3. Create the environment configuration file
+    cp .env.example .env
 
-   # 5. Generate application key
-   php artisan key:generate
+    # 4. Open .env and configure your Database connection
+    DB_DATABASE=your_database_name
+    DB_USERNAME=root
+    DB_PASSWORD=
 
-   # 6. Initialize the database (migrations are configured to run raw SQL schema automatically)
-   php artisan migrate
+    # 5. Generate application key
+    php artisan key:generate
 
-   # 7. Install Frontend libraries and build
-   npm install
-   npm run build
+    # 6. Initialize the database (migrations are configured to run raw SQL schema automatically)
+    php artisan migrate
 
-   # 8. Start the local server
-   php artisan serve
-   ```
+    # 7. Install Frontend libraries and build
+    npm install
+    npm run build
+
+    # 8. Start the local server
+    php artisan serve
+    ```
 
 ### 2. Server/Hosting Deployment Guide (Linux)
 
 This project’s file paths have been fully optimized to be 100% compatible with Linux systems (case-sensitive). Follow these steps to deploy:
 
 1. **Prepare the .env file:**
-   - Delete the existing `.env` on your server (if any).
-   - Rename the `.env-deploy-sample` file to `.env` (or copy its contents into a new `.env` file).
-   - Open the `.env` file and update the following values:
-     - `APP_URL=https://your-domain.com`
-     - Update the `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` to match your Hosting credentials.
+    - Delete the existing `.env` on your server (if any).
+    - Rename the `.env-deploy-sample` file to `.env` (or copy its contents into a new `.env` file).
+    - Open the `.env` file and update the following values:
+        - `APP_URL=https://your-domain.com`
+        - Update the `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` to match your Hosting credentials.
 
 2. **Run optimization commands on the Server:**
    Open Terminal/SSH on your hosting and run the following commands sequentially in the project root:
-   ```bash
-   # Install dependencies without dev packages for maximum performance
-   composer install --optimize-autoloader --no-dev
 
-   # Clear all old caches and generate new ones to speed up the website
-   php artisan optimize:clear
-   php artisan optimize
-   php artisan view:cache
+    ```bash
+    # Install dependencies without dev packages for maximum performance
+    composer install --optimize-autoloader --no-dev
 
-   # Automatically create the exact database schema
-   php artisan migrate --force
+    # Clear all old caches and generate new ones to speed up the website
+    php artisan optimize:clear
+    php artisan optimize
+    php artisan view:cache
 
-   # Note: Ensure the storage and bootstrap/cache directories have write permissions (chmod 775)
-   chmod -R 775 storage bootstrap/cache
-   ```
+    # Automatically create the exact database schema
+    php artisan migrate --force
+
+    # Note: Ensure the storage and bootstrap/cache directories have write permissions (chmod 775)
+    chmod -R 775 storage bootstrap/cache
+    ```
