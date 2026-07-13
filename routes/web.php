@@ -231,6 +231,16 @@ Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
             ['label' => $post->category->name ?? 'Tin tức', 'url' => url('/bai-viet?type=sub&cat=' . \Illuminate\Support\Str::slug($post->category->name ?? 'tin-tuc'))],
             ['label' => $post->title]
         ];
+
+        // Fetch approved comments and their approved replies
+        $comments = \App\Models\Comment::where('post_id', $post->id)
+            ->whereNull('parent_id')
+            ->where('status', 1)
+            ->with(['replies' => function ($query) {
+                $query->where('status', 1)->orderBy('created_at', 'asc');
+            }])
+            ->orderBy('created_at', 'desc')
+            ->get();
     } else {
         $article = [
             'title' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm',
@@ -249,6 +259,8 @@ Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
             ['label' => 'Bọc răng sứ', 'url' => url('/bai-viet?type=sub&cat=boc-rang-su')],
             ['label' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm']
         ];
+
+        $comments = collect();
     }
 
     $relatedArticles = [
@@ -292,8 +304,10 @@ Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
 
     $recentArticles = $relatedArticles; // Reusing for sidebar
 
-    return view('client.pages.post.detail', compact('article', 'breadcrumb', 'relatedArticles', 'recentArticles'));
+    return view('client.pages.post.detail', compact('post', 'article', 'breadcrumb', 'relatedArticles', 'recentArticles', 'comments'));
 });
+
+Route::post('/bai-viet/chi-tiet/{slug}/binh-luan', [\App\Http\Controllers\Client\CommentController::class, 'store'])->name('posts.comments.store');
 
 Route::get('/tinh-thanh', function () {
     $regions = [
@@ -437,9 +451,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
 
-    Route::get('/comments', function () {
-        return view('admin.pages.comments.index');
-    });
+    Route::get('/comments', [\App\Http\Controllers\Admin\CommentController::class, 'index'])->name('admin.comments.index');
+    Route::patch('/comments/{id}/approve', [\App\Http\Controllers\Admin\CommentController::class, 'approve'])->name('admin.comments.approve');
+    Route::post('/comments/{id}/reply', [\App\Http\Controllers\Admin\CommentController::class, 'reply'])->name('admin.comments.reply');
+    Route::delete('/comments/{id}', [\App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('admin.comments.destroy');
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show', 'create', 'edit'])->names('admin.users');
     Route::post('/roles', [\App\Http\Controllers\Admin\RoleController::class, 'store'])->name('admin.roles.store');

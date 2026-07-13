@@ -3,6 +3,13 @@
 @section('title', 'Bình luận - Review Thẩm Mỹ Admin')
 
 @section('content')
+    @if(session('success'))
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-[14px] mb-4 flex items-center gap-2 shadow-sm">
+            <i class="pi pi-check-circle"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="mb-6">
         <h1 class="text-[24px] font-bold text-[#1F2733] mb-4">Bình luận</h1>
@@ -29,170 +36,95 @@
                     </tr>
                 </thead>
                 <tbody class="text-[14px]" id="comments-tbody">
-                    <!-- Comment 1: Chờ duyệt -->
-                    <tr class="comment-row border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-500 opacity-100 align-top" data-status="pending">
-                        <td class="py-4 px-5">
-                            <div class="font-bold text-[#1F2733] mb-1">Khách ẩn danh</div>
-                            <div class="text-gray-700 leading-relaxed mb-3">
-                                Bình luận này đang chờ kiểm duyệt (demo).
-                            </div>
-
-                            <!-- Inline Reply Box (Hidden by default) -->
-                            <div id="reply-box-1" class="hidden bg-gray-50 rounded-lg p-3 border border-gray-200 mt-2 transition-all">
-                                <textarea rows="3" class="w-full border border-gray-200 rounded-md p-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none placeholder-gray-400" placeholder="Nội dung trả lời..."></textarea>
-                                <div class="flex items-center gap-2 mt-3">
-                                    <button class="bg-[#6B9DFE] hover:bg-[#5a8af0] text-white px-4 py-2 rounded-md text-[14px] font-medium transition-colors flex items-center gap-2 shadow-sm" onclick="window.showToast('Đã gửi câu trả lời!', 'success'); toggleReplyBox('1')">
-                                        <i class="pi pi-send text-[12px]"></i> Gửi trả lời
-                                    </button>
-                                    <button class="text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-md text-[14px] font-medium transition-colors" onclick="toggleReplyBox('1')">Hủy</button>
+                    @forelse($comments as $comment)
+                        <tr class="comment-row border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-500 opacity-100 align-top {{ $comment->status == 0 ? '' : 'hidden opacity-0' }}" data-status="{{ $comment->status == 1 ? 'approved' : 'pending' }}">
+                            <td class="py-4 px-5">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-bold text-[#1F2733]">{{ $comment->name }}</span>
+                                    @if($comment->email)
+                                        <span class="text-gray-400 text-[13px]">{{ $comment->email }}</span>
+                                    @endif
+                                    @if($comment->user_id && $comment->user && $comment->user->role_id == 1)
+                                        <span class="bg-[#EBF3FF] text-[#1668DC] text-[11px] font-bold px-2 py-0.5 rounded">Admin</span>
+                                    @endif
                                 </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-5">
-                            <a href="#" class="text-primary hover:underline font-medium text-[13px] leading-tight block">Hút mỡ bụng 2026: chi phí, công nghệ và những sự thật ít ai nói</a>
-                        </td>
-                        <td class="py-4 px-5">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium bg-amber-100 text-amber-700">
-                                Chờ duyệt
-                            </span>
-                        </td>
-                        <td class="py-4 px-5 text-gray-500 text-[13px]">
-                            05/07/2026 09:35
-                        </td>
-                        <td class="py-4 px-5">
-                            <div class="flex items-center justify-center gap-3">
-                                <button onclick="toggleReplyBox('1')" class="text-primary hover:text-primary-dark transition-colors p-1" title="Trả lời">
-                                    <i class="pi pi-reply"></i>
-                                </button>
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-1" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
 
-                    <!-- Comment 2: Đã duyệt -->
-                    <tr class="comment-row hidden opacity-0 border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-500 align-top" data-status="approved">
-                        <td class="py-4 px-5">
-                            <div class="font-bold text-[#1F2733] mb-1">Thu Hà</div>
-                            <div class="text-gray-700 leading-relaxed mb-3">
-                                Mình từng làm ở đây rồi, dịch vụ ổn, bác sĩ tư vấn kỹ.
-                            </div>
+                                @if($comment->parent_id && $comment->parent)
+                                    <div class="text-[12px] text-gray-400 flex items-start gap-1 mb-2 italic">
+                                        <i class="pi pi-share-alt mt-[2px] text-[10px]"></i>
+                                        <span>Trả lời "{{ $comment->parent->name }}: {{ Str::limit($comment->parent->content, 50) }}"</span>
+                                    </div>
+                                @endif
 
-                            <!-- Inline Reply Box -->
-                            <div id="reply-box-2" class="hidden bg-gray-50 rounded-lg p-3 border border-gray-200 mt-2 transition-all">
-                                <textarea rows="3" class="w-full border border-gray-200 rounded-md p-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none placeholder-gray-400" placeholder="Nội dung trả lời..."></textarea>
-                                <div class="flex items-center gap-2 mt-3">
-                                    <button class="bg-[#6B9DFE] hover:bg-[#5a8af0] text-white px-4 py-2 rounded-md text-[14px] font-medium transition-colors flex items-center gap-2 shadow-sm" onclick="window.showToast('Đã gửi câu trả lời!', 'success'); toggleReplyBox('2')">
-                                        <i class="pi pi-send text-[12px]"></i> Gửi trả lời
-                                    </button>
-                                    <button class="text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-md text-[14px] font-medium transition-colors" onclick="toggleReplyBox('2')">Hủy</button>
+                                <div class="text-gray-700 leading-relaxed mb-3">
+                                    {!! nl2br(e($comment->content)) !!}
                                 </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-5">
-                            <a href="#" class="text-primary hover:underline font-medium text-[13px] leading-tight block">Hút mỡ bụng 2026: chi phí, công nghệ và những sự thật ít ai nói</a>
-                        </td>
-                        <td class="py-4 px-5">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium bg-green-100 text-green-700">
-                                Đã duyệt
-                            </span>
-                        </td>
-                        <td class="py-4 px-5 text-gray-500 text-[13px]">
-                            05/07/2026 09:35
-                        </td>
-                        <td class="py-4 px-5">
-                            <div class="flex items-center justify-center gap-3">
-                                <button onclick="toggleReplyBox('2')" class="text-primary hover:text-primary-dark transition-colors p-1" title="Trả lời">
-                                    <i class="pi pi-reply"></i>
-                                </button>
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-1" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
 
-                    <!-- Comment 3: Admin reply -->
-                    <tr class="comment-row hidden opacity-0 border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-500 align-top" data-status="approved">
-                        <td class="py-4 px-5">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-bold text-[#1F2733]">Quản trị viên</span>
-                                <span class="bg-[#EBF3FF] text-[#1668DC] text-[11px] font-bold px-2 py-0.5 rounded">Admin</span>
-                            </div>
-                            <!-- Parent Reference -->
-                            <div class="text-[12px] text-gray-400 flex items-start gap-1 mb-2 italic">
-                                <i class="pi pi-share-alt mt-[2px] text-[10px]"></i>
-                                <span>Trả lời "Minh Anh: Bài viết rất hữu ích, cho mình hỏi hút mỡ Vaser 2 vùng bụng..."</span>
-                            </div>
-                            <div class="text-gray-700 leading-relaxed mb-3">
-                                Chào bạn, hút mỡ Vaser 2 vùng bụng trọn gói (gồm gây mê + áo định hình) dao động 50-80 triệu. Bạn liên hệ hotline của cơ sở để được thăm khám và báo giá chính xác nhé!
-                            </div>
-                        </td>
-                        <td class="py-4 px-5">
-                            <a href="#" class="text-primary hover:underline font-medium text-[13px] leading-tight block">Hút mỡ bụng 2026: chi phí, công nghệ và những sự thật ít ai nói</a>
-                        </td>
-                        <td class="py-4 px-5">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium bg-green-100 text-green-700">
-                                Đã duyệt
-                            </span>
-                        </td>
-                        <td class="py-4 px-5 text-gray-500 text-[13px]">
-                            05/07/2026 09:35
-                        </td>
-                        <td class="py-4 px-5">
-                            <div class="flex items-center justify-center gap-3">
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-1" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- Comment 4 -->
-                    <tr class="comment-row hidden opacity-0 border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-500 align-top" data-status="approved">
-                        <td class="py-4 px-5">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-bold text-[#1F2733]">Minh Anh</span>
-                                <span class="text-gray-400 text-[13px]">minhanh@example.com</span>
-                            </div>
-                            <div class="text-gray-700 leading-relaxed mb-3">
-                                Bài viết rất hữu ích, cho mình hỏi hút mỡ Vaser 2 vùng bụng ở cơ sở top 1 tổng chi phí khoảng bao nhiêu ạ?
-                            </div>
-
-                            <!-- Inline Reply Box -->
-                            <div id="reply-box-4" class="hidden bg-gray-50 rounded-lg p-3 border border-gray-200 mt-2 transition-all">
-                                <textarea rows="3" class="w-full border border-gray-200 rounded-md p-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none placeholder-gray-400" placeholder="Nội dung trả lời..."></textarea>
-                                <div class="flex items-center gap-2 mt-3">
-                                    <button class="bg-[#6B9DFE] hover:bg-[#5a8af0] text-white px-4 py-2 rounded-md text-[14px] font-medium transition-colors flex items-center gap-2 shadow-sm" onclick="window.showToast('Đã gửi câu trả lời!', 'success'); toggleReplyBox('4')">
-                                        <i class="pi pi-send text-[12px]"></i> Gửi trả lời
+                                <!-- Inline Reply Box (Hidden by default) -->
+                                <form id="reply-box-{{ $comment->id }}" action="{{ route('admin.comments.reply', $comment->id) }}" method="POST" class="hidden bg-gray-50 rounded-lg p-3 border border-gray-200 mt-2 transition-all">
+                                    @csrf
+                                    <textarea name="content" rows="3" class="w-full border border-gray-200 rounded-md p-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none placeholder-gray-400" placeholder="Nội dung trả lời..." required></textarea>
+                                    <div class="flex items-center gap-2 mt-3">
+                                        <button type="submit" class="bg-[#6B9DFE] hover:bg-[#5a8af0] text-white px-4 py-2 rounded-md text-[14px] font-medium transition-colors flex items-center gap-2 shadow-sm">
+                                            <i class="pi pi-send text-[12px]"></i> Gửi trả lời
+                                        </button>
+                                        <button type="button" class="text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-md text-[14px] font-medium transition-colors" onclick="toggleReplyBox('{{ $comment->id }}')">Hủy</button>
+                                    </div>
+                                </form>
+                            </td>
+                            <td class="py-4 px-5">
+                                @if($comment->post)
+                                    <a href="{{ url('/bai-viet/chi-tiet/' . $comment->post->slug) }}" target="_blank" class="text-primary hover:underline font-medium text-[13px] leading-tight block">
+                                        {{ $comment->post->title }}
+                                    </a>
+                                @else
+                                    <span class="text-gray-400 italic text-[13px]">Bài viết đã bị xóa</span>
+                                @endif
+                            </td>
+                            <td class="py-4 px-5">
+                                @if($comment->status == 0)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium bg-amber-100 text-amber-700">
+                                        Chờ duyệt
+                                    </span>
+                                @elseif($comment->status == 1)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium bg-green-100 text-green-700">
+                                        Đã duyệt
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium bg-gray-100 text-gray-700">
+                                        {{ $comment->status }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="py-4 px-5 text-gray-500 text-[13px]">
+                                {{ $comment->created_at->format('d/m/Y H:i') }}
+                            </td>
+                            <td class="py-4 px-5">
+                                <div class="flex items-center justify-center gap-3">
+                                    @if($comment->status == 0)
+                                        <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="text-green-500 hover:text-green-700 transition-colors p-1" title="Duyệt" onclick="return confirm('Bạn có chắc chắn muốn duyệt bình luận này?')">
+                                                <i class="pi pi-check text-[15px]"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                    <button onclick="toggleReplyBox('{{ $comment->id }}')" class="text-primary hover:text-primary-dark transition-colors p-1" title="Trả lời">
+                                        <i class="pi pi-reply"></i>
                                     </button>
-                                    <button class="text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-md text-[14px] font-medium transition-colors" onclick="toggleReplyBox('4')">Hủy</button>
+                                    <form action="{{ route('admin.comments.destroy', $comment->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-400 hover:text-red-600 transition-colors p-1" title="Xóa">
+                                            <i class="pi pi-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-5">
-                            <a href="#" class="text-primary hover:underline font-medium text-[13px] leading-tight block">Hút mỡ bụng 2026: chi phí, công nghệ và những sự thật ít ai nói</a>
-                        </td>
-                        <td class="py-4 px-5">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium bg-green-100 text-green-700">
-                                Đã duyệt
-                            </span>
-                        </td>
-                        <td class="py-4 px-5 text-gray-500 text-[13px]">
-                            05/07/2026 09:35
-                        </td>
-                        <td class="py-4 px-5">
-                            <div class="flex items-center justify-center gap-3">
-                                <button onclick="toggleReplyBox('4')" class="text-primary hover:text-primary-dark transition-colors p-1" title="Trả lời">
-                                    <i class="pi pi-reply"></i>
-                                </button>
-                                <button class="text-red-400 hover:text-red-600 transition-colors p-1" title="Xóa">
-                                    <i class="pi pi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    @empty
+                    @endforelse
                 </tbody>
             </table>
             
@@ -231,14 +163,14 @@
 
         tabs.forEach(tab => {
             const btn = document.getElementById(`tab-${tab}`);
-            if (tab === status) {
-                // Tab active
-                btn.classList.remove(...inactiveClasses);
-                btn.classList.add(...activeClasses);
-            } else {
-                // Tab inactive
-                btn.classList.remove(...activeClasses);
-                btn.classList.add(...inactiveClasses);
+            if (btn) {
+                if (tab === status) {
+                    btn.classList.remove(...inactiveClasses);
+                    btn.classList.add(...activeClasses);
+                } else {
+                    btn.classList.remove(...activeClasses);
+                    btn.classList.add(...inactiveClasses);
+                }
             }
         });
 
@@ -252,7 +184,6 @@
             if (status === 'all' || rowStatus === status) {
                 row.classList.remove('hidden');
                 visibleCount++;
-                // Thêm một chút delay để hiệu ứng fade in có tác dụng
                 setTimeout(() => {
                     row.classList.remove('opacity-0');
                     row.classList.add('opacity-100');
@@ -262,13 +193,12 @@
                 row.classList.add('opacity-0');
                 setTimeout(() => {
                     row.classList.add('hidden');
-                }, 300); // 300ms tương ứng với duration-500 của tailwind hoặc duration-300 tự custom
+                }, 300);
             }
         });
 
         // Hiện Empty State nếu không có dữ liệu
         const emptyState = document.getElementById('empty-state');
-        const tbody = document.getElementById('comments-tbody');
         setTimeout(() => {
             if (visibleCount === 0) {
                 emptyState.classList.remove('hidden');
@@ -279,5 +209,10 @@
             }
         }, 300);
     }
+
+    // Tự động kích hoạt tab pending khi load trang
+    document.addEventListener('DOMContentLoaded', function() {
+        switchTab('pending');
+    });
 </script>
 @endpush

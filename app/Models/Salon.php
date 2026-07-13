@@ -34,4 +34,9 @@ class Salon extends Model
     {
         return $this->belongsToMany(Post::class, 'salon_post');
     }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
