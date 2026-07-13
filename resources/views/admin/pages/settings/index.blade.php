@@ -12,13 +12,6 @@
 <div x-data="settingsData()" x-init="init()" x-cloak>
     <x-admin.page-header title="Cấu hình Website" subtitle="Quản lý logo, footer và các cài đặt chung" />
 
-    @if(session('success'))
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
-            <i class="pi pi-check-circle text-xl"></i>
-            <span class="font-medium">{{ session('success') }}</span>
-        </div>
-    @endif
-
     <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6 mb-8">
         @csrf
         

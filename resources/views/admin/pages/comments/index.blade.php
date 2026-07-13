@@ -3,13 +3,6 @@
 @section('title', 'Bình luận - Review Thẩm Mỹ Admin')
 
 @section('content')
-    @if(session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-[14px] mb-4 flex items-center gap-2 shadow-sm">
-            <i class="pi pi-check-circle"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
     <!-- Header -->
     <div class="mb-6">
         <h1 class="text-[24px] font-bold text-[#1F2733] mb-4">Bình luận</h1>
