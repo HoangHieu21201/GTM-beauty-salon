@@ -10,22 +10,18 @@ return new class extends Migration
     {
         Schema::create('page_visits', function (Blueprint $table) {
             $table->id();
-            $table->uuid('visitor_id');
-            $table->string('session_id')->nullable();
-            $table->char('ip_hash', 64)->nullable();
+            $table->char('visitor_id');
+            $table->string('session_id', 255)->nullable();
+            $table->char('ip_hash')->nullable();
             $table->text('user_agent')->nullable();
             $table->string('method', 10)->default('GET');
             $table->string('path', 500);
             $table->text('full_url');
-            $table->string('route_name')->nullable();
+            $table->string('route_name', 255)->nullable();
             $table->string('referrer', 1000)->nullable();
-            $table->unsignedSmallInteger('status_code')->default(200);
+            $table->smallInteger('status_code')->default('200');
             $table->timestamp('visited_at');
             $table->timestamps();
-
-            $table->index(['visited_at', 'status_code', 'path']);
-            $table->index(['visited_at', 'status_code', 'visitor_id']);
-            $table->index(['visitor_id', 'path', 'visited_at']);
         });
     }
 

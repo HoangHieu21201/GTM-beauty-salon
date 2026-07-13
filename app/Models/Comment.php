@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
-    'user_id', 'salon_id', 'post_id', 'parent_id', 'name', 'email', 'content', 'status'
+    'salon_id', 'post_id', 'parent_id', 'name', 'email', 'content'
 ])]
 class Comment extends Model
 {
@@ -40,5 +40,10 @@ class Comment extends Model
     public function replies(): HasMany
     {
         return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    public function isFromAdmin(): bool
+    {
+        return $this->user_id !== null && $this->user !== null && $this->user->role_id === 1;
     }
 }

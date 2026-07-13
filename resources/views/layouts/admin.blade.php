@@ -38,15 +38,31 @@
         };
 
         window.confirmAction = function(options = {}) {
+            let confirmColor = '#1668dc'; // primary
+            let iconType = options.icon || 'warning';
+
+            if (options.type === 'danger') {
+                confirmColor = '#ef4444';
+            } else if (options.type === 'success') {
+                confirmColor = '#10b981';
+            }
+
             return Swal.fire({
                 title: options.title || 'Xác nhận thao tác',
                 text: options.message || 'Bạn có chắc chắn muốn tiếp tục?',
-                icon: 'warning',
+                icon: iconType,
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444',
+                confirmButtonColor: confirmColor,
                 cancelButtonColor: '#9ca3af',
                 confirmButtonText: options.acceptHtml || 'Tiếp tục',
                 cancelButtonText: 'Hủy',
+                customClass: {
+                    popup: 'rounded-xl shadow-lg border border-gray-100',
+                    title: 'text-gray-800 text-xl font-bold',
+                    htmlContainer: 'text-gray-600',
+                    confirmButton: 'font-bold px-5 py-2.5 rounded-lg shadow-sm',
+                    cancelButton: 'font-bold px-5 py-2.5 rounded-lg shadow-sm'
+                }
             }).then((result) => {
                 return result.isConfirmed;
             });
@@ -79,6 +95,8 @@
                     const confirmed = await window.confirmAction({
                         title: form.dataset.confirmTitle,
                         message: form.dataset.confirmMessage,
+                        type: form.dataset.confirmType || 'danger',
+                        icon: form.dataset.confirmIcon || 'warning',
                         acceptHtml: form.dataset.confirmAcceptHtml ? form.dataset.confirmAcceptHtml.replace(/<[^>]*>?/gm, '').trim() : 'Tiếp tục', // Strip HTML for SweetAlert button
                     });
 

@@ -47,13 +47,12 @@
                                     <a href="{{ route('admin.posts.edit', $post->id) }}" class="w-8 h-8 flex items-center justify-center rounded-full text-primary hover:bg-blue-50 transition-all duration-300" title="Sửa">
                                         <i class="pi pi-pencil text-[14px]"></i>
                                     </a>
-                                    <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 transition-all duration-300" title="Xóa">
-                                            <i class="pi pi-trash text-[14px]"></i>
-                                        </button>
-                                    </form>
+                                    <x-admin.delete-form 
+                                        :action="route('admin.posts.destroy', $post->id)" 
+                                        message="Bạn có chắc chắn muốn xóa bài viết này không?"
+                                        class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-50 transition-all duration-300">
+                                        <i class="pi pi-trash text-[14px]"></i>
+                                    </x-admin.delete-form>
                                 </div>
                             </td>
                         </tr>

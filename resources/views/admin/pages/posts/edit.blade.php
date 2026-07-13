@@ -88,12 +88,6 @@
             font-weight: 500 !important;
         }
     </style>
-    @if(session('success'))
-        <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-semibold flex items-center gap-2 shadow-sm">
-            <i class="pi pi-check-circle"></i>
-            {{ session('success') }}
-        </div>
-    @endif
 
     @if($errors->any())
         <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-semibold shadow-sm">

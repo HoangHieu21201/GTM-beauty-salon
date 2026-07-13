@@ -28,13 +28,14 @@ class CommentController extends Controller
         
         if (Auth::check()) {
             $comment->user_id = Auth::id();
-            // If the authenticated user is an admin, we can auto-approve their comment!
-            // Let's check user's role or role_id.
-            // Wait, is there a simple way to check if user is admin?
-            // In routes/web.php we have a middleware('admin'). Let's check User model or CategoryController to see how admin checks roles.
+            if (Auth::user()->role_id == 1) {
+                $comment->status = 1;
+            } else {
+                $comment->status = 0;
+            }
+        } else {
+            $comment->status = 0;
         }
-
-        $comment->status = 0;
         $comment->save();
 
         return back()->with('success', 'Bình luận của bạn đã được gửi và đang chờ kiểm duyệt.');
