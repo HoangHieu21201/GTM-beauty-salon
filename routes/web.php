@@ -199,11 +199,13 @@ Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
         $comments = \App\Models\Comment::where('post_id', $post->id)
             ->whereNull('parent_id')
             ->where('status', 1)
-            ->with(['replies' => function ($query) {
-                $query->where('status', 1)->orderBy('created_at', 'asc');
+            ->with(['user', 'replies' => function ($query) {
+                $query->with('user')->where('status', 1)->orderBy('created_at', 'asc');
             }])
             ->orderBy('created_at', 'desc')
             ->get();
+
+        $totalCommentsCount = $comments->count() + $comments->sum(fn($c) => $c->replies->count());
     } else {
         $article = [
             'title' => 'Bọc răng sứ giá bao nhiêu? Bảng giá 2026 và 5 điều phải hỏi trước khi làm',
@@ -224,6 +226,7 @@ Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
         ];
 
         $comments = collect();
+        $totalCommentsCount = 0;
     }
 
     $relatedArticles = [
@@ -267,10 +270,10 @@ Route::get('/bai-viet/chi-tiet/{slug}', function ($slug) {
 
     $recentArticles = $relatedArticles; // Reusing for sidebar
 
-    return view('client.pages.post.detail', compact('post', 'article', 'breadcrumb', 'relatedArticles', 'recentArticles', 'comments'));
+    return view('client.pages.post.detail', compact('post', 'article', 'breadcrumb', 'relatedArticles', 'recentArticles', 'comments', 'totalCommentsCount'));
 });
 
-Route::post('/bai-viet/chi-tiet/{slug}/binh-luan', [\App\Http\Controllers\Client\CommentController::class, 'store'])->name('posts.comments.store');
+Route::post('/bai-viet/chi-tiet/{slug}/binh-luan', [\App\Http\Controllers\Client\CommentController::class, 'store'])->middleware('throttle:60,1')->name('posts.comments.store');
 
 Route::get('/tinh-thanh', function () {
     $regions = [

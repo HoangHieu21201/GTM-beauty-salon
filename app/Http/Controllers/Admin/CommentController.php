@@ -13,7 +13,7 @@ class CommentController extends Controller
     {
         $comments = Comment::with(['post', 'user', 'parent'])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(15);
 
         return view('admin.pages.comments.index', compact('comments'));
     }
@@ -52,6 +52,7 @@ class CommentController extends Controller
     public function destroy($id)
     {
         $comment = Comment::findOrFail($id);
+        Comment::where('parent_id', $comment->id)->delete();
         $comment->delete();
 
         return back()->with('success', 'Đã xóa bình luận thành công.');

@@ -320,7 +320,7 @@
                 <!-- Comments Section -->
                 <section id="binh-luan" class="comments mt-[36px] pt-[20px] border-t-4 border-[#E8F1FF]">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-[18px] font-bold text-[#1F2733]">Bình luận ({{ $comments->count() + $comments->sum(fn($c) => $c->replies->count()) }})</h3>
+                        <h3 class="text-[18px] font-bold text-[#1F2733]">Bình luận ({{ $totalCommentsCount }})</h3>
                         <span class="bg-[#e2ffe9] text-[#16a34a] px-2 py-1 rounded-[4px] text-[12px] font-bold flex items-center gap-1">
                             <i class="pi pi-check text-[10px]"></i> Đã kiểm duyệt
                         </span>
@@ -336,7 +336,7 @@
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="flex items-center gap-2">
                                             <span class="font-bold text-[#1F2733]">{{ $comment->name }}</span>
-                                            @if($comment->user_id && $comment->user && $comment->user->role_id == 1)
+                                            @if($comment->isFromAdmin())
                                                 <span class="bg-[#EBF3FF] text-[#1668DC] text-[10px] font-bold px-1.5 py-0.5 rounded">Admin</span>
                                             @endif
                                         </div>
@@ -354,7 +354,7 @@
                                                     <div class="flex items-center justify-between mb-1">
                                                         <div class="flex items-center gap-2">
                                                             <span class="font-bold text-[#1F2733]">{{ $reply->name }}</span>
-                                                            @if($reply->user_id && $reply->user && $reply->user->role_id == 1)
+                                                            @if($reply->isFromAdmin())
                                                                 <span class="bg-[#EBF3FF] text-[#1668DC] text-[10px] font-bold px-1.5 py-0.5 rounded">Admin</span>
                                                             @endif
                                                         </div>
@@ -394,8 +394,8 @@
                             @csrf
                             <h4 class="font-bold text-[#1F2733] mb-4">Viết bình luận</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <input type="text" name="name" placeholder="Họ tên *" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC]" value="{{ auth()->user()->name ?? old('name') }}" required>
-                                <input type="email" name="email" placeholder="Email (không bắt buộc)" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC]" value="{{ auth()->user()->email ?? old('email') }}">
+                                <input type="text" name="name" placeholder="Họ tên *" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC]" value="{{ auth()->user()?->name ?? old('name') }}" required>
+                                <input type="email" name="email" placeholder="Email (không bắt buộc)" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC]" value="{{ auth()->user()?->email ?? old('email') }}">
                             </div>
                             <div class="mb-4 relative">
                                 <textarea name="content" placeholder="Nội dung bình luận *" rows="4" class="w-full px-3 py-2 border border-[#cbd5e1] rounded-[6px] outline-none focus:border-[#1668DC] resize-none" required>{{ old('content') }}</textarea>
