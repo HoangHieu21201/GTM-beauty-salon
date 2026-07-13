@@ -10,10 +10,10 @@
         </div>
 
         <!-- Main Layout Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
             
             <!-- Left Column (Main) -->
-            <div class="flex flex-col w-full overflow-hidden">
+            <div class="flex-1 flex flex-col w-full overflow-hidden">
                 
                 <!-- Gallery -->
                 @php
@@ -21,7 +21,7 @@
                 @endphp
                 <div style="display: flex; gap: 8px; height: 320px; margin-bottom: 18px;">
                     <!-- Big -->
-                    <div style="flex: 1; min-width: 540px; height: 320px; border-radius: 12px; overflow: hidden; background: #f3f4f6;">
+                    <div style="flex: 1; min-width: 0; height: 320px; border-radius: 12px; overflow: hidden; background: #f3f4f6;">
                         <img id="clinicMainImage" src="{{ $galleryImages->first() }}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" class="hover:scale-105 transition-transform duration-500" alt="{{ $clinic['name'] }}">
                     </div>
                     <!-- Thumbs -->
@@ -72,7 +72,7 @@
             </div>
 
             <!-- Right Column (Sidebar) -->
-            <aside style="display: flex; flex-direction: column; gap: 24px; position: sticky; top: 80px;">
+            <aside style="width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 80px; max-width: 100%;">
                 
                 <!-- Contact Card -->
                 <div class="bg-white shadow-sm border" style="border-radius: 12px; padding: 20px; border-color: #e2e8f0; display: flex; flex-direction: column; gap: 16px;">

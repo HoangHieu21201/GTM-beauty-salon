@@ -28,20 +28,26 @@
             <x-client.home.clinics-ranking :title="'TOP CƠ SỞ ' . mb_strtoupper($category['name'], 'UTF-8')" :icon="true" :clinics="$categoryClinics" />
         </div>
         
-        <!-- Loop qua các danh mục con để hiển thị 1 dòng (4 bài) cho mỗi danh mục -->
-        @foreach($category['children'] as $child)
-            @php
-                $childArticles = collect($articles)->filter(function($item) use ($child) {
-                    return \Illuminate\Support\Str::slug($item['category']) === $child['slug'];
-                })->all();
-            @endphp
-            @if(count($childArticles) > 0)
-                <section class="mb-[34px]">
-                    <x-client.ui.section-title :title="$child['name']" :link="url('/bai-viet?type=sub&cat='.$child['slug'])" />
-                    <x-client.ui.posts-grid :articles="$childArticles" :limit="4" />
-                </section>
-            @endif
-        @endforeach
+        @if(count($articles) == 0)
+            <div class="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200 mb-8">
+                <p class="text-gray-500 text-[15px]">Chưa có bài viết nào thuộc danh mục này.</p>
+            </div>
+        @else
+            <!-- Loop qua các danh mục con để hiển thị 1 dòng (4 bài) cho mỗi danh mục -->
+            @foreach($category['children'] as $child)
+                @php
+                    $childArticles = collect($articles)->filter(function($item) use ($child) {
+                        return \Illuminate\Support\Str::slug($item['category']) === $child['slug'];
+                    })->all();
+                @endphp
+                @if(count($childArticles) > 0)
+                    <section class="mb-[34px]">
+                        <x-client.ui.section-title :title="$child['name']" :link="url('/bai-viet?type=sub&cat='.$child['slug'])" />
+                        <x-client.ui.posts-grid :articles="$childArticles" :limit="4" />
+                    </section>
+                @endif
+            @endforeach
+        @endif
 
     @else
         <!-- Section Title for Sub Category -->
@@ -53,14 +59,22 @@
         
         <!-- Hiển thị tất cả bài viết -->
         <div class="mb-[34px]">
-            <x-client.ui.posts-grid :articles="$articles" />
+            @if(count($articles) > 0)
+                <x-client.ui.posts-grid :articles="$articles" />
+            @else
+                <div class="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                    <p class="text-gray-500 text-[15px]">Chưa có bài viết nào thuộc danh mục này.</p>
+                </div>
+            @endif
         </div>
 
+        @if($articles->hasMorePages())
         <div class="flex justify-center mt-6">
-            <button class="px-6 py-2 bg-white border border-[#1668DC] text-[#1668DC] text-[14px] font-medium rounded-[6px] hover:bg-[#1668DC] hover:text-white transition-colors">
+            <a href="{{ $articles->nextPageUrl() }}" class="inline-block px-6 py-2 bg-white border border-[#1668DC] text-[#1668DC] text-[14px] font-medium rounded-[6px] hover:bg-[#1668DC] hover:text-white transition-colors">
                 Xem thêm
-            </button>
+            </a>
         </div>
+        @endif
     @endif
 </div>
 @endsection
