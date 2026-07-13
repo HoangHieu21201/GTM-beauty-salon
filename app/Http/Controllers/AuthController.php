@@ -79,15 +79,15 @@ class AuthController extends Controller
 
         // Mặc định đăng ký là role user bình thường (VD: id 2).
         // Trong thực tế cần có logic lấy role_id đúng. 
-        // Ở đây tạm gán role_id = 2 (cần có role có id = 2 trong db).
-        $defaultRole = \App\Models\Role::where('name', 'user')->first();
+        // Lấy role user hoặc tự động tạo nếu chưa có
+        $defaultRole = \App\Models\Role::firstOrCreate(['name' => 'user']);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $defaultRole ? $defaultRole->id : null,
-        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role_id = $defaultRole->id;
+        $user->save();
 
         Auth::login($user);
 

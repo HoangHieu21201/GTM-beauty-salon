@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['id', 'name', 'slug', 'region'])]
+#[Fillable(['name', 'slug', 'region'])]
 class Province extends Model
 {
     public $incrementing = false; // predefined IDs

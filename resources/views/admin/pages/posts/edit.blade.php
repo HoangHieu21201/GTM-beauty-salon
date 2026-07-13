@@ -105,7 +105,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.posts.update', $post->id) }}" method="POST" id="editPostForm" enctype="multipart/form-data">
+    <form action="{{ route('admin.posts.update', $post->id) }}" method="POST" id="editPostForm" class="post-form" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -326,29 +326,70 @@
         <!-- RIGHT COLUMN (Sidebar & SEO) -->
         <div class="lg:col-span-4 space-y-6">
             
-            <!-- Box 1: Xuất bản & Thuộc tính -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <!-- Box 1: Cấu hình bài viết -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-6">
                 <h3 class="font-bold text-[14px] text-gray-800 flex items-center gap-2 mb-5 uppercase tracking-wider">
-                    <i class="pi pi-send text-primary"></i> Thuộc tính
+                    <i class="pi pi-cog text-blue-500"></i> Cấu hình bài viết
                 </h3>
                 
-                <div class="space-y-4">
+                <div class="space-y-5">
+                    <!-- Post Category -->
                     <div>
-                        <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">Trạng thái</label>
-                        <select name="status" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
-                            <option value="draft" {{ old('status', $post->status) == 'draft' ? 'selected' : '' }}>Nháp</option>
-                            <option value="published" {{ old('status', $post->status) == 'published' ? 'selected' : '' }}>Đã xuất bản</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">Danh mục</label>
-                        <select name="category_id" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
-                            <option value="">-- Chọn danh mục --</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id', $post->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Chuyên mục <span class="text-red-500">*</span></label>
+                        <select name="category_id" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-shadow">
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}" {{ (old('category_id') ?? $post->category_id) == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->name }}
+                                </option>
                             @endforeach
                         </select>
+                        @error('category_id') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Post Status -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Trạng thái</label>
+                        <select name="status" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-shadow">
+                            <option value="draft" {{ (old('status') ?? $post->status) == 'draft' ? 'selected' : '' }}>Bản nháp</option>
+                            <option value="published" {{ (old('status') ?? $post->status) == 'published' ? 'selected' : '' }}>Xuất bản</option>
+                        </select>
+                        @error('status') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Attach Provinces -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Gắn thẻ tỉnh/thành phố</label>
+                        <select name="provinces[]" multiple class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-shadow h-32">
+                            @php
+                                $selectedProvinces = old('provinces', $post->provinces->pluck('id')->toArray());
+                            @endphp
+                            @foreach($provinces as $province)
+                                <option value="{{ $province->id }}" {{ in_array($province->id, $selectedProvinces) ? 'selected' : '' }}>
+                                    {{ $province->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-400 mt-1">Giữ Ctrl (hoặc Cmd) để chọn nhiều</p>
+                        @error('provinces') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @error('provinces.*') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Attach Salons -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Liên kết cơ sở thẩm mỹ</label>
+                        <select name="salons[]" multiple class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-shadow h-32">
+                            @php
+                                $selectedSalons = old('salons', $post->salons->pluck('id')->toArray());
+                            @endphp
+                            @foreach($salons as $salon)
+                                <option value="{{ $salon->id }}" {{ in_array($salon->id, $selectedSalons) ? 'selected' : '' }}>
+                                    {{ $salon->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-400 mt-1">Giữ Ctrl (hoặc Cmd) để chọn nhiều</p>
+                        @error('salons') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @error('salons.*') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
             </div>
@@ -363,7 +404,7 @@
                 <div class="relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 mb-3 group bg-gray-50">
                     <img src="{{ old('thumbnail', $post->thumbnail ?? 'https://picsum.photos/400/250?random=10') }}" alt="Cover" class="w-full h-full object-cover">
                     <!-- Delete Button -->
-                    <button type="button" onclick="document.getElementById('postThumbnail').value=''; document.querySelector('img[alt=\'Cover\']').src='https://picsum.photos/400/250?random=10';" class="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow">
+                    <button type="button" id="deleteCoverBtn" class="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow">
                         <i class="pi pi-times text-[12px]"></i>
                     </button>
                 </div>
@@ -373,33 +414,8 @@
                         <i class="pi pi-cloud-upload"></i> Chọn file
                     </button>
                     <input type="file" name="thumbnail_file" id="coverImageInput" accept="image/*" class="hidden" style="display: none;">
+                    <input type="hidden" name="remove_thumbnail" id="removeThumbnailInput" value="0">
                     <input type="text" name="thumbnail" id="postThumbnail" value="{{ old('thumbnail', $post->thumbnail) }}" placeholder="Hoặc dán URL ảnh..." class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 text-[13px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition">
-                </div>
-            </div>
-
-            <!-- Box 3: Meta Đính kèm -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">Cơ sở liên quan</label>
-                        <select name="salons[]" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none">
-                            <option value="">-- Chọn cơ sở --</option>
-                            @foreach($salons as $salon)
-                                <option value="{{ $salon->id }}" {{ $post->salons->contains($salon->id) ? 'selected' : '' }}>{{ $salon->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-2">
-                            Tỉnh thành <span class="normal-case font-normal text-gray-400">(chọn bằng cách giữ Ctrl)</span>
-                        </label>
-                        <select name="provinces[]" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-[14px] text-gray-700 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition outline-none" multiple style="height: 100px;">
-                            @foreach($provinces as $province)
-                                <option value="{{ $province->id }}" {{ $post->provinces->contains($province->id) ? 'selected' : '' }}>{{ $province->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
                 </div>
             </div>
 
@@ -526,699 +542,5 @@
 @endsection
 
 @push('scripts')
-<script>
-    /**
-     * Editor Format Logic
-     */
-    window.formatDoc = function(cmd, value = null) {
-        document.execCommand(cmd, false, value);
-        document.getElementById('postContent').focus();
-    };
-
-    /**
-     * Table manipulation helpers
-     */
-    function getSelectedElement() {
-        if (window.getSelection) {
-            var sel = window.getSelection();
-            if (sel.rangeCount > 0) {
-                return sel.getRangeAt(0).startContainer;
-            }
-        }
-        return null;
-    }
-
-    function getClosestParent(node, tagName) {
-        if (!node) return null;
-        var curr = node;
-        while (curr && curr.id !== 'postContent') {
-            if (curr.nodeName === tagName.toUpperCase()) {
-                return curr;
-            }
-            curr = curr.parentNode;
-        }
-        return null;
-    }
-
-    window.addTableRow = function() {
-        var selEl = getSelectedElement();
-        var tr = getClosestParent(selEl, 'tr');
-        var table = getClosestParent(selEl, 'table');
-        
-        if (tr && table) {
-            var cellCount = tr.cells.length;
-            var newRow = table.insertRow(tr.rowIndex + 1);
-            for (var i = 0; i < cellCount; i++) {
-                var newCell = newRow.insertCell(i);
-                newCell.className = "border border-gray-300 p-2.5";
-                newCell.innerHTML = "&nbsp;";
-            }
-        } else {
-            // No table selected, insert a default 3x4 table
-            var html = '<table class="w-full border-collapse border border-gray-300 mb-4">' +
-                '<thead><tr class="bg-gray-50">' +
-                '<th class="border border-gray-300 p-2.5 text-left font-semibold text-gray-700">Dòng sứ</th>' +
-                '<th class="border border-gray-300 p-2.5 text-left font-semibold text-gray-700">Giá/răng</th>' +
-                '<th class="border border-gray-300 p-2.5 text-left font-semibold text-gray-700">Tuổi thọ</th>' +
-                '<th class="border border-gray-300 p-2.5 text-left font-semibold text-gray-700">Đặc điểm</th>' +
-                '</tr></thead>' +
-                '<tbody><tr>' +
-                '<td class="border border-gray-300 p-2.5">Sứ kim loại</td>' +
-                '<td class="border border-gray-300 p-2.5">1-2.5 triệu</td>' +
-                '<td class="border border-gray-300 p-2.5">5-8 năm</td>' +
-                '<td class="border border-gray-300 p-2.5">Rẻ, đen viền nướu</td>' +
-                '</tr></tbody></table>';
-            formatDoc('insertHTML', html);
-        }
-    };
-
-    window.addTableColumn = function() {
-        var selEl = getSelectedElement();
-        var td = getClosestParent(selEl, 'td') || getClosestParent(selEl, 'th');
-        var table = getClosestParent(selEl, 'table');
-        
-        if (td && table) {
-            var colIndex = td.cellIndex;
-            for (var i = 0; i < table.rows.length; i++) {
-                var row = table.rows[i];
-                var isHeader = row.parentNode.nodeName === 'THEAD' || row.cells[colIndex].nodeName === 'TH';
-                var newCell = isHeader ? document.createElement('th') : document.createElement('td');
-                
-                newCell.className = isHeader 
-                    ? "border border-gray-300 p-2.5 text-left font-semibold text-gray-700" 
-                    : "border border-gray-300 p-2.5";
-                newCell.innerHTML = "&nbsp;";
-                
-                if (colIndex + 1 < row.cells.length) {
-                    row.insertBefore(newCell, row.cells[colIndex + 1]);
-                } else {
-                    row.appendChild(newCell);
-                }
-            }
-        }
-    };
-
-    window.deleteTableRow = function() {
-        var selEl = getSelectedElement();
-        var tr = getClosestParent(selEl, 'tr');
-        var table = getClosestParent(selEl, 'table');
-        if (tr && table) {
-            table.deleteRow(tr.rowIndex);
-        }
-    };
-
-    window.deleteTableColumn = function() {
-        var selEl = getSelectedElement();
-        var td = getClosestParent(selEl, 'td') || getClosestParent(selEl, 'th');
-        var table = getClosestParent(selEl, 'table');
-        if (td && table) {
-            var colIndex = td.cellIndex;
-            for (var i = 0; i < table.rows.length; i++) {
-                var row = table.rows[i];
-                if (row.cells.length > colIndex) {
-                    row.deleteCell(colIndex);
-                }
-            }
-        }
-    };
-
-    window.createCustomTable = function() {
-        var rowsInput = document.getElementById('tblRows').value;
-        var colsInput = document.getElementById('tblCols').value;
-        var rows = parseInt(rowsInput);
-        var cols = parseInt(colsInput);
-        
-        if (isNaN(rows) || isNaN(cols) || rows <= 0 || cols <= 0) {
-            alert("Số dòng và số cột phải lớn hơn 0");
-            return;
-        }
-        
-        var html = '<table class="w-full border-collapse border border-gray-300 mb-4" style="table-layout: fixed; width: 100%; border-collapse: collapse;">';
-        html += '<tbody>';
-        for (var r = 0; r < rows; r++) {
-            html += '<tr>';
-            for (var c = 0; c < cols; c++) {
-                html += '<td class="border border-gray-300 p-2.5" style="word-break: break-word;">&nbsp;</td>';
-            }
-            html += '</tr>';
-        }
-        html += '</tbody></table>';
-        
-        formatDoc('insertHTML', html);
-    };
-
-    window.insertChecklist = function() {
-        formatDoc('insertHTML', '<ul class="checklist-list" style="list-style: none; padding-left: 0; margin-left: 0; margin-bottom: 1rem;"><li class="checklist-item" style="list-style-type: none; display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem;"><input type="checkbox" style="margin: 0; transform: scale(1.1); accent-color: #2563eb;">&nbsp;</li></ul>');
-    };
-
-    /**
-     * Dropdown Logic
-     */
-    window.toggleDropdown = function(id) {
-        // Hide others
-        if (id !== 'textColorDropdown') document.getElementById('textColorDropdown').classList.add('hidden');
-        if (id !== 'bgColorDropdown') document.getElementById('bgColorDropdown').classList.add('hidden');
-        if (id !== 'tableGeneratorDropdown') document.getElementById('tableGeneratorDropdown').classList.add('hidden');
-        
-        const el = document.getElementById(id);
-        el.classList.toggle('hidden');
-    };
-
-    // Close dropdowns on outside click
-    document.addEventListener('click', function(event) {
-        const isClickInsideTextColor = document.getElementById('textColorContainer').contains(event.target);
-        const isClickInsideBgColor = document.getElementById('bgColorContainer').contains(event.target);
-        const isClickInsideTableGen = document.getElementById('tableGeneratorContainer').contains(event.target);
-        
-        const popover = document.getElementById('linkPopover');
-        const linkBtn = event.target.closest('button[onclick="showLinkPopover()"]');
-        const isClickInsidePopover = popover.contains(event.target);
-        
-        if (!isClickInsideTextColor) {
-            document.getElementById('textColorDropdown').classList.add('hidden');
-        }
-        if (!isClickInsideBgColor) {
-            document.getElementById('bgColorDropdown').classList.add('hidden');
-        }
-        if (!isClickInsideTableGen) {
-            document.getElementById('tableGeneratorDropdown').classList.add('hidden');
-        }
-        if (!isClickInsidePopover && !linkBtn) {
-            popover.classList.add('hidden');
-        }
-    });
-
-    let savedSelectionRange = null;
-
-    window.showLinkPopover = function() {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            const container = document.getElementById('postContent');
-            if (!container.contains(range.commonAncestorContainer)) {
-                alert("Vui lòng bôi đen văn bản trong trình soạn thảo trước");
-                return;
-            }
-            
-            savedSelectionRange = range.cloneRange();
-            let rect = range.getBoundingClientRect();
-            const popover = document.getElementById('linkPopover');
-            
-            // Fallback for collapsed selections or zero height ranges
-            if (rect.top === 0 && rect.left === 0) {
-                let parent = range.startContainer;
-                if (parent.nodeType === Node.TEXT_NODE) {
-                    parent = parent.parentNode;
-                }
-                rect = parent.getBoundingClientRect();
-            }
-            
-            let currentUrl = '';
-            let parentNode = range.commonAncestorContainer;
-            if (parentNode.nodeType === Node.TEXT_NODE) {
-                parentNode = parentNode.parentNode;
-            }
-            if (parentNode.tagName === 'A') {
-                currentUrl = parentNode.getAttribute('href');
-            }
-            
-            document.getElementById('linkPopoverInput').value = currentUrl;
-            
-            // Calculate absolute position inside the Editor Box relative parent
-            const wrapper = container.closest('.relative');
-            const wrapperRect = wrapper.getBoundingClientRect();
-            
-            const left = rect.left - wrapperRect.left;
-            const top = rect.bottom - wrapperRect.top + 5;
-            
-            popover.style.left = left + 'px';
-            popover.style.top = top + 'px';
-            popover.classList.remove('hidden');
-            
-            setTimeout(() => {
-                const input = document.getElementById('linkPopoverInput');
-                input.focus();
-                input.select();
-            }, 50);
-        } else {
-            alert("Vui lòng bôi đen văn bản để chèn liên kết");
-        }
-    };
-
-    window.savePopoverLink = function() {
-        const url = document.getElementById('linkPopoverInput').value.trim();
-        const popover = document.getElementById('linkPopover');
-        popover.classList.add('hidden');
-        
-        if (savedSelectionRange) {
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(savedSelectionRange);
-            
-            if (url) {
-                formatDoc('createLink', url);
-            } else {
-                formatDoc('unlink');
-            }
-            
-            savedSelectionRange = null;
-        }
-    };
-
-    /**
-     * Preview Modal Logic
-     */
-    window.openPreview = function() {
-        const modal = document.getElementById('previewModal');
-        
-        // Populate data
-        document.getElementById('previewTitle').innerText = document.getElementById('postTitle').value || 'Chưa có tiêu đề';
-        document.getElementById('previewBody').innerHTML = document.getElementById('postContent').innerHTML;
-        
-        const today = new Date();
-        document.getElementById('previewDate').innerText = today.toLocaleDateString('vi-VN');
-        
-        const stats = document.getElementById('readingStats').innerText.split(' - ');
-        if(stats.length > 1) {
-            document.getElementById('previewReadTime').innerText = stats[1].trim();
-        }
-        
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-        }, 10);
-        document.body.style.overflow = 'hidden'; // prevent background scrolling
-    };
-
-    window.closePreview = function() {
-        const modal = document.getElementById('previewModal');
-        modal.classList.add('opacity-0');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }, 300);
-    };
-
-    window.setPreviewMode = function(mode) {
-        const container = document.getElementById('previewContainer');
-        const btnDesktop = document.getElementById('btnPreviewDesktop');
-        const btnMobile = document.getElementById('btnPreviewMobile');
-        
-        if (mode === 'desktop') {
-            container.style.maxWidth = '800px';
-            btnDesktop.className = 'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-colors bg-[#2563eb] text-white';
-            btnMobile.className = 'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-colors text-gray-400 hover:text-white';
-        } else {
-            container.style.maxWidth = '375px'; // standard mobile width
-            btnMobile.className = 'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-colors bg-[#2563eb] text-white';
-            btnDesktop.className = 'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-colors text-gray-400 hover:text-white';
-        }
-    };
-
-    /**
-     * SEO Analyzer Logic (Mockup for Real-time scoring)
-     */
-    document.addEventListener('DOMContentLoaded', function() {
-        const titleInput = document.getElementById('postTitle');
-        const slugSpan = document.getElementById('postSlug');
-        const excerptInput = document.getElementById('postExcerpt');
-        const excerptCounter = document.getElementById('excerptCounter');
-        
-        const contentDiv = document.getElementById('postContent');
-        const readingStats = document.getElementById('readingStats');
-        
-        const keywordInput = document.getElementById('seoKeyword');
-        const seoTitleInput = document.getElementById('seoTitle');
-        const seoTitleCounter = document.getElementById('seoTitleCounter');
-        const seoDescInput = document.getElementById('seoDesc');
-        const seoDescCounter = document.getElementById('seoDescCounter');
-        
-        const previewTitle = document.getElementById('previewTitle');
-        const previewDesc = document.getElementById('previewDesc');
-        const previewSlug = document.getElementById('previewSlug');
-        
-        const scoreRing = document.getElementById('seoScoreRing');
-        const scoreText = document.getElementById('seoScoreText');
-        const checklist = document.getElementById('seoChecklist');
-
-        // Utils
-        const generateSlug = (text) => {
-            let slug = text.toString().toLowerCase();
-
-            // Convert Vietnamese characters to English equivalents
-            slug = slug.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, 'a');
-            slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, 'e');
-            slug = slug.replace(/í|ì|ỉ|ĩ|ị/g, 'i');
-            slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, 'o');
-            slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, 'u');
-            slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, 'y');
-            slug = slug.replace(/đ/g, 'd');
-
-            // Strip special characters and normalize spaces
-            slug = slug.replace(/[^\w\s-]/g, '')
-                       .trim()
-                       .replace(/[\s_]+/g, '-')
-                       .replace(/-+/g, '-');
-            
-            return slug;
-        };
-
-        const countWords = (str) => {
-            return str.trim().split(/\s+/).filter(word => word.length > 0).length;
-        };
-
-        const updateCounter = (el, count, max) => {
-            el.innerText = `${count}/${max}`;
-            if (count > max) {
-                el.classList.add('text-orange-500');
-                el.classList.remove('text-gray-400', 'text-green-600');
-            } else if (count > 0) {
-                el.classList.add('text-green-600');
-                el.classList.remove('text-gray-400', 'text-orange-500');
-            } else {
-                el.classList.add('text-gray-400');
-                el.classList.remove('text-green-600', 'text-orange-500');
-            }
-        };
-
-        // Main Engine
-        const analyzeSEO = () => {
-            const title = titleInput.value;
-            const excerpt = excerptInput.value;
-            const content = contentDiv.innerText;
-            const wordCount = countWords(content);
-            const readTime = Math.max(1, Math.ceil(wordCount / 200)); // Average 200 wpm
-            
-            readingStats.innerText = `${wordCount} từ - ${readTime} phút đọc`;
-            
-            const slugVal = generateSlug(title) || 'tieu-de-bai-viet';
-            slugSpan.innerText = slugVal;
-            previewSlug.innerText = slugVal;
-            const hiddenSlugEl = document.getElementById('hiddenSlug');
-            if (hiddenSlugEl) hiddenSlugEl.value = slugVal;
-            
-            // Sync Excerpt Counter
-            updateCounter(excerptCounter, excerpt.length, 160);
-
-            // Sync SEO Meta (fallback to post title/excerpt)
-            const metaTitle = seoTitleInput.value || title;
-            const metaDesc = seoDescInput.value || excerpt;
-            const keyword = keywordInput.value.toLowerCase().trim();
-
-            updateCounter(seoTitleCounter, metaTitle.length, 65);
-            updateCounter(seoDescCounter, metaDesc.length, 160);
-
-            previewTitle.innerText = metaTitle || 'Tiêu đề SEO sẽ hiển thị ở đây';
-            previewDesc.innerText = metaDesc || 'Vui lòng cung cấp Meta Description hoặc Mô tả ngắn để Google có thể hiển thị đoạn mã trích dẫn này...';
-
-            // Scoring Logic
-            let score = 0;
-            let maxScore = 100;
-            const checks = [];
-
-            const addCheck = (condition, textPass, textFail) => {
-                if (condition) {
-                    checks.push(`<li class="flex items-start gap-2 text-green-600"><i class="pi pi-check-circle mt-0.5"></i> <span>${textPass}</span></li>`);
-                    score += 15;
-                } else {
-                    checks.push(`<li class="flex items-start gap-2 text-orange-500"><i class="pi pi-circle mt-0.5"></i> <span>${textFail}</span></li>`);
-                }
-            };
-
-            // Rule 1: Meta Title Length
-            addCheck(metaTitle.length >= 30 && metaTitle.length <= 65, 
-                `Meta title độ dài chuẩn (hiện ${metaTitle.length})`, 
-                `Meta title nên từ 30-65 ký tự (hiện ${metaTitle.length})`);
-            
-            // Rule 2: Meta Desc Length
-            addCheck(metaDesc.length >= 70 && metaDesc.length <= 160, 
-                `Meta description độ dài chuẩn (hiện ${metaDesc.length})`, 
-                `Meta description nên từ 70-160 ký tự (hiện ${metaDesc.length})`);
-
-            // Rule 3: Content Length
-            addCheck(wordCount >= 600, 
-                `Nội dung đủ dài ≥ 600 từ (hiện ${wordCount})`, 
-                `Nội dung quá ngắn < 600 từ (hiện ${wordCount})`);
-
-            // Rule 4: Headings
-            const h2Count = (contentDiv.innerHTML.match(/<h2/gi) || []).length;
-            addCheck(h2Count >= 2, 
-                `Có ≥ 2 thẻ H2 để tạo mục lục (hiện ${h2Count})`, 
-                `Nên có ≥ 2 thẻ H2 để cấu trúc bài viết rõ ràng (hiện ${h2Count})`);
-
-            // Rule 5: Focus Keyword (if provided)
-            if (keyword) {
-                const keywordInTitle = metaTitle.toLowerCase().includes(keyword);
-                const keywordInDesc = metaDesc.toLowerCase().includes(keyword);
-                const keywordInContent = content.toLowerCase().includes(keyword);
-                
-                addCheck(keywordInTitle, `Từ khóa xuất hiện trong meta title`, `Từ khóa chưa có trong meta title`);
-                addCheck(keywordInDesc, `Từ khóa xuất hiện trong meta description`, `Từ khóa chưa có trong meta description`);
-                addCheck(keywordInContent, `Từ khóa xuất hiện trong nội dung`, `Từ khóa chưa xuất hiện trong nội dung`);
-                maxScore = 105; // 7 rules * 15
-            } else {
-                checks.push(`<li class="flex items-start gap-2 text-gray-400"><i class="pi pi-info-circle mt-0.5"></i> <span>Nhập từ khóa chính để đánh giá sâu hơn</span></li>`);
-                maxScore = 60; // 4 rules * 15
-            }
-
-            // Calculate percentage
-            const percentage = Math.round((score / maxScore) * 100) || 0;
-            scoreText.innerText = `${percentage}%`;
-
-            // Color gradient logic based on score
-            let color = '#ef4444'; // Red < 50
-            if (percentage >= 50 && percentage < 80) color = '#f59e0b'; // Orange
-            if (percentage >= 80) color = '#10b981'; // Green
-
-            if (percentage > 0) {
-                scoreText.style.color = color;
-                scoreRing.style.background = `conic-gradient(${color} ${percentage}%, #e5e7eb ${percentage}%)`;
-            } else {
-                scoreText.style.color = '#9ca3af';
-                scoreRing.style.background = `#e5e7eb`;
-            }
-
-            // Render Checklist
-            checklist.innerHTML = checks.join('');
-        };
-
-        // Event Listeners
-        titleInput.addEventListener('input', analyzeSEO);
-        excerptInput.addEventListener('input', analyzeSEO);
-        contentDiv.addEventListener('input', analyzeSEO);
-        keywordInput.addEventListener('input', analyzeSEO);
-        seoTitleInput.addEventListener('input', analyzeSEO);
-        seoDescInput.addEventListener('input', analyzeSEO);
-
-        // Sync cover image preview when URL is pasted
-        const thumbnailInput = document.getElementById('postThumbnail');
-        const thumbnailPreview = document.querySelector('img[alt="Cover"]');
-        if (thumbnailInput && thumbnailPreview) {
-            thumbnailInput.addEventListener('input', function() {
-                thumbnailPreview.src = this.value || 'https://picsum.photos/400/250?random=10';
-            });
-        }
-
-        // Preview cover image when selected locally
-        const coverInput = document.getElementById('coverImageInput');
-        if (coverInput && thumbnailPreview) {
-            coverInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        thumbnailPreview.src = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        // Handle rich-text editor image selection from computer
-        const editorFileInput = document.getElementById('editorImageInput');
-        if (editorFileInput) {
-            editorFileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const base64Url = event.target.result;
-                        formatDoc('insertImage', base64Url);
-                        e.target.value = ''; // Reset uploader value
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        // Breakout from blockquote immediately on first Enter
-        if (contentDiv) {
-            contentDiv.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    const selection = window.getSelection();
-                    if (selection.rangeCount > 0) {
-                        const range = selection.getRangeAt(0);
-                        let container = range.startContainer;
-                        
-                        // Find blockquote parent
-                        let blockquote = null;
-                        let temp = container;
-                        while (temp && temp !== this) {
-                            if (temp.tagName === 'BLOCKQUOTE') {
-                                blockquote = temp;
-                                break;
-                            }
-                            temp = temp.parentNode;
-                        }
-                        
-                        if (blockquote) {
-                            e.preventDefault();
-                            
-                            // Create a new range from caret to the end of the blockquote
-                            const endRange = document.createRange();
-                            endRange.setStart(range.startContainer, range.startOffset);
-                            endRange.setEndAfter(blockquote.lastChild || blockquote);
-                            
-                            // Extract contents after the cursor
-                            const extracted = endRange.extractContents();
-                            
-                            // Create a new normal paragraph below the blockquote
-                            const p = document.createElement('p');
-                            p.appendChild(extracted);
-                            
-                            // If the new paragraph is completely empty, insert a <br> so it's styleable and focusable
-                            if (p.textContent.trim() === '' && p.querySelectorAll('img, iframe, table').length === 0) {
-                                p.innerHTML = '<br>';
-                            }
-                            
-                            // Insert the new paragraph after the blockquote
-                            blockquote.parentNode.insertBefore(p, blockquote.nextSibling);
-                            
-                            // Position the cursor at the beginning of the new paragraph
-                            const newRange = document.createRange();
-                            newRange.selectNodeContents(p);
-                            newRange.collapse(true);
-                            selection.removeAllRanges();
-                            selection.addRange(newRange);
-                        }
-                    }
-                }
-            });
-        }
-
-        // --- Draft Auto-Save & Prevent Accidental F5 ---
-        let isDirty = false;
-        const AUTO_SAVE_KEY = 'gtm_editor_draft_' + window.location.pathname;
-
-        const markDirty = () => { isDirty = true; };
-        titleInput.addEventListener('input', markDirty);
-        excerptInput.addEventListener('input', markDirty);
-        contentDiv.addEventListener('input', markDirty);
-
-        // Warn on accidental refresh
-        window.addEventListener('beforeunload', function(e) {
-            if (isDirty) {
-                e.preventDefault();
-                e.returnValue = 'Bạn chưa lưu thay đổi. Bạn có chắc chắn muốn rời đi?';
-            }
-        });
-
-        // Save progress to LocalStorage
-        const saveDraftToLocalStorage = () => {
-            const selectCategory = document.querySelector('select[name="category_id"]');
-            const selectStatus = document.querySelector('select[name="status"]');
-            const draft = {
-                title: titleInput.value,
-                excerpt: excerptInput.value,
-                content: contentDiv.innerHTML,
-                categoryId: selectCategory ? selectCategory.value : '',
-                status: selectStatus ? selectStatus.value : '',
-                keyword: keywordInput.value,
-                metaTitle: seoTitleInput.value,
-                metaDesc: seoDescInput.value,
-                timestamp: Date.now()
-            };
-            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(draft));
-        };
-
-        const triggerAutoSave = () => {
-            markDirty();
-            saveDraftToLocalStorage();
-        };
-
-        titleInput.addEventListener('input', triggerAutoSave);
-        excerptInput.addEventListener('input', triggerAutoSave);
-        contentDiv.addEventListener('input', triggerAutoSave);
-        if (keywordInput) keywordInput.addEventListener('input', triggerAutoSave);
-        if (seoTitleInput) seoTitleInput.addEventListener('input', triggerAutoSave);
-        if (seoDescInput) seoDescInput.addEventListener('input', triggerAutoSave);
-        
-        const selectCategory = document.querySelector('select[name="category_id"]');
-        const selectStatus = document.querySelector('select[name="status"]');
-        if (selectCategory) selectCategory.addEventListener('change', triggerAutoSave);
-        if (selectStatus) selectStatus.addEventListener('change', triggerAutoSave);
-
-        // Offer to restore draft if found
-        const savedDraftStr = localStorage.getItem(AUTO_SAVE_KEY);
-        if (savedDraftStr) {
-            try {
-                const draft = JSON.parse(savedDraftStr);
-                const currentContent = contentDiv.innerHTML.trim();
-                const draftContent = draft.content.trim();
-
-                if (draftContent && draftContent !== currentContent && draftContent !== '<br>' && draftContent !== '<p><br></p>') {
-                    const restoreBanner = document.createElement('div');
-                    restoreBanner.className = 'mb-6 p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 text-sm font-semibold flex items-center justify-between shadow-sm';
-                    restoreBanner.innerHTML = `
-                        <div class="flex items-center gap-2">
-                            <i class="pi pi-info-circle"></i>
-                            <span>Phát hiện bản nháp được lưu tự động lúc ${new Date(draft.timestamp).toLocaleTimeString('vi-VN')}. Khôi phục lại nội dung?</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <button type="button" id="btnRestoreDraft" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors">Khôi phục</button>
-                            <button type="button" id="btnDiscardDraft" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-xs font-bold transition-colors">Bỏ qua</button>
-                        </div>
-                    `;
-
-                    const formEl = document.getElementById('editPostForm');
-                    formEl.parentNode.insertBefore(restoreBanner, formEl);
-
-                    document.getElementById('btnRestoreDraft').addEventListener('click', function() {
-                        titleInput.value = draft.title;
-                        excerptInput.value = draft.excerpt;
-                        contentDiv.innerHTML = draft.content;
-                        if (selectCategory) selectCategory.value = draft.categoryId;
-                        if (selectStatus) selectStatus.value = draft.status;
-                        if (keywordInput) keywordInput.value = draft.keyword;
-                        if (seoTitleInput) seoTitleInput.value = draft.metaTitle;
-                        if (seoDescInput) seoDescInput.value = draft.metaDesc;
-
-                        analyzeSEO();
-                        restoreBanner.remove();
-                        if (window.showToast) window.showToast('Khôi phục bản nháp tự động thành công!', 'success');
-                    });
-
-                    document.getElementById('btnDiscardDraft').addEventListener('click', function() {
-                        localStorage.removeItem(AUTO_SAVE_KEY);
-                        restoreBanner.remove();
-                    });
-                }
-            } catch (e) {
-                console.error("Lỗi phân tích bản nháp:", e);
-            }
-        }
-
-        // Copy contenteditable editor content to hidden input prior to form submission
-        const form = document.getElementById('editPostForm');
-        if (form) {
-            form.addEventListener('submit', function() {
-                isDirty = false;
-                document.getElementById('hiddenContent').value = contentDiv.innerHTML;
-            });
-        }
-
-        // Initial Run
-        analyzeSEO();
-    });
-</script>
+<script src="{{ asset('js/admin/editor.js') }}"></script>
 @endpush

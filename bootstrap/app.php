@@ -12,10 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->append(\App\Http\Middleware\TrackPageVisit::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, Request $request) {
+            if ($request->wantsJson() || $request->is('api/*') || $request->ajax()) {
+                return response()->json(['message' => $e->getMessage() ?: 'Bạn không có quyền truy cập.'], 403);
+            }
+            return back()->with('error', $e->getMessage() ?: 'Bạn không có quyền thao tác.');
+        });
+
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
+            fn (Request $request) => $request->is('api/*') || $request->ajax() || $request->wantsJson(),
         );
     })->create();

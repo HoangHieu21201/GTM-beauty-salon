@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['parent_id', 'name'])]
+#[Fillable(['parent_id', 'name', 'slug'])]
 class Category extends Model
 {
     use SoftDeletes;

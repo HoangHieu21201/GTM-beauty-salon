@@ -1,4 +1,4 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Sửa cơ sở thẩm mỹ - Review Thẩm Mỹ Admin')
 
@@ -10,36 +10,57 @@
         </a>
     </div>
 
-    <form action="{{ route('admin.clinics.update', $clinic) }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row gap-5" data-loading-submit>
+    <form action="{{ route('admin.clinics.update', $clinic) }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row gap-5" data-loading-submit data-clinic-form data-images-required-message="Vui lòng giữ lại ảnh hiện có, tải ảnh mới hoặc nhập URL ảnh.">
         @csrf
         @method('PUT')
         <input type="hidden" name="form_token" value="{{ $formToken }}">
         <input type="hidden" name="images_synced" value="1">
         <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-5">
+            @error('form_token')
+                <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                    {{ $message }}
+                </div>
+            @enderror
+
             <div>
                 <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Tên cơ sở <span class="text-red-500">*</span></label>
-                <input name="name" value="{{ old('name', $clinic->name) }}" type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập tên cơ sở...">
+                <input name="name" value="{{ old('name', $clinic->name) }}" type="text" class="{{ $inputClass('name') }}" placeholder="Nhập tên cơ sở..." data-required-message="Vui lòng nhập tên cơ sở." @error('name') aria-invalid="true" aria-describedby="name-error" @enderror>
+                @error('name')
+                    <p id="name-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Địa chỉ</label>
-                <input name="address" value="{{ old('address', $clinic->address) }}" type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập địa chỉ cơ sở...">
+                <input name="address" value="{{ old('address', $clinic->address) }}" type="text" class="{{ $inputClass('address') }}" placeholder="Nhập địa chỉ cơ sở..." @error('address') aria-invalid="true" aria-describedby="address-error" @enderror>
+                @error('address')
+                    <p id="address-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Điện thoại</label>
-                    <input name="phone" value="{{ old('phone', $clinic->phone) }}" type="text" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập số điện thoại...">
+                    <input name="phone" value="{{ old('phone', $clinic->phone) }}" type="text" class="{{ $inputClass('phone') }}" placeholder="Nhập số điện thoại..." @error('phone') aria-invalid="true" aria-describedby="phone-error" @enderror>
+                    @error('phone')
+                        <p id="phone-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Website</label>
-                    <input name="website" value="{{ old('website', $clinic->website) }}" type="url" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="https://...">
+                    <input name="website" value="{{ old('website', $clinic->website) }}" type="url" class="{{ $inputClass('website') }}" placeholder="https://..." @error('website') aria-invalid="true" aria-describedby="website-error" @enderror>
+                    @error('website')
+                        <p id="website-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
             <div>
                 <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Mô tả</label>
-                <textarea name="description" rows="4" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="Nhập mô tả về cơ sở thẩm mỹ...">{{ old('description', $clinic->description) }}</textarea>
+                <textarea name="description" rows="4" class="{{ $inputClass('description', 'py-2.5') }}" placeholder="Nhập mô tả về cơ sở thẩm mỹ..." @error('description') aria-invalid="true" aria-describedby="description-error" @enderror>{{ old('description', $clinic->description) }}</textarea>
+                @error('description')
+                    <p id="description-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -67,8 +88,17 @@
                         <i class="pi pi-cloud-upload"></i> Tải ảnh lên
                     </button>
                     <input id="image_file" name="image_files[]" type="file" accept="image/*" multiple class="hidden">
-                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="flex-1 px-3 py-1.5 rounded-lg border border-gray-100 bg-gray-50 text-sm outline-none focus:bg-white focus:border-gray-200" placeholder="hoặc dán URL ảnh rồi nhấn Enter">
+                    <input name="image_url" value="{{ old('image_url') }}" type="text" class="{{ $inputClass('image_url', 'flex-1 py-1.5 bg-gray-50 focus:bg-white') }}" placeholder="hoặc dán URL ảnh rồi nhấn Enter" @error('image_url') aria-invalid="true" aria-describedby="image-url-error" @enderror>
                 </div>
+                @error('image_url')
+                    <p id="image-url-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                @enderror
+                @error('image_files')
+                    <p class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                @enderror
+                @error('image_files.*')
+                    <p class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -76,28 +106,40 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-5">
                 <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Điểm xếp hạng (score)</label>
-                    <input name="score" value="{{ old('score', $clinic->score) }}" type="number" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm mb-1" placeholder="Ví dụ: 60">
+                    <input name="score" value="{{ old('score', $clinic->score) }}" type="number" class="{{ $inputClass('score', 'mb-1') }}" placeholder="Ví dụ: 60" @error('score') aria-invalid="true" aria-describedby="score-error" @enderror>
                     <p class="text-[12px] text-gray-500 font-medium">Càng cao càng đứng đầu bảng xếp hạng.</p>
+                    @error('score')
+                        <p id="score-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="flex gap-4">
                     <div class="flex-1">
                         <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Rating (0-5)</label>
-                        <input name="rating" value="{{ old('rating', $clinic->rating) }}" type="number" step="0.1" class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="5.0">
+                        <input name="rating" value="{{ old('rating', $clinic->rating) }}" type="number" step="0.1" class="{{ $inputClass('rating') }}" placeholder="5.0" @error('rating') aria-invalid="true" aria-describedby="rating-error" @enderror>
+                        @error('rating')
+                            <p id="rating-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div class="flex-1">
                         <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Số đánh giá</label>
-                        <input name="review_count" value="{{ old('review_count', $clinic->review_count) }}" type="number" data-clear-zero class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-sm" placeholder="500">
+                        <input name="review_count" value="{{ old('review_count', $clinic->review_count) }}" type="number" data-clear-zero class="{{ $inputClass('review_count') }}" placeholder="500" @error('review_count') aria-invalid="true" aria-describedby="review-count-error" @enderror>
+                        @error('review_count')
+                            <p id="review-count-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Danh mục</label>
-                    <select name="category_id" class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-gray-700">
+                    <select name="category_id" class="{{ $selectClass('category_id') }}" @error('category_id') aria-invalid="true" aria-describedby="category-id-error" @enderror>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}" @selected(old('category_id', $clinic->category_id) == $category->id)>{{ $category->name }}</option>
                         @endforeach
                     </select>
+                    @error('category_id')
+                        <p id="category-id-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="pt-1">
@@ -109,10 +151,13 @@
 
                 <div>
                     <label class="block text-[13px] font-bold text-gray-700 mb-1.5">Trạng thái</label>
-                    <select name="status" class="w-full px-3 py-2 rounded-lg border border-primary bg-white text-sm ring-2 ring-primary/10 outline-none transition text-gray-800">
+                    <select name="status" class="{{ $selectClass('status', $errors->has('status') ? '' : 'border-primary ring-2 ring-primary/10 text-gray-800') }}" @error('status') aria-invalid="true" aria-describedby="status-error" @enderror>
                         <option value="active" @selected(old('status', $clinic->status) === 'active')>Hiển thị</option>
                         <option value="inactive" @selected(old('status', $clinic->status) === 'inactive')>Ẩn</option>
                     </select>
+                    @error('status')
+                        <p id="status-error" class="mt-1.5 text-[12px] font-medium text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="pt-1">
@@ -221,4 +266,5 @@
         });
     });
 </script>
+@include('admin.pages.clinics.partials.client-validation')
 @endpush
