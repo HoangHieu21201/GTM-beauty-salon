@@ -102,10 +102,16 @@
                             <td class="py-4 px-5">
                                 <div class="flex items-center justify-center gap-3">
                                     @if($comment->status == 0)
-                                        <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="inline">
+                                        <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="inline"
+                                            data-confirm-submit="true"
+                                            data-confirm-title="Xác nhận duyệt"
+                                            data-confirm-message="Bạn có chắc chắn muốn duyệt bình luận này?"
+                                            data-confirm-type="success"
+                                            data-confirm-icon="question"
+                                            data-confirm-accept-html="Duyệt">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="text-green-500 hover:text-green-700 transition-colors p-1" title="Duyệt" onclick="return confirm('Bạn có chắc chắn muốn duyệt bình luận này?')">
+                                            <button type="submit" class="text-green-500 hover:text-green-700 transition-colors p-1" title="Duyệt">
                                                 <i class="pi pi-check text-[15px]"></i>
                                             </button>
                                         </form>
@@ -113,13 +119,12 @@
                                     <button onclick="toggleReplyBox('{{ $comment->id }}')" class="text-primary hover:text-primary-dark transition-colors p-1" title="Trả lời">
                                         <i class="pi pi-reply"></i>
                                     </button>
-                                    <form action="{{ route('admin.comments.destroy', $comment->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-400 hover:text-red-600 transition-colors p-1" title="Xóa">
-                                            <i class="pi pi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <x-admin.delete-form 
+                                        :action="route('admin.comments.destroy', $comment->id)" 
+                                        message="Bạn có chắc chắn muốn xóa bình luận này?"
+                                        class="text-red-400 hover:text-red-600 transition-colors p-1">
+                                        <i class="pi pi-trash"></i>
+                                    </x-admin.delete-form>
                                 </div>
                             </td>
                         </tr>

@@ -471,7 +471,11 @@ function settingsData() {
         },
 
         async deleteLogo(path) {
-            if(confirm('Bạn có chắc chắn muốn xóa vĩnh viễn logo này khỏi máy chủ?')) {
+            const confirmed = window.confirmAction 
+                ? await window.confirmAction({ title: 'Xóa logo', message: 'Bạn có chắc chắn muốn xóa vĩnh viễn logo này khỏi máy chủ?', type: 'danger', acceptHtml: 'Xóa' })
+                : confirm('Bạn có chắc chắn muốn xóa vĩnh viễn logo này khỏi máy chủ?');
+            
+            if(confirmed) {
                 try {
                     const res = await fetch('{{ route("admin.settings.logo.delete") }}', {
                         method: 'DELETE',
